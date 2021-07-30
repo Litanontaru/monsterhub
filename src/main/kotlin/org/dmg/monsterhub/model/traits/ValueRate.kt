@@ -54,8 +54,6 @@ data class ValueRate(val initValue: String) {
 
     }
 
-    fun evaluate(x: Int, y: Int, speed: Double): Int {
-        val v = value.toDouble() + firstArgument * ((if (squareFirst) x * x else x) * if (firstUseSecondVariable) y else 1) + secondArgument * y
-        return (v * speed).toInt()
-    }
+    fun evaluate(x: Int, y: Int): Int =
+            (value.toDouble() + firstArgument * ((if (squareFirst) x * x else x) * if (firstUseSecondVariable) y else 1) + secondArgument * y).toInt()
 }

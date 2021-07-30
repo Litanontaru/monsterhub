@@ -24,4 +24,6 @@ class TraitsService {
     } catch (e: IOException) {
         emptyList()
     }
+
+    operator fun get(trait: String): Trait? = traits[trait]
 }
