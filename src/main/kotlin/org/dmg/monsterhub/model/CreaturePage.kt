@@ -21,6 +21,7 @@ class CreaturePage(
 
             width = "100%"
             height = "100%"
+            isPadding = false
         })
 
         width = "100%"
@@ -31,10 +32,11 @@ class CreaturePage(
     private fun createEditSpace() = VerticalLayout().apply {
         val name = TextField().apply {
             label = "Имя монстра"
-            width = "100%"
             isReadOnly = true
 
             value = creature.name
+
+            width = "100%"
         }
         add(name)
 
@@ -49,16 +51,19 @@ class CreaturePage(
             })
 
             width = "100%"
+            isPadding = false
         })
 
         width = "100%"
         height = "100%"
+        isPadding = false
     }
 
-    private fun createBaseCreatures() {
+    private fun VerticalLayout.createBaseCreatures() {
         add(Label("Основан на монстрах"))
         val baseLayout = VerticalLayout().apply {
             creature.base.forEach { add(createBaseSpace(it)) }
+
             width = "100%"
             isPadding = false
         }
@@ -73,8 +78,9 @@ class CreaturePage(
 
         var theBase = base
         val name = TextField().apply {
-            width = "100%"
             value = base.name
+
+            width = "100%"
         }
         name.addValueChangeListener {
             creatureService.find(it.value)
@@ -91,11 +97,13 @@ class CreaturePage(
         add(delete)
 
         width = "100%"
+        isPadding = false
     }
 
     private fun createAddBaseCreature(onAdd: (Creature) -> Unit) = HorizontalLayout().apply {
         val name = TextField().apply {
             width = "100%"
+
             value = ""
         }
         var theBase: Creature? = null
@@ -128,11 +136,14 @@ class CreaturePage(
         add(add)
 
         width = "100%"
+        isPadding = false
     }
+
 
     private fun createInformationSpace() = VerticalLayout().apply {
         width = "100%"
         height = "100%"
+        isPadding = false
     }
 
     override fun getPageTitle(): String = "MonsterHub ${creature.name}"
