@@ -116,6 +116,7 @@ class CreaturePage(
                 creature.base.add(it)
                 onAdd(it)
                 theBase = null
+                name.value = ""
                 add.isEnabled = false
             }
         }
@@ -199,6 +200,7 @@ class CreaturePage(
                 onAdd(newCreatureTrait)
 
                 theTrait = null
+                name.value = ""
                 add.isEnabled = false
             }
         }
