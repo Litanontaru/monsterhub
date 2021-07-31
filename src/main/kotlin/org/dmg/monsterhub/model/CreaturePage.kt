@@ -28,7 +28,7 @@ class CreaturePage(
 
     }
 
-    fun createEditSpace() = VerticalLayout().apply {
+    private fun createEditSpace() = VerticalLayout().apply {
         val name = TextField().apply {
             label = "Имя монстра"
             width = "100%"
@@ -38,16 +38,7 @@ class CreaturePage(
         }
         add(name)
 
-        add(Label("Основан на монстрах"))
-        val baseLayout = VerticalLayout().apply {
-            creature.base.forEach { add(createBaseSpace(it)) }
-            width = "100%"
-            isPadding = false
-        }
-        add(baseLayout)
-        add(createAddBaseCreature {
-            baseLayout.add(createBaseSpace(it))
-        })
+        createBaseCreatures()
 
         add(HorizontalLayout().apply {
             add(Button("Сохранить") {
@@ -64,7 +55,20 @@ class CreaturePage(
         height = "100%"
     }
 
-    fun createBaseSpace(base: Creature) = HorizontalLayout().apply {
+    private fun createBaseCreatures() {
+        add(Label("Основан на монстрах"))
+        val baseLayout = VerticalLayout().apply {
+            creature.base.forEach { add(createBaseSpace(it)) }
+            width = "100%"
+            isPadding = false
+        }
+        add(baseLayout)
+        add(createAddBaseCreature {
+            baseLayout.add(createBaseSpace(it))
+        })
+    }
+
+    private fun createBaseSpace(base: Creature) = HorizontalLayout().apply {
         val result = this
 
         var theBase = base
@@ -89,7 +93,7 @@ class CreaturePage(
         width = "100%"
     }
 
-    fun createAddBaseCreature(onAdd: (Creature) -> Unit) = HorizontalLayout().apply {
+    private fun createAddBaseCreature(onAdd: (Creature) -> Unit) = HorizontalLayout().apply {
         val name = TextField().apply {
             width = "100%"
             value = ""
@@ -126,7 +130,7 @@ class CreaturePage(
         width = "100%"
     }
 
-    fun createInformationSpace() = VerticalLayout().apply {
+    private fun createInformationSpace() = VerticalLayout().apply {
         width = "100%"
         height = "100%"
     }
