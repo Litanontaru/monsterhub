@@ -5,6 +5,7 @@ import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
@@ -108,29 +109,20 @@ class CreaturePage(
         }
         var theBase: Creature? = null
 
-        val add = Button(Icon(VaadinIcon.PLUS)).apply {
-            isEnabled = false
-        }
+        val add = Button(Icon(VaadinIcon.PLUS))
         add.addClickListener {
             theBase?.let {
                 creature.base.add(it)
                 onAdd(it)
                 theBase = null
                 name.value = ""
-                add.isEnabled = false
             }
         }
 
         name.addValueChangeListener {
             creatureService.find(it.value)
-                    ?.let {
-                        theBase = it
-                        add.isEnabled = true
-                    }
-                    ?: run {
-                        theBase = null
-                        add.isEnabled = false
-                    }
+                    ?.let { theBase = it }
+                    ?: run { theBase = null }
         }
 
         add(name)
@@ -168,12 +160,39 @@ class CreaturePage(
                     ?: run { name.value = trait.trait }
         }
 
+        val x = TextField().apply {
+            value = trait.x.toString()
+            addValueChangeListener {
+                try {
+                    trait.x = Integer.parseInt(it.value)
+                } catch (e: NumberFormatException) {
+                    Notification("Монст хочет тут число").apply { duration = 1000 }.open()
+                }
+            }
+
+            width = "4em"
+        }
+        val y = TextField().apply {
+            value = trait.y.toString()
+            addValueChangeListener {
+                try {
+                    trait.y = Integer.parseInt(it.value)
+                } catch (e: NumberFormatException) {
+                    Notification("Монст хочет тут число").apply { duration = 1000 }.open()
+                }
+            }
+
+            width = "4em"
+        }
+
         val delete = Button(Icon(VaadinIcon.TRASH)) {
             creature.traits.remove(trait)
             result.isVisible = false
         }
 
         add(name)
+        add(x)
+        add(y)
         add(delete)
 
         width = "100%"
@@ -188,33 +207,22 @@ class CreaturePage(
         }
         var theTrait: String? = null
 
-        val add = Button(Icon(VaadinIcon.PLUS)).apply {
-            isEnabled = false
-        }
+        val add = Button(Icon(VaadinIcon.PLUS))
         add.addClickListener {
             theTrait?.let {
-                val newCreatureTrait = CreatureTrait().apply {
-                    trait = it
-                }
+                val newCreatureTrait = CreatureTrait().apply { trait = it }
                 creature.traits.add(newCreatureTrait)
                 onAdd(newCreatureTrait)
 
                 theTrait = null
                 name.value = ""
-                add.isEnabled = false
             }
         }
 
         name.addValueChangeListener {
             traitsService.get(it.value)
-                    ?.let {
-                        theTrait = it.name
-                        add.isEnabled = true
-                    }
-                    ?: run {
-                        theTrait = null
-                        add.isEnabled = false
-                    }
+                    ?.let { theTrait = it.name }
+                    ?: run { theTrait = null }
         }
 
         add(name)

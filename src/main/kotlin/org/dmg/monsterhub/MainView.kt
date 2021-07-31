@@ -28,11 +28,11 @@ class MainView(
             add(Button("Найти", Icon(VaadinIcon.EDIT)) {
                 creatureService.find(name.value)
                         ?. let { CreaturePage(it, creatureService, traitsService).open() }
-                        ?: Notification("Монстр в логове не найден").open()
+                        ?: Notification("Монстр в логове не найден").apply { duration = 1000 }.open()
             })
             add(Button("Создать", Icon(VaadinIcon.PLUS)) {
                 creatureService.find(name.value)
-                        ?. let { Notification("${name.value} уже живёт в логове")}
+                        ?. let { Notification("${name.value} уже живёт в логове").apply { duration = 1000 }.open()}
                         ?: run {
                             val creature = Creature()
                             creature.name = name.value

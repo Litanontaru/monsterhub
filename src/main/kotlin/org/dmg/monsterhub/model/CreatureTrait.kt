@@ -1,5 +1,6 @@
 package org.dmg.monsterhub.model
 
+import org.hibernate.annotations.Type
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -13,6 +14,7 @@ class CreatureTrait {
 
     var trait: String = ""
 
+    @Type(type="text")
     var details: String = ""
 
     var x: Int = 0
