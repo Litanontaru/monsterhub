@@ -18,5 +18,7 @@ class Creature {
     )
     var base: MutableList<Creature> = mutableListOf()
 
-
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JoinColumn(name = "creature_id")
+    var traits: MutableList<CreatureTrait> = mutableListOf()
 }

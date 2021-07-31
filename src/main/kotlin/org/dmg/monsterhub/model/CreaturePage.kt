@@ -9,10 +9,12 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.router.HasDynamicTitle
+import org.dmg.monsterhub.model.traits.TraitsService
 
 class CreaturePage(
         val creature: Creature,
-        val creatureService: CreatureService
+        val creatureService: CreatureService,
+        val traitsService: TraitsService
 ) : Dialog(), HasDynamicTitle {
     init {
         add(HorizontalLayout().apply {
@@ -41,6 +43,7 @@ class CreaturePage(
         add(name)
 
         createBaseCreatures()
+        createTraits()
 
         add(HorizontalLayout().apply {
             add(Button("Сохранить") {
@@ -78,16 +81,11 @@ class CreaturePage(
     private fun createBaseSpace(base: Creature) = HorizontalLayout().apply {
         val result = this
 
-        var theBase = base
         val name = TextField().apply {
             value = base.name
 
             width = "100%"
-        }
-        name.addValueChangeListener {
-            creatureService.find(it.value)
-                    ?.let { theBase = it }
-                    ?: run { name.value = theBase.name }
+            isReadOnly = true
         }
 
         val delete = Button(Icon(VaadinIcon.TRASH)) {
@@ -141,6 +139,88 @@ class CreaturePage(
         isPadding = false
     }
 
+    private fun  VerticalLayout.createTraits() {
+        add(Label("Черты"))
+        val traitsLayout = VerticalLayout().apply {
+            creature.traits.forEach{ add(createTraitSpace(it))}
+
+            width = "100%"
+            isPadding = false
+            isSpacing = false
+        }
+        add(traitsLayout)
+        add(createAddTrait {
+            traitsLayout.add(createTraitSpace(it))
+        })
+    }
+
+    private fun createTraitSpace(trait: CreatureTrait) = HorizontalLayout().apply {
+        val result = this
+        val name = TextField().apply {
+            value = trait.trait
+
+            width = "100%"
+        }
+        name.addValueChangeListener {
+            traitsService.get(it.value)
+                    ?.let { trait.trait = it.name }
+                    ?: run { name.value = trait.trait }
+        }
+
+        val delete = Button(Icon(VaadinIcon.TRASH)) {
+            creature.traits.remove(trait)
+            result.isVisible = false
+        }
+
+        add(name)
+        add(delete)
+
+        width = "100%"
+        isPadding = false
+    }
+
+    private fun createAddTrait(onAdd: (CreatureTrait) -> Unit) = HorizontalLayout().apply {
+        val name = TextField().apply {
+            width = "100%"
+
+            value = ""
+        }
+        var theTrait: String? = null
+
+        val add = Button(Icon(VaadinIcon.PLUS)).apply {
+            isEnabled = false
+        }
+        add.addClickListener {
+            theTrait?.let {
+                val newCreatureTrait = CreatureTrait().apply {
+                    trait = it
+                }
+                creature.traits.add(newCreatureTrait)
+                onAdd(newCreatureTrait)
+
+                theTrait = null
+                add.isEnabled = false
+            }
+        }
+
+        name.addValueChangeListener {
+            traitsService.get(it.value)
+                    ?.let {
+                        theTrait = it.name
+                        add.isEnabled = true
+                    }
+                    ?: run {
+                        theTrait = null
+                        add.isEnabled = false
+                    }
+        }
+
+        add(name)
+        add(add)
+
+        width = "100%"
+        isPadding = false
+    }
 
     private fun createInformationSpace() = VerticalLayout().apply {
         width = "100%"

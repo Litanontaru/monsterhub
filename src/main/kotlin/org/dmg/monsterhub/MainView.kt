@@ -11,10 +11,12 @@ import com.vaadin.flow.router.Route
 import org.dmg.monsterhub.model.Creature
 import org.dmg.monsterhub.model.CreaturePage
 import org.dmg.monsterhub.model.CreatureService
+import org.dmg.monsterhub.model.traits.TraitsService
 
 @Route
 class MainView(
-    creatureService: CreatureService
+    creatureService: CreatureService,
+    traitsService: TraitsService
 ) : VerticalLayout() {
     init {
         val name = TextField().apply {
@@ -25,7 +27,7 @@ class MainView(
         add(HorizontalLayout().apply {
             add(Button("Найти", Icon(VaadinIcon.EDIT)) {
                 creatureService.find(name.value)
-                        ?. let { CreaturePage(it, creatureService).open() }
+                        ?. let { CreaturePage(it, creatureService, traitsService).open() }
                         ?: Notification("Монстр в логове не найден").open()
             })
             add(Button("Создать", Icon(VaadinIcon.PLUS)) {
@@ -36,7 +38,7 @@ class MainView(
                             creature.name = name.value
                             creatureService.save(creature)
 
-                            CreaturePage(creature, creatureService).open()
+                            CreaturePage(creature, creatureService, traitsService).open()
                         }
             })
 
