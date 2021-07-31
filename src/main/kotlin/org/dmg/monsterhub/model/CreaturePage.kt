@@ -57,6 +57,7 @@ class CreaturePage(
         width = "100%"
         height = "100%"
         isPadding = false
+        isSpacing = false
     }
 
     private fun VerticalLayout.createBaseCreatures() {
@@ -66,6 +67,7 @@ class CreaturePage(
 
             width = "100%"
             isPadding = false
+            isSpacing = false
         }
         add(baseLayout)
         add(createAddBaseCreature {
