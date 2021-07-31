@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.model.yaml
 
 import org.springframework.stereotype.Service
+import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 
 @Service

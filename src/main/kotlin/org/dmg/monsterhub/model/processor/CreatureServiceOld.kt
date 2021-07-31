@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 import java.lang.Integer.parseInt
 
 @Service
-class CreatureService(
+class CreatureServiceOld(
         val loader: CreatureLoader,
         val traits: TraitsService
 ) {
