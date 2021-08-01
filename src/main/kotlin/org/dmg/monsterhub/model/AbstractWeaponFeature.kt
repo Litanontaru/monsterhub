@@ -6,7 +6,7 @@ import javax.persistence.Id
 import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
-open class AbstractWeaponFeature {
+open class AbstractWeaponFeature: Detailed {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long = 0
@@ -14,5 +14,5 @@ open class AbstractWeaponFeature {
     var feature: String = ""
     var primaryNumber: Int = 0
     var secondaryNumber: Int = 0
-    var details: String = ""
+    override var details: String = ""
 }

@@ -6,11 +6,11 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextArea
 
-class CreatureTraitDetails(trait: CreatureTrait) : Dialog() {
+class DetailsDialog(detailed: Detailed) : Dialog() {
     init {
         add(VerticalLayout().apply {
             val text = TextArea().apply {
-                value = trait.details
+                value = detailed.details
 
                 width = "100%"
                 height = "100%"
@@ -18,7 +18,7 @@ class CreatureTraitDetails(trait: CreatureTrait) : Dialog() {
             add(text)
             add(HorizontalLayout().apply {
                 add(Button("ОК") {
-                    trait.details = text.value
+                    detailed.details = text.value
                     close()
                 })
                 add(Button("Закрыть") { close() })

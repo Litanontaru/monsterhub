@@ -7,7 +7,7 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-class CreatureTrait {
+class CreatureTrait: Detailed {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long = 0
@@ -15,7 +15,7 @@ class CreatureTrait {
     var trait: String = ""
 
     @Type(type="text")
-    var details: String = ""
+    override var details: String = ""
 
     var x: Int = 0
 

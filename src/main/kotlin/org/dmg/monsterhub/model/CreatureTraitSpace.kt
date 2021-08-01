@@ -83,7 +83,7 @@ class CreatureTraitSpace(
         }
 
         val detailsButton = Button(Icon(VaadinIcon.FILE_TEXT)) {
-            CreatureTraitDetails(trait).open()
+            DetailsDialog(trait).open()
         }
 
         val deleteButton = Button(Icon(VaadinIcon.TRASH)) {
