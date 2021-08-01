@@ -68,4 +68,10 @@ class CreatureService(
         value * 3 < max -> PrimaryRate(value, (max / 3.0 - value).toInt())
         else -> PrimaryRate(value, (max / 2.0 - value).toInt())
     }
+
+    fun size(creature: Creature) = creature
+            .getAllTraits()
+            .find { it.trait == "Размер" }
+            ?. x
+            ?: 0
 }
