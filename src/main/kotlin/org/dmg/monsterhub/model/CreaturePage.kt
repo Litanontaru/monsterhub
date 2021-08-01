@@ -18,6 +18,10 @@ class CreaturePage(
         val creatureService: CreatureService,
         val traitsService: TraitsService
 ) : Dialog(), HasDynamicTitle {
+    class TraitSpace(val creatureTrait: CreatureTrait) : HorizontalLayout()
+
+    val traitSpaces = mutableListOf<TraitSpace>()
+
     init {
         add(HorizontalLayout().apply {
             add(createEditSpace())
@@ -136,7 +140,10 @@ class CreaturePage(
     private fun VerticalLayout.createTraits() {
         add(Label("Черты"))
         val traitsLayout = VerticalLayout().apply {
-            creature.traits.forEach { add(createTraitSpace(it)) }
+            creature.traits.map { createTraitSpace(it) }.forEach {
+                traitSpaces.add(it)
+                add(it)
+            }
 
             width = "100%"
             isPadding = false
@@ -144,11 +151,13 @@ class CreaturePage(
         }
         add(traitsLayout)
         add(createAddTrait {
-            traitsLayout.add(createTraitSpace(it))
+            val space = createTraitSpace(it)
+            traitSpaces.add(space)
+            traitsLayout.add(space)
         })
     }
 
-    private fun createTraitSpace(trait: CreatureTrait) = HorizontalLayout().apply {
+    private fun createTraitSpace(trait: CreatureTrait) = TraitSpace(trait).apply {
         val result = this
         val name = TextField().apply {
             value = trait.trait
@@ -194,8 +203,7 @@ class CreaturePage(
         }
 
         val deleteButton = Button(Icon(VaadinIcon.TRASH)) {
-            creature.traits.remove(trait)
-            result.isVisible = false
+            removeTrait(trait, result)
         }
 
         add(name)
@@ -208,6 +216,11 @@ class CreaturePage(
         isPadding = false
     }
 
+    private fun removeTrait(trait: CreatureTrait, result: TraitSpace) {
+        creature.traits.remove(trait)
+        result.isVisible = false
+    }
+
     private fun createAddTrait(onAdd: (CreatureTrait) -> Unit) = HorizontalLayout().apply {
         val name = TextField().apply {
             width = "100%"
@@ -216,19 +229,48 @@ class CreaturePage(
         }
         var theTrait: Trait? = null
 
+        fun tryAddTrait(setTrait: Trait, onAdd: (CreatureTrait) -> Unit, name: TextField) {
+            val sameName = creature.traits.find { it.trait == setTrait.name }
+            if (sameName != null) {
+                AddSameTraitDialog(sameName.trait, null) {
+                    traitSpaces
+                            .find { it.creatureTrait.trait == sameName.trait }
+                            ?.apply { removeTrait(creatureTrait, this) }
+                    tryAddTrait(setTrait, onAdd, name)
+                }.open()
+                return
+            }
+
+            val sameGroup = when {
+                setTrait.group == null -> null
+                else -> creature.traits.find { setTrait.group == it.traitGroup }
+            }
+            if (sameGroup != null) {
+                AddSameTraitDialog(sameGroup.trait, sameGroup.traitGroup) {
+                    traitSpaces
+                            .find { it.creatureTrait.trait == sameGroup.trait }
+                            ?.apply { removeTrait(creatureTrait, this) }
+                    tryAddTrait(setTrait, onAdd, name)
+                }.open()
+                return
+            }
+
+            val newCreatureTrait = CreatureTrait().apply {
+                trait = setTrait.name
+                traitGroup = setTrait.group
+            }
+
+            creature.traits.add(newCreatureTrait)
+            onAdd(newCreatureTrait)
+
+            name.value = ""
+
+            theTrait = null
+        }
+
         val add = Button(Icon(VaadinIcon.PLUS))
         add.addClickListener {
-            theTrait?.let {
-                val newCreatureTrait = CreatureTrait().apply {
-                    trait = it.name
-                    traitGroup = it.group
-                }
-                creature.traits.add(newCreatureTrait)
-                onAdd(newCreatureTrait)
-
-                theTrait = null
-                name.value = ""
-            }
+            theTrait?.let { tryAddTrait(it, onAdd, name) }
         }
 
         name.addValueChangeListener {
