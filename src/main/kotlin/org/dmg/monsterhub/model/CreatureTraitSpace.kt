@@ -39,7 +39,6 @@ class CreatureTraitSpace(
         })
 
         width = "100%"
-        height = "100%"
         isPadding = false
         isSpacing = false
     }
