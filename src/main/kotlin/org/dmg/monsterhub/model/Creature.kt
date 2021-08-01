@@ -21,4 +21,14 @@ class Creature {
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "creature_id")
     var traits: MutableList<CreatureTrait> = mutableListOf()
+
+    fun getAllTraits(): Sequence<CreatureTrait> = base
+            .map { it.getAllTraits() }
+            .fold(traits.asSequence(), ::combine)
+}
+
+fun combine(left: Sequence<CreatureTrait>, right: Sequence<CreatureTrait>): Sequence<CreatureTrait> {
+    val names = left.map { it.trait }.toSet()
+    val groups = left.mapNotNull { it.traitGroup }.toSet()
+    return left + right.filter { it.trait !in names && (it.traitGroup !in groups) }
 }
