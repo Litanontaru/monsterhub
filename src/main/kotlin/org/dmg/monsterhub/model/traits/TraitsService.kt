@@ -18,7 +18,7 @@ class TraitsService {
                 .use { br ->
                     br.lineSequence()
                             .map { it.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() }
-                            .map { (it.asSequence() + (it.size..12).map { "" }).toList() }
+                            .map { (it.asSequence() + (it.size..13).map { "" }).toList() }
                             .toList()
                 }
     } catch (e: IOException) {
