@@ -26,13 +26,13 @@ class Creature {
             .map { it.getAllTraits() }
             .fold(traits.asSequence(), ::combine)
 
+    private fun combine(left: Sequence<CreatureTrait>, right: Sequence<CreatureTrait>): Sequence<CreatureTrait> {
+        val names = left.map { it.trait }.toSet()
+        val groups = left.mapNotNull { it.traitGroup }.toSet()
+        return left + right.filter { it.trait !in names && (it.traitGroup !in groups) }
+    }
+
     fun getAllTraits(category: String, vararg categories: String) = getAllTraits((sequenceOf(category) + categories).toSet())
 
     fun getAllTraits(categories: Set<String>) = getAllTraits().filter { it.traitCategory in categories || it.trait in categories}
-}
-
-fun combine(left: Sequence<CreatureTrait>, right: Sequence<CreatureTrait>): Sequence<CreatureTrait> {
-    val names = left.map { it.trait }.toSet()
-    val groups = left.mapNotNull { it.traitGroup }.toSet()
-    return left + right.filter { it.trait !in names && (it.traitGroup !in groups) }
 }
