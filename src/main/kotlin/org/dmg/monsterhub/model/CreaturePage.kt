@@ -116,6 +116,17 @@ class CreaturePage(
             close()
         })
 
+        add(Accordion().apply {
+            add("Атака", VerticalLayout().apply {
+                add(Label(creature.getAllTraits("Общая атака").map { it.toSmallString() }.joinToString()))
+
+                width = "100%"
+                isPadding = false
+                isSpacing = false
+            })
+            close()
+        })
+
         width = "100%"
         height = "100%"
         isPadding = false
