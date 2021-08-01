@@ -6,7 +6,6 @@ data class CreatureStats(
     val size: Int,
     val perception: List<String>,
     val movement: Map<String, Double>,
-    val weapons: List<Weapons>,
     val intelTraits: List<String>,
     val otherTraits: List<String>
 )
