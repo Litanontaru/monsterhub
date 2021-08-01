@@ -78,7 +78,26 @@ class CreaturePage(
                 isPadding = false
                 isSpacing = false
             })
+            close()
+        })
 
+        add(Accordion().apply {
+            val size = creatureService.size(creature)
+            add("Размер $size", VerticalLayout().apply {
+                add(Label("Размер $size"))
+                val sizeTraits = creature
+                        .getAllTraits("Размер", "Крылатый")
+                        .filter { it.trait != "Размер" }
+                        .map { it.toSmallString() }
+                        .joinToString()
+                if (sizeTraits.isNotEmpty()) {
+                    add(Label(sizeTraits))
+                }
+
+                width = "100%"
+                isPadding = false
+                isSpacing = false
+            })
             close()
         })
 

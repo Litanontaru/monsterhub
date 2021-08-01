@@ -24,4 +24,6 @@ class CreatureTrait {
     var traitGroup: String? = null
 
     var traitCategory: String = ""
+
+    fun toSmallString() = "$trait${if (x == 0) "" else " $x"}${if (y == 0) "" else " $y"}"
 }

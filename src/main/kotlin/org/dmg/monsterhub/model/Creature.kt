@@ -25,6 +25,10 @@ class Creature {
     fun getAllTraits(): Sequence<CreatureTrait> = base
             .map { it.getAllTraits() }
             .fold(traits.asSequence(), ::combine)
+
+    fun getAllTraits(category: String, vararg categories: String) = getAllTraits((sequenceOf(category) + categories).toSet())
+
+    fun getAllTraits(categories: Set<String>) = getAllTraits().filter { it.traitCategory in categories || it.trait in categories}
 }
 
 fun combine(left: Sequence<CreatureTrait>, right: Sequence<CreatureTrait>): Sequence<CreatureTrait> {
