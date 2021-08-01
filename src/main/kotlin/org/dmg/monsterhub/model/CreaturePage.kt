@@ -101,6 +101,21 @@ class CreaturePage(
             close()
         })
 
+        add(Accordion().apply {
+            add("Черты", VerticalLayout().apply {
+                add(Label("Восприятие: ${creature.getAllTraits("Восприятие").map { it.toSmallString() }.joinToString()}"))
+                add(Label("Движение: ${creature.getAllTraits("Движение").map { it.toSmallString() }.joinToString()}"))
+                add(Label("Интеллект: ${creature.getAllTraits("Интеллект").map { it.toSmallString() }.joinToString()}"))
+                add(Label("Остальные: ${creature.getAllTraits("Общее").map { it.toSmallString() }.joinToString()}"))
+
+
+                width = "100%"
+                isPadding = false
+                isSpacing = false
+            })
+            close()
+        })
+
         width = "100%"
         height = "100%"
         isPadding = false
