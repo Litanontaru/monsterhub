@@ -65,7 +65,7 @@ class CreaturePage(
 
     private fun createInformationSpace() = VerticalLayout().apply {
         add(Accordion().apply {
-            val superiority = creatureService.eval(creature)
+            val superiority = creatureService.superiority(creature)
             add("Превосходство: ${superiority.value}", VerticalLayout().apply {
                 add(Label("Превосходство: ${superiority.value}"))
                 add(Label("Опасность: ${superiority.challengeRating}"))

@@ -18,7 +18,7 @@ class CreatureService(
 
     private val base = listOf(0, 0, 0, 0, -26, 0, -13, 0, -18, 0, -3)
 
-    fun eval(creature: Creature): Superiority {
+    fun superiority(creature: Creature): Superiority {
         val allTraits = creature.getAllTraits()
 
         val values = allTraits
