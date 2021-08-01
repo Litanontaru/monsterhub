@@ -185,7 +185,11 @@ class CreaturePage(
             width = "4em"
         }
 
-        val delete = Button(Icon(VaadinIcon.TRASH)) {
+        val detailsButton = Button(Icon(VaadinIcon.FILE_TEXT)) {
+            CreatureTraitDetails(trait).open()
+        }
+
+        val deleteButton = Button(Icon(VaadinIcon.TRASH)) {
             creature.traits.remove(trait)
             result.isVisible = false
         }
@@ -193,7 +197,8 @@ class CreaturePage(
         add(name)
         add(x)
         add(y)
-        add(delete)
+        add(detailsButton)
+        add(deleteButton)
 
         width = "100%"
         isPadding = false
