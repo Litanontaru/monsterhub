@@ -22,4 +22,6 @@ class CreatureTrait {
     var y : Int = 0
 
     var traitGroup: String? = null
+
+    var traitCategory: String = ""
 }

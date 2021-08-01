@@ -144,6 +144,7 @@ class CreatureTraitSpace(
             val newCreatureTrait = CreatureTrait().apply {
                 trait = setTrait.name
                 traitGroup = setTrait.group
+                traitCategory = setTrait.category
             }
 
             creature.traits.add(newCreatureTrait)
