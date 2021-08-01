@@ -11,7 +11,7 @@ import com.vaadin.flow.router.Route
 import org.dmg.monsterhub.model.Creature
 import org.dmg.monsterhub.model.CreaturePage
 import org.dmg.monsterhub.model.CreatureService
-import org.dmg.monsterhub.model.traits.TraitsService
+import org.dmg.monsterhub.model.TraitsService
 
 @Route
 class MainView(

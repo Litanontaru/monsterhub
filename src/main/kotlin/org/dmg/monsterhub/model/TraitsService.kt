@@ -1,4 +1,4 @@
-package org.dmg.monsterhub.model.traits
+package org.dmg.monsterhub.model
 
 import org.springframework.stereotype.Service
 import java.io.BufferedReader

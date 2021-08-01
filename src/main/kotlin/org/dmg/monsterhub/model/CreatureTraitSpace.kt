@@ -8,8 +8,6 @@ import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
-import org.dmg.monsterhub.model.traits.Trait
-import org.dmg.monsterhub.model.traits.TraitsService
 
 class CreatureTraitSpace(
         val creature: Creature,

@@ -1,4 +1,4 @@
-package org.dmg.monsterhub.model.traits
+package org.dmg.monsterhub.model
 
 data class Trait(
         val name: String,
