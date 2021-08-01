@@ -10,6 +10,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.router.HasDynamicTitle
+import org.dmg.monsterhub.model.traits.Trait
 import org.dmg.monsterhub.model.traits.TraitsService
 
 class CreaturePage(
@@ -132,10 +133,10 @@ class CreaturePage(
         isPadding = false
     }
 
-    private fun  VerticalLayout.createTraits() {
+    private fun VerticalLayout.createTraits() {
         add(Label("Черты"))
         val traitsLayout = VerticalLayout().apply {
-            creature.traits.forEach{ add(createTraitSpace(it))}
+            creature.traits.forEach { add(createTraitSpace(it)) }
 
             width = "100%"
             isPadding = false
@@ -156,7 +157,10 @@ class CreaturePage(
         }
         name.addValueChangeListener {
             traitsService.get(it.value)
-                    ?.let { trait.trait = it.name }
+                    ?.let {
+                        trait.trait = it.name
+                        trait.traitGroup = it.group
+                    }
                     ?: run { name.value = trait.trait }
         }
 
@@ -210,12 +214,15 @@ class CreaturePage(
 
             value = ""
         }
-        var theTrait: String? = null
+        var theTrait: Trait? = null
 
         val add = Button(Icon(VaadinIcon.PLUS))
         add.addClickListener {
             theTrait?.let {
-                val newCreatureTrait = CreatureTrait().apply { trait = it }
+                val newCreatureTrait = CreatureTrait().apply {
+                    trait = it.name
+                    traitGroup = it.group
+                }
                 creature.traits.add(newCreatureTrait)
                 onAdd(newCreatureTrait)
 
@@ -226,7 +233,7 @@ class CreaturePage(
 
         name.addValueChangeListener {
             traitsService.get(it.value)
-                    ?.let { theTrait = it.name }
+                    ?.let { theTrait = it }
                     ?: run { theTrait = null }
         }
 
