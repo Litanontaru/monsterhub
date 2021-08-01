@@ -2,6 +2,8 @@ package org.dmg.monsterhub.model
 
 import org.dmg.monsterhub.model.traits.TraitsService
 import org.springframework.stereotype.Service
+import java.lang.Math.max
+import java.lang.Math.min
 
 @Service
 class CreatureService(
@@ -46,17 +48,24 @@ class CreatureService(
         val offence = off + (per + mov) / 2 + hnd
         val defence = def + (per + mov) / 2
 
-        return sup(offence, defence, com)
+        val sortedSuper = arrayOf(offence, defence, com).sortedArray()
+        val maxSuper = max(max(sortedSuper[0] * 4, sortedSuper[1] * 3), sortedSuper[2] * 2)
+
+        val maxCR = max(min(offence, defence) * 4, max(offence, defence) * 3)
+
+        return Superiority(
+                Math.ceil(0.2 * maxSuper).toInt(),
+                Math.ceil(0.2 * maxCR).toInt(),
+
+                primary(offence, maxSuper),
+                primary(defence, maxSuper),
+                primary(com, maxSuper)
+        )
     }
 
-    private fun sup(offence: Int, defence: Int, common: Int): Superiority {
-        val sorted = arrayOf(offence, defence, common).sortedArray()
-        val max = Math.max(Math.max(sorted[0] * 4, sorted[1] * 3), sorted[2] * 2)
-        return Superiority(
-                Math.ceil(0.2 * max).toInt(),
-                offence,
-                defence,
-                common
-        )
+    private fun primary(value: Int, max: Int) = when {
+        value * 4 < max -> PrimaryRate(value, (max / 4.0 - value).toInt())
+        value * 3 < max -> PrimaryRate(value, (max / 3.0 - value).toInt())
+        else -> PrimaryRate(value, (max / 2.0 - value).toInt())
     }
 }
