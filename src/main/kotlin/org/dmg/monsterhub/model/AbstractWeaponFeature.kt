@@ -12,7 +12,7 @@ open class AbstractWeaponFeature {
     var id: Long = 0
 
     var feature: String = ""
-    var primary: Int = 0
-    var secondary: Int = 0
+    var primaryNumber: Int = 0
+    var secondaryNumber: Int = 0
     var details: String = ""
 }
