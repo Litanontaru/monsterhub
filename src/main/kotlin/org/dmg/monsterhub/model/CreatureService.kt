@@ -8,7 +8,8 @@ import java.lang.Math.min
 class CreatureService(
         val repository: CreatureRepository,
         val traitsService: TraitsService,
-        val weaponService: WeaponService
+        val weaponService: WeaponService,
+        val sizeProfileService: SizeProfileService
 ) {
     fun save(creature: Creature) {
         repository.save(creature)
@@ -79,6 +80,10 @@ class CreatureService(
         val natural = creature.getAllTraits("Руки").map { "Кулаки" } +
                 creature.getAllTraits("Естественное оружие").map { it.details }
 
-        return weaponService.getNaturalWeapons(natural)
+        val sizeProfile = sizeProfileService[size(creature)]
+
+        return weaponService
+                .getNaturalWeapons(natural)
+                .map { it.adjustToSize(sizeProfile) }
     }
 }

@@ -7,23 +7,23 @@ import java.io.InputStreamReader
 
 @Service
 class TraitsService {
-    private val traits = csv("/Traits.csv")
+    private val traits = csv("/Traits.csv", 13)
             .asSequence()
             .map { Trait(it) }
             .groupBy { it.name }
             .mapValues { it.value.single() }
 
-    private fun csv(fileName: String): List<List<String>> = try {
-        BufferedReader(InputStreamReader(TraitsService::class.java.getResourceAsStream(fileName)))
-                .use { br ->
-                    br.lineSequence()
-                            .map { it.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() }
-                            .map { (it.asSequence() + (it.size..13).map { "" }).toList() }
-                            .toList()
-                }
-    } catch (e: IOException) {
-        emptyList()
-    }
-
     operator fun get(trait: String): Trait? = traits[trait]
+}
+
+fun csv(fileName: String, columns: Int): List<List<String>> = try {
+    BufferedReader(InputStreamReader(TraitsService::class.java.getResourceAsStream(fileName)))
+            .use { br ->
+                br.lineSequence()
+                        .map { it.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() }
+                        .map { (it.asSequence() + (it.size..columns).map { "" }).toList() }
+                        .toList()
+            }
+} catch (e: IOException) {
+    emptyList()
 }

@@ -20,4 +20,15 @@ class WeaponAttack {
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "weapon_attack_id")
     var features: MutableList<WeaponAttackFeature> = mutableListOf()
+
+    fun adjustToSize(sizeProfile: SizeProfile) = WeaponAttack().also {
+        it.mode = mode
+
+        it.damage = damage + sizeProfile.damageModifier
+        it.desturction = desturction + sizeProfile.destructionModifier
+        it.distance = distance
+        it.speed = speed
+        it.clipsize = clipsize
+        it.allowInBarrel = allowInBarrel
+    }
 }
