@@ -7,7 +7,8 @@ import java.lang.Math.min
 @Service
 class CreatureService(
         val repository: CreatureRepository,
-        val traitsService: TraitsService
+        val traitsService: TraitsService,
+        val weaponService: WeaponService
 ) {
     fun save(creature: Creature) {
         repository.save(creature)
@@ -71,6 +72,13 @@ class CreatureService(
     fun size(creature: Creature) = creature
             .getAllTraits()
             .find { it.trait == "Размер" }
-            ?. x
+            ?.x
             ?: 0
+
+    fun weapons(creature: Creature): List<Weapon> {
+        val natural = creature.getAllTraits("Руки").map { "Кулаки" } +
+                creature.getAllTraits("Естественное оружие").map { it.details }
+
+        return weaponService.getNaturalWeapons(natural)
+    }
 }

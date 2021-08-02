@@ -11,4 +11,6 @@ class WeaponService(
     }
 
     fun find(name: String): Weapon? = repository.findByName(name)
+
+    fun getNaturalWeapons(keys: Sequence<String>): List<Weapon> = repository.findNaturalWeapon(keys.toList())
 }

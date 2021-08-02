@@ -10,9 +10,9 @@ import com.vaadin.flow.component.accordion.Accordion
 import com.vaadin.flow.component.html.Label
 
 class CreaturePage(
-        val creature: Creature,
-        val creatureService: CreatureService,
-        val traitsService: TraitsService
+        private val creature: Creature,
+        private val creatureService: CreatureService,
+        private val traitsService: TraitsService
 ) : Dialog(), HasDynamicTitle {
 
     init {
@@ -107,7 +107,6 @@ class CreaturePage(
                 add(Label("Интеллект: ${creature.getAllTraits("Интеллект").map { it.toSmallString() }.joinToString()}"))
                 add(Label("Остальные: ${creature.getAllTraits("Общее").map { it.toSmallString() }.joinToString()}"))
 
-
                 width = "100%"
                 isPadding = false
                 isSpacing = false
@@ -118,6 +117,21 @@ class CreaturePage(
         add(Accordion().apply {
             add("Атака", VerticalLayout().apply {
                 add(Label(creature.getAllTraits("Общая атака").map { it.toSmallString() }.joinToString()))
+
+                creatureService
+                        .weapons(creature)
+                        .flatMap { weapon -> weapon.attacks.map { weapon to it } }
+                        .forEach { (weapon, attack) ->
+                            val features = (weapon.features + attack.features)
+                                    .map {
+                                        it.feature +
+                                                (if (it.primaryNumber != 0) " ${it.primaryNumber}" else "") +
+                                                (if (it.secondaryNumber != 0) " ${it.secondaryNumber}" else "") +
+                                                (if (it.details.isNotBlank()) "(${it.details})" else "")
+                                    }
+                                    .joinToString()
+                            add(Label("${weapon.name} ${attack.mode}, урон ${attack.damage}/${attack.desturction}, ${attack.distance} м, скр ${attack.speed}, $features"))
+                        }
 
                 width = "100%"
                 isPadding = false
