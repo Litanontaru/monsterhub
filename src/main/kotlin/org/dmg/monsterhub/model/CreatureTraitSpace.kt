@@ -4,7 +4,6 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
-import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
@@ -57,12 +56,12 @@ class CreatureTraitSpace(
                     ?: run { name.value = trait.trait }
         }
 
-        val x = NumberField(
+        val x = IntField(
                 { trait.x },
                 { trait.x = it },
                 "Монст хочет тут число"
         )
-        val y = NumberField(
+        val y = IntField(
                 { trait.y },
                 { trait.y = it },
                 "Монст хочет тут число"

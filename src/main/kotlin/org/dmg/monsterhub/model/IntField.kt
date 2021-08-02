@@ -3,7 +3,7 @@ package org.dmg.monsterhub.model
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.textfield.TextField
 
-class NumberField(
+class IntField(
         val get: () -> Int,
         val set: (Int) -> Unit,
         val error: String
