@@ -12,7 +12,7 @@ import com.vaadin.flow.component.textfield.TextField
 class CreatureTraitSpace(
         val creature: Creature,
         val traitsService: TraitsService
-): VerticalLayout() {
+) : VerticalLayout() {
     class TraitSpace(val creatureTrait: CreatureTrait) : HorizontalLayout()
 
     val traitSpaces = mutableListOf<TraitSpace>()
@@ -57,30 +57,16 @@ class CreatureTraitSpace(
                     ?: run { name.value = trait.trait }
         }
 
-        val x = TextField().apply {
-            value = trait.x.toString()
-            addValueChangeListener {
-                try {
-                    trait.x = Integer.parseInt(it.value)
-                } catch (e: NumberFormatException) {
-                    Notification("Монст хочет тут число").apply { duration = 1000 }.open()
-                }
-            }
-
-            width = "4em"
-        }
-        val y = TextField().apply {
-            value = trait.y.toString()
-            addValueChangeListener {
-                try {
-                    trait.y = Integer.parseInt(it.value)
-                } catch (e: NumberFormatException) {
-                    Notification("Монст хочет тут число").apply { duration = 1000 }.open()
-                }
-            }
-
-            width = "4em"
-        }
+        val x = NumberField(
+                { trait.x },
+                { trait.x = it },
+                "Монст хочет тут число"
+        )
+        val y = NumberField(
+                { trait.y },
+                { trait.y = it },
+                "Монст хочет тут число"
+        )
 
         val detailsButton = Button(Icon(VaadinIcon.FILE_TEXT)) {
             DetailsDialog(trait).open()

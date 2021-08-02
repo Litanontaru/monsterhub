@@ -5,7 +5,6 @@ import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
-import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
@@ -51,30 +50,16 @@ class WeaponPage(
                     feature.feature = event.value
                 }
 
-                val x = TextField().apply {
-                    value = feature.primaryNumber.toString()
-                    addValueChangeListener {
-                        try {
-                            feature.primaryNumber = Integer.parseInt(it.value)
-                        } catch (e: NumberFormatException) {
-                            Notification("Оружие хочет тут число").apply { duration = 1000 }.open()
-                        }
-                    }
-
-                    width = "4em"
-                }
-                val y = TextField().apply {
-                    value = feature.secondaryNumber.toString()
-                    addValueChangeListener {
-                        try {
-                            feature.secondaryNumber = Integer.parseInt(it.value)
-                        } catch (e: NumberFormatException) {
-                            Notification("Оружие хочет тут число").apply { duration = 1000 }.open()
-                        }
-                    }
-
-                    width = "4em"
-                }
+                val primaryNumber = NumberField(
+                        { feature.primaryNumber },
+                        { feature.primaryNumber = it },
+                        "Оружие хочет тут число"
+                )
+                val secondaryNumber = NumberField(
+                        { feature.secondaryNumber },
+                        { feature.secondaryNumber = it },
+                        "Оружие хочет тут число"
+                )
 
                 val detailsButton = Button(Icon(VaadinIcon.FILE_TEXT)) {
                     DetailsDialog(feature).open()
@@ -86,8 +71,8 @@ class WeaponPage(
                 }
 
                 add(featureName)
-                add(x)
-                add(y)
+                add(primaryNumber)
+                add(secondaryNumber)
                 add(detailsButton)
                 add(deleteButton)
 
