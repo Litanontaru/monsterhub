@@ -47,6 +47,9 @@ class CreaturePage(
         add(HorizontalLayout().apply {
             add(Button("Сохранить") {
                 creatureService.save(creature)
+
+                close()
+                CreaturePage(creature, creatureService, traitsService).open()
             })
             add(Button("Закрыть") {
                 close()
