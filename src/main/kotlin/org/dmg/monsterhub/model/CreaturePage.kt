@@ -82,8 +82,10 @@ class CreaturePage(
 
         add(Accordion().apply {
             val size = creatureService.size(creature)
-            add("Размер $size", VerticalLayout().apply {
+            val physicalSize = creatureService.physicalSize(creature)
+            add("Размер $size ($physicalSize)", VerticalLayout().apply {
                 add(Label("Размер $size"))
+                add(Label("Физический размер $physicalSize"))
                 val sizeTraits = creature
                         .getAllTraits("Размер", "Крылатый")
                         .filter { it.trait != "Размер" }

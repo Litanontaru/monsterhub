@@ -26,9 +26,10 @@ class WeaponAttack {
 
         it.damage = damage + sizeProfile.damageModifier
         it.desturction = desturction + sizeProfile.destructionModifier
-        it.distance = distance
+        it.distance = sizeProfile.modifyWeaponDistance(distance)
         it.speed = speed
         it.clipsize = clipsize
         it.allowInBarrel = allowInBarrel
+        it.features = features
     }
 }

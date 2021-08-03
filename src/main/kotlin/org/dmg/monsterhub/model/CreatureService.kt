@@ -71,16 +71,37 @@ class CreatureService(
     }
 
     fun size(creature: Creature) = creature
-            .getAllTraits()
-            .find { it.trait == "Размер" }
+            .getAllTraits("Размер")
+            .singleOrNull()
             ?.x
             ?: 0
+
+    private fun partsSize(creature: Creature): Int =
+            creature.getAllTraits("Тяжёлый")
+                    .singleOrNull()
+                    ?.let { size(creature) - 1 }
+                    ?: (creature.getAllTraits("Очень тяжёлый")
+                            .singleOrNull()
+                            ?.let { size(creature) - 3 }
+                            ?: size(creature))
+
+    private fun longArms(creature: Creature): Int =
+            creature.getAllTraits("Длинные конечности")
+                    .singleOrNull()
+                    ?.x
+                    ?: 0
+
+    fun physicalSize(creature: Creature): Int = partsSize(creature) +
+            creature.getAllTraits("Крупногабаритный", "Крылатый").sumBy { 1 }
 
     fun weapons(creature: Creature): List<Weapon> {
         val natural = creature.getAllTraits("Руки").map { "Кулаки" } +
                 creature.getAllTraits("Естественное оружие").map { it.details }
 
-        val sizeProfile = sizeProfileService[size(creature)]
+        val sizeProfile = sizeProfileService.get(
+                size(creature),
+                partsSize(creature) + longArms(creature)
+        )
 
         return weaponService
                 .getNaturalWeapons(natural)
