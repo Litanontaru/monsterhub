@@ -23,4 +23,23 @@ class Weapon {
         it.attacks = attacks.asSequence().map { it.adjustToSize(sizeProfile, isNatural) }.toMutableList()
         it.features = features.asSequence().toMutableList()
     }
+
+    fun addExternalFeature(creatureTraits: List<CreatureTrait>): Weapon {
+        val externalFeatures = creatureTraits
+                .asSequence()
+                .map {
+                    WeaponFeature().apply {
+                        feature = it.trait
+                        primaryNumber = it.x
+                        secondaryNumber = it.y
+                        details = it.details.lines().drop(1).joinToString { "\n" }
+                    }
+                }
+
+        return Weapon().also {
+            it.name = name
+            it.attacks = attacks.asSequence().toMutableList()
+            it.features = (features.asSequence() + externalFeatures).toMutableList()
+        }
+    }
 }

@@ -104,8 +104,16 @@ class CreatureService(
                 partsSize(creature) + longArms(creature)
         )
 
+        val attackTraits = creature.getAllTraits("Свойство атаки").groupBy { getWeaponFromAttackTrait(it) }
+
         return weaponService
                 .getNaturalWeapons(natural)
                 .map { it.adjustToSize(sizeProfile, weaponService.isNatural(it)) }
+                .map { weapon -> attackTraits[weapon.name]?.let { weapon.addExternalFeature(it) } ?: weapon }
     }
+
+    private fun getWeaponFromAttackTrait(creatureTrait: CreatureTrait) = creatureTrait
+            .details
+            .takeIf { it.isNotBlank() }
+            ?.let { it.lines()[0] }
 }
