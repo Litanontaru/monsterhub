@@ -96,7 +96,8 @@ class CreatureService(
 
     fun weapons(creature: Creature): List<Weapon> {
         val natural = creature.getAllTraits("Руки").map { "Кулаки" } +
-                creature.getAllTraits("Естественное оружие").map { it.details }
+                creature.getAllTraits("Естественное оружие").map { it.details } +
+                creature.getAllTraits("Оружие").map { it.trait }
 
         val sizeProfile = sizeProfileService.get(
                 size(creature),
@@ -105,6 +106,6 @@ class CreatureService(
 
         return weaponService
                 .getNaturalWeapons(natural)
-                .map { it.adjustToSize(sizeProfile) }
+                .map { it.adjustToSize(sizeProfile, weaponService.isNatural(it)) }
     }
 }

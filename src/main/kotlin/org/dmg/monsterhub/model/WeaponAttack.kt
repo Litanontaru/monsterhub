@@ -21,12 +21,14 @@ class WeaponAttack {
     @JoinColumn(name = "weapon_attack_id")
     var features: MutableList<WeaponAttackFeature> = mutableListOf()
 
-    fun adjustToSize(sizeProfile: SizeProfile) = WeaponAttack().also {
+    fun adjustToSize(sizeProfile: SizeProfile, isNatural: Boolean) = WeaponAttack().also {
         it.mode = mode
 
         it.damage = damage + sizeProfile.damageModifier
         it.desturction = desturction + sizeProfile.destructionModifier
-        it.distance = sizeProfile.modifyWeaponDistance(distance)
+        it.distance = if (isNatural) sizeProfile.modifyNaturalWeaponDistance(distance)
+        else sizeProfile.modifyWeaponDistance(distance)
+
         it.speed = speed
         it.clipsize = clipsize
         it.allowInBarrel = allowInBarrel

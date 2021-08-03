@@ -12,6 +12,8 @@ data class SizeProfile(
             if (distance < 0.6) distance * partSizeModifier
             else 0.6 * partSizeModifier + (distance - 0.6) * weaponSizeModifier
 
+    fun modifyNaturalWeaponDistance(distance: Double) = distance * partSizeModifier
+
     companion object {
         operator fun invoke(row: List<String>) = SizeProfile(
                 row[0].toInt(),

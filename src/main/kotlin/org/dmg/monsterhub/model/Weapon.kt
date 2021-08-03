@@ -18,9 +18,9 @@ class Weapon {
     @JoinColumn(name = "weapon_id")
     var features: MutableList<WeaponFeature> = mutableListOf()
 
-    fun adjustToSize(sizeProfile: SizeProfile) = Weapon().also {
+    fun adjustToSize(sizeProfile: SizeProfile, isNatural: Boolean) = Weapon().also {
         it.name = name
-        it.attacks = attacks.asSequence().map { it.adjustToSize(sizeProfile) }.toMutableList()
+        it.attacks = attacks.asSequence().map { it.adjustToSize(sizeProfile, isNatural) }.toMutableList()
         it.features = features.asSequence().toMutableList()
     }
 }
