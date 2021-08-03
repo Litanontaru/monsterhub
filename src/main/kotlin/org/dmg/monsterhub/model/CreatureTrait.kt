@@ -25,5 +25,12 @@ class CreatureTrait: Detailed {
 
     var traitCategory: String = ""
 
-    fun toSmallString() = "$trait${if (x == 0) "" else " $x"}${if (y == 0) "" else " $y"}"
+    fun toSmallString() = trait +
+            (if (x == 0) "" else " $x") +
+            (if (y == 0) "" else " $y")
+
+    fun toBigString() = "<b>$trait</b>" +
+            (if (x == 0) "" else " $x") +
+            (if (y == 0) "" else " $y") +
+            (if (details.isNotBlank()) "($details)" else "")
 }

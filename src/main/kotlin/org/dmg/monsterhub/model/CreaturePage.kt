@@ -107,10 +107,10 @@ class CreaturePage(
 
         add(Accordion().apply {
             add("Черты", VerticalLayout().apply {
-                add(Label("Восприятие: ${creature.getAllTraits("Восприятие").map { it.toSmallString() }.joinToString()}"))
-                add(Label("Движение: ${creature.getAllTraits("Движение").map { it.toSmallString() }.joinToString()}"))
-                add(Label("Интеллект: ${creature.getAllTraits("Интеллект").map { it.toSmallString() }.joinToString()}"))
-                add(Label("Остальные: ${creature.getAllTraits("Общее").map { it.toSmallString() }.joinToString()}"))
+                add(Label("Восприятие: ${creature.getAllTraits("Восприятие").map { it.toBigString() }.joinToString()}"))
+                add(Label("Движение: ${creature.getAllTraits("Движение").map { it.toBigString() }.joinToString()}"))
+                add(Label("Интеллект: ${creature.getAllTraits("Интеллект").map { it.toBigString() }.joinToString()}"))
+                add(Label("Остальные: ${creature.getAllTraits("Общее").map { it.toBigString() }.joinToString()}"))
 
                 width = "100%"
                 isPadding = false
@@ -121,7 +121,7 @@ class CreaturePage(
 
         add(Accordion().apply {
             add("Атака", VerticalLayout().apply {
-                add(Label(creature.getAllTraits("Общая атака").map { it.toSmallString() }.joinToString()))
+                add(Label(creature.getAllTraits("Общая атака").map { it.toBigString() }.joinToString()))
 
                 creatureService
                         .weapons(creature)
@@ -142,6 +142,21 @@ class CreaturePage(
                 isPadding = false
                 isSpacing = false
             })
+            close()
+        })
+
+        add(Accordion().apply {
+            add("Защита", VerticalLayout().apply {
+                add(Label(creature.getAllTraits("Тип тела").map { it.toBigString() }.joinToString()))
+                add(Label(creature.getAllTraits("Регенерация").map { it.toBigString() }.joinToString()))
+                creature.getAllTraits("Особая защита").forEach { add(Label(it.toBigString())) }
+                add(Label(creature.getAllTraits("Общая защита").map { it.toBigString() }.joinToString()))
+
+                width = "100%"
+                isPadding = false
+                isSpacing = false
+            })
+
             close()
         })
 
