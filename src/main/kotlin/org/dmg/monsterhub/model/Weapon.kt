@@ -32,7 +32,7 @@ class Weapon {
                         feature = it.trait
                         primaryNumber = it.x
                         secondaryNumber = it.y
-                        details = it.details.lines().drop(1).joinToString { "\n" }
+                        details = it.details.lines().drop(1).joinToString("\n")
                     }
                 }
 

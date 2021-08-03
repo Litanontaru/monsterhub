@@ -132,7 +132,7 @@ class CreaturePage(
                                         it.feature +
                                                 (if (it.primaryNumber != 0) " ${it.primaryNumber}" else "") +
                                                 (if (it.secondaryNumber != 0) " ${it.secondaryNumber}" else "") +
-                                                (if (it.details.isNotBlank()) "(${it.details})" else "")
+                                                (if (it.details.isNotBlank()) " (${it.details})" else "")
                                     }
                                     .joinToString()
                             add(Label("${weapon.name} ${attack.mode}, урон ${attack.damage}/${attack.desturction}, ${attack.distance} м, скр ${attack.speed}, $features"))

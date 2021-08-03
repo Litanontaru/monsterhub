@@ -99,14 +99,31 @@ class CreatureTraitSpace(
         var theTrait: Trait? = null
 
         fun tryAddTrait(setTrait: Trait, onAdd: (CreatureTrait) -> Unit, name: TextField) {
+            fun addTrait() {
+                val newCreatureTrait = CreatureTrait().apply {
+                    trait = setTrait.name
+                    traitGroup = setTrait.group
+                    traitCategory = setTrait.category
+                }
+
+                creature.traits.add(newCreatureTrait)
+                onAdd(newCreatureTrait)
+
+                name.value = ""
+
+                theTrait = null
+            }
+
             val sameName = creature.traits.find { it.trait == setTrait.name }
             if (sameName != null) {
-                AddSameTraitDialog(sameName.trait, null) {
+                AddSameTraitDialog(sameName.trait, null, {
                     traitSpaces
                             .find { it.creatureTrait.trait == sameName.trait }
                             ?.apply { removeTrait(creatureTrait, this) }
                     tryAddTrait(setTrait, onAdd, name)
-                }.open()
+                }, {
+                    addTrait()
+                }).open()
                 return
             }
 
@@ -115,27 +132,16 @@ class CreatureTraitSpace(
                 else -> creature.traits.find { setTrait.group == it.traitGroup }
             }
             if (sameGroup != null) {
-                AddSameTraitDialog(sameGroup.trait, sameGroup.traitGroup) {
+                AddSameTraitDialog(sameGroup.trait, sameGroup.traitGroup, {
                     traitSpaces
                             .find { it.creatureTrait.trait == sameGroup.trait }
                             ?.apply { removeTrait(creatureTrait, this) }
                     tryAddTrait(setTrait, onAdd, name)
-                }.open()
+                }, { }).open()
                 return
             }
 
-            val newCreatureTrait = CreatureTrait().apply {
-                trait = setTrait.name
-                traitGroup = setTrait.group
-                traitCategory = setTrait.category
-            }
-
-            creature.traits.add(newCreatureTrait)
-            onAdd(newCreatureTrait)
-
-            name.value = ""
-
-            theTrait = null
+            addTrait()
         }
 
         val add = Button(Icon(VaadinIcon.PLUS))
