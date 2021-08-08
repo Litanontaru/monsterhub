@@ -160,6 +160,32 @@ class CreaturePage(
             close()
         })
 
+        add(Accordion().apply {
+            add("Способности", VerticalLayout().apply {
+                val perks = creature.getAllTraits("Перк Н", "Перк З", "Перк О").map { it.details }
+                if (perks.toList().isNotEmpty()) {
+                    add(Label("Перки: ${perks.joinToString()}"))
+                }
+                val advanced = creature.getAllTraits("Продвинутая проверка Н", "Продвинутая проверка З", "Продвинутая проверка О").map { it.details }
+                if (advanced.toList().isNotEmpty()) {
+                    add(Label("Продвинутая проверка: ${advanced.joinToString()}"))
+                }
+                val weak = creature.getAllTraits("Слабая проверка Н", "Слабая проверка З", "Слабая проверка О").map { it.details }
+                if (weak.toList().isNotEmpty()) {
+                    add(Label("Слабая проверка: ${weak.joinToString()}"))
+                }
+                val failed = creature.getAllTraits("Провальная проверка Н", "Провальная проверка З", "Провальная проверка О").map { it.details }
+                if (failed.toList().isNotEmpty()) {
+                    add(Label("Провальная проверка: ${failed.joinToString()}"))
+                }
+
+                width = "100%"
+                isPadding = false
+                isSpacing = false
+            })
+            close()
+        })
+
         width = "100%"
         height = "100%"
         isPadding = false

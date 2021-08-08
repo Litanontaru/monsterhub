@@ -29,7 +29,7 @@ class CreatureTrait: Detailed {
             (if (x == 0) "" else " $x") +
             (if (y == 0) "" else " $y")
 
-    fun toBigString() = "<b>$trait</b>" +
+    fun toBigString() = trait +
             (if (x == 0) "" else " $x") +
             (if (y == 0) "" else " $y") +
             (if (details.isNotBlank()) "($details)" else "")
