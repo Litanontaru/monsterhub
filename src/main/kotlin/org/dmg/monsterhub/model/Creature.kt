@@ -3,6 +3,7 @@ package org.dmg.monsterhub.model
 import javax.persistence.*
 
 @Entity
+@Table(name = "old_creature")
 class Creature {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -12,7 +13,7 @@ class Creature {
 
     @ManyToMany(cascade = [CascadeType.ALL])
     @JoinTable(
-            name = "Base_Creature",
+            name = "old_base_Creature",
             joinColumns = [JoinColumn(name = "creature_id")],
             inverseJoinColumns = [JoinColumn(name = "base_id")]
     )

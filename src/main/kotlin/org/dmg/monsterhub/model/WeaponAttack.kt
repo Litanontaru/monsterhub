@@ -3,6 +3,7 @@ package org.dmg.monsterhub.model
 import javax.persistence.*
 
 @Entity
+@Table(name = "old_weapon_attack")
 class WeaponAttack {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
