@@ -2,6 +2,6 @@ package org.dmg.monsterhub.model
 
 import org.springframework.data.repository.CrudRepository
 
-interface CreatureRepository: CrudRepository<Creature, Long> {
-    fun findByName(name: String): Creature?
+interface CreatureRepository: CrudRepository<OldCreature, Long> {
+    fun findByName(name: String): OldCreature?
 }

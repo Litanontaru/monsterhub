@@ -4,7 +4,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "old_creature")
-class Creature {
+class OldCreature {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long = 0
@@ -17,7 +17,7 @@ class Creature {
             joinColumns = [JoinColumn(name = "creature_id")],
             inverseJoinColumns = [JoinColumn(name = "base_id")]
     )
-    var base: MutableList<Creature> = mutableListOf()
+    var base: MutableList<OldCreature> = mutableListOf()
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "creature_id")

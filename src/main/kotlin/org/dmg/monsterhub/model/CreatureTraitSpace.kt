@@ -9,7 +9,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 
 class CreatureTraitSpace(
-        val creature: Creature,
+        val creature: OldCreature,
         val traitsService: TraitsService
 ) : VerticalLayout() {
     class TraitSpace(val creatureTrait: CreatureTrait) : HorizontalLayout()

@@ -10,7 +10,7 @@ import com.vaadin.flow.component.accordion.Accordion
 import com.vaadin.flow.component.html.Label
 
 class CreaturePage(
-        private val creature: Creature,
+        private val creature: OldCreature,
         private val creatureService: CreatureService,
         private val traitsService: TraitsService
 ) : Dialog(), HasDynamicTitle {

@@ -11,15 +11,15 @@ class CreatureService(
         val weaponService: WeaponService,
         val sizeProfileService: SizeProfileService
 ) {
-    fun save(creature: Creature) {
+    fun save(creature: OldCreature) {
         repository.save(creature)
     }
 
-    fun find(name: String): Creature? = repository.findByName(name)
+    fun find(name: String): OldCreature? = repository.findByName(name)
 
     private val base = listOf(0, 0, 0, 0, -26, 0, -13, 0, -18, 0, -3)
 
-    fun superiority(creature: Creature): Superiority {
+    fun superiority(creature: OldCreature): Superiority {
         val allTraits = creature.getAllTraits()
 
         val values = allTraits
@@ -70,13 +70,13 @@ class CreatureService(
         else -> PrimaryRate(value, (max / 2.0 - value).toInt())
     }
 
-    fun size(creature: Creature) = creature
+    fun size(creature: OldCreature) = creature
             .getAllTraits("Размер")
             .singleOrNull()
             ?.x
             ?: 0
 
-    private fun partsSize(creature: Creature): Int =
+    private fun partsSize(creature: OldCreature): Int =
             creature.getAllTraits("Тяжёлый")
                     .singleOrNull()
                     ?.let { size(creature) - 1 }
@@ -85,16 +85,16 @@ class CreatureService(
                             ?.let { size(creature) - 3 }
                             ?: size(creature))
 
-    private fun longArms(creature: Creature): Int =
+    private fun longArms(creature: OldCreature): Int =
             creature.getAllTraits("Длинные конечности")
                     .singleOrNull()
                     ?.x
                     ?: 0
 
-    fun physicalSize(creature: Creature): Int = partsSize(creature) +
+    fun physicalSize(creature: OldCreature): Int = partsSize(creature) +
             creature.getAllTraits("Крупногабаритный", "Крылатый").sumBy { 1 }
 
-    fun weapons(creature: Creature): List<Weapon> {
+    fun weapons(creature: OldCreature): List<Weapon> {
         val natural = creature.getAllTraits("Руки").map { "Кулаки" } +
                 creature.getAllTraits("Естественное оружие").map { it.details } +
                 creature.getAllTraits("Оружие").map { it.trait }

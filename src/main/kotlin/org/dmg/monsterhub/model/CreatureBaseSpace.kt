@@ -9,7 +9,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 
 class CreatureBaseSpace(
-        val creature: Creature,
+        val creature: OldCreature,
         val creatureService: CreatureService
 ): VerticalLayout() {
     init {
@@ -31,7 +31,7 @@ class CreatureBaseSpace(
         isSpacing = false
     }
 
-    private fun createBaseSpace(base: Creature) = HorizontalLayout().apply {
+    private fun createBaseSpace(base: OldCreature) = HorizontalLayout().apply {
         val result = this
 
         val name = TextField().apply {
@@ -53,13 +53,13 @@ class CreatureBaseSpace(
         isPadding = false
     }
 
-    private fun createAddBaseCreature(onAdd: (Creature) -> Unit) = HorizontalLayout().apply {
+    private fun createAddBaseCreature(onAdd: (OldCreature) -> Unit) = HorizontalLayout().apply {
         val name = TextField().apply {
             width = "100%"
 
             value = ""
         }
-        var theBase: Creature? = null
+        var theBase: OldCreature? = null
 
         val add = Button(Icon(VaadinIcon.PLUS))
         add.addClickListener {

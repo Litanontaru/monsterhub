@@ -34,7 +34,7 @@ class MainView(
                 creatureService.find(name.value)
                         ?. let { Notification("${name.value} уже живёт в логове").apply { duration = 1000 }.open()}
                         ?: run {
-                            val creature = Creature()
+                            val creature = OldCreature()
                             creature.name = name.value
                             creatureService.save(creature)
 
