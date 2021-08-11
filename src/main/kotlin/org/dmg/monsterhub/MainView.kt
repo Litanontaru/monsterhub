@@ -9,16 +9,27 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.router.Route
+import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.model.*
+import org.dmg.monsterhub.service.SettingService
 
 @Route
 class MainView(
-    creatureService: CreatureService,
-    traitsService: TraitsService,
-    weaponService: WeaponService
+//    creatureService: CreatureService,
+//    traitsService: TraitsService,
+//    weaponService: WeaponService
+    settingService: SettingService
 ) : VerticalLayout() {
     init {
-        add(Label("Монстр"))
+        add(Button("Базовый сеттинг") {
+            settingService.save(Setting().apply {
+                name = "Основание Dream"
+                description = "Самый первый базовый сеттинг с основными правилами Dream."
+            })
+        })
+
+
+        /*add(Label("Монстр"))
         val name = TextField().apply {
             width = "100%"
         }
@@ -71,6 +82,6 @@ class MainView(
             })
 
             width = "100%"
-        })
+        })*/
     }
 }
