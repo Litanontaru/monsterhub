@@ -54,41 +54,49 @@ class ObjectTreeDataProvider(
   fun roots() = children[null] ?: listOf<SettingObject>()
 
   fun add(settingObject: SettingObject) {
-    dataProviders
-        .first { settingObject::class.java.isAssignableFrom(it.objectClass) }
-        .also {
-          settingObject.setting = setting
-          it.save(settingObject)
-          children.getOrPut(settingObject.parent) { mutableListOf() } += settingObject
-          refreshAll()
-        }
+    action(settingObject) {
+      settingObject.setting = setting
+      it.save(settingObject)
+      children.getOrPut(settingObject.parent) { mutableListOf() } += settingObject
+      refreshAll()
+    }
+  }
+
+  fun update(settingObject: SettingObject) {
+    action(settingObject) {
+      it.save(settingObject)
+
+      refreshItem(settingObject)
+    }
   }
 
   fun move(settingObject: SettingObject, new: Folder?) {
-    dataProviders
-        .first { settingObject::class.java.isAssignableFrom(it.objectClass) }
-        .also {
-          it.save(settingObject)
+    action(settingObject) {
+      it.save(settingObject)
 
-          children[settingObject.parent]?.also {
-            it -= settingObject
-          }
-          settingObject.parent = new
-          children.getOrPut(settingObject.parent) { mutableListOf() } += settingObject
-          refreshAll()
-        }
+      children[settingObject.parent]?.also {
+        it -= settingObject
+      }
+      settingObject.parent = new
+      children.getOrPut(settingObject.parent) { mutableListOf() } += settingObject
+      refreshAll()
+    }
   }
 
   fun delete(settingObject: SettingObject) {
+    action(settingObject) {
+      it.delete(settingObject)
+
+      children[settingObject.parent]?.also {
+        it -= settingObject
+      }
+      refreshAll()
+    }
+  }
+
+  private fun action(settingObject: SettingObject, block: (SettingObjectDataProvider) -> Unit) {
     dataProviders
         .first { settingObject::class.java.isAssignableFrom(it.objectClass) }
-        .also {
-          it.delete(settingObject)
-
-          children[settingObject.parent]?.also {
-            it -= settingObject
-          }
-          refreshAll()
-        }
+        .also(block)
   }
 }
