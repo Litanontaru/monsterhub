@@ -4,17 +4,19 @@ import javax.persistence.*
 
 @MappedSuperclass
 open class SettingObject {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long = 0
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  open var id: Long = 0
 
-    var name: String = ""
+  open var name: String = ""
 
-    @ManyToOne
-    @JoinColumn(name="setting_id", nullable=true)
-    lateinit var setting: Setting
+  @ManyToOne
+  @JoinColumn(name = "setting_id", nullable = true)
+  open lateinit var setting: Setting
 
-    @ManyToOne
-    @JoinColumn(name="parent_id", nullable=true)
-    var parent: Folder? = null
+  @ManyToOne
+  @JoinColumn(name = "parent_id", nullable = true)
+  open var parent: Folder? = null
+
+  override fun toString(): String = "${this.javaClass.simpleName}($name)"
 }
