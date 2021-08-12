@@ -6,9 +6,13 @@ import org.dmg.monsterhub.data.setting.SettingObject
 interface SettingObjectDataProvider {
   val objectClass: Class<*>
 
+  val name: String
+
   fun getAllBySetting(setting: Setting): List<SettingObject>
 
   fun save(one: SettingObject)
 
   fun delete(one: SettingObject)
+
+  fun create(): SettingObject
 }

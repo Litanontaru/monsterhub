@@ -99,4 +99,6 @@ class ObjectTreeDataProvider(
         .first { settingObject::class.java.isAssignableFrom(it.objectClass) }
         .also(block)
   }
+
+  fun dataProviders(): Sequence<SettingObjectDataProvider> = dataProviders.asSequence()
 }

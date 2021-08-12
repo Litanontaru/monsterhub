@@ -12,6 +12,8 @@ class TraitDataProvider(
     ): SettingObjectDataProvider {
   override val objectClass: Class<*> = Trait::class.java
 
+  override val name: String = "Черта"
+
   override fun getAllBySetting(setting: Setting): List<SettingObject> = repository.findAllBySetting(setting)
 
   override fun save(one: SettingObject) {
@@ -21,4 +23,6 @@ class TraitDataProvider(
   override fun delete(one: SettingObject) {
     repository.delete(one as Trait)
   }
+
+  override fun create(): SettingObject = Trait()
 }

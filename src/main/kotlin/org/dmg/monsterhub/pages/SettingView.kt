@@ -61,7 +61,7 @@ class SettingView(
         tree.addComponentHierarchyColumn { obj ->
           val item: Component = when (obj) {
             is Folder -> HorizontalLayout().apply {
-              add(Icon(VaadinIcon.FOLDER))
+              add(Icon(VaadinIcon.FOLDER_O))
               add(Label(obj.name))
 
               width = "100%"
@@ -73,14 +73,16 @@ class SettingView(
           item.apply {
             ContextMenu().also {
               if (obj is Folder) {
-
-                it.addItem("Добавить") {
-                  ChangeDialog("Новая папка", "Новая папка") {
-                    data.add(Folder().apply {
-                      name = it
-                      parent = obj
-                    })
-                  }.open()
+                val toAdd = it.addItem("Добавить")
+                data.dataProviders().forEach { dataProvider ->
+                  toAdd.subMenu.addItem(dataProvider.name) {
+                    ChangeDialog("Создать", "Название") {
+                      data.add(dataProvider.create().apply {
+                        name = it
+                        parent = obj
+                      })
+                    }.open()
+                  }
                 }
 
                 it.addItem("Переименовать") {

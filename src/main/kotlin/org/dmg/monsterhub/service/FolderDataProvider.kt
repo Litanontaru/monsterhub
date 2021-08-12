@@ -12,6 +12,8 @@ class FolderDataProvider(
 ): SettingObjectDataProvider {
   override val objectClass: Class<*> = Folder::class.java
 
+  override val name: String = "Папка"
+
   override fun getAllBySetting(setting: Setting): List<SettingObject> = repository.findAllBySetting(setting)
 
   override fun save(one: SettingObject) {
@@ -21,4 +23,6 @@ class FolderDataProvider(
   override fun delete(one: SettingObject) {
     repository.delete(one as Folder)
   }
+
+  override fun create(): SettingObject = Folder()
 }
