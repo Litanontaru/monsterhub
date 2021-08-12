@@ -1,14 +1,15 @@
 package org.dmg.monsterhub.data.setting
 
+import org.dmg.monsterhub.data.Named
 import javax.persistence.*
 
 @MappedSuperclass
-open class SettingObject {
+open class SettingObject: Named {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   open var id: Long = 0
 
-  open var name: String = ""
+  override var name: String = ""
 
   @ManyToOne
   @JoinColumn(name = "setting_id", nullable = true)

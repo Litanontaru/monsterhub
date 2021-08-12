@@ -1,14 +1,15 @@
 package org.dmg.monsterhub.data.setting
 
+import org.dmg.monsterhub.data.Named
 import javax.persistence.*
 
 @Entity
-class Setting {
+class Setting: Named {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long = 0
 
-    var name: String = ""
+    override var name: String = ""
 
     @ManyToMany(cascade = [CascadeType.ALL])
     @JoinTable(

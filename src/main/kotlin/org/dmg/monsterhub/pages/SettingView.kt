@@ -1,5 +1,7 @@
 package org.dmg.monsterhub.pages
 
+import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.HasElement
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.contextmenu.ContextMenu
 import com.vaadin.flow.component.grid.Grid
@@ -57,18 +59,41 @@ class SettingView(
         var draggedItem: SettingObject? = null
 
         tree.addComponentHierarchyColumn { obj ->
-          Label(obj.name).apply {
+          val item: Component = when (obj) {
+            is Folder -> HorizontalLayout().apply {
+              add(Icon(VaadinIcon.FOLDER))
+              add(Label(obj.name))
+
+              width = "100%"
+              isPadding = false
+            }
+            else -> Label(obj.name)
+          }
+
+          item.apply {
             ContextMenu().also {
               if (obj is Folder) {
+
                 it.addItem("Добавить") {
-                  data.add(Folder().apply {
-                    name = "Папка"
-                    parent = obj
-                  })
+                  ChangeDialog("Новая папка", "Новая папка") {
+                    data.add(Folder().apply {
+                      name = it
+                      parent = obj
+                    })
+                  }.open()
                 }
+
+                it.addItem("Переименовать") {
+                  ChangeDialog("Новое название", obj.name) {
+                    obj.name = it
+                    data.update(obj)
+                  }.open()
+                }
+
               }
+
               it.addItem("Удалить") {
-                  data.delete(obj)
+                data.delete(obj)
               }
 
               it.target = this
