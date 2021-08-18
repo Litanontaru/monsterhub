@@ -7,9 +7,9 @@ import javax.persistence.Id
 
 @Entity
 class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long = 0
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  var id: Long = 0
 
-    var name: String = ""
+  var name: String = ""
 }

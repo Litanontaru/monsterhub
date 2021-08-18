@@ -15,6 +15,7 @@ class ChangeDialog(
     add(VerticalLayout().apply {
       val field = TextField(title).apply {
         this.value = value
+        isAutofocus = true
       }
 
       add(field)

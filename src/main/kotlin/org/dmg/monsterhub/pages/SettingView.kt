@@ -1,10 +1,9 @@
 package org.dmg.monsterhub.pages
 
 import com.vaadin.flow.component.Component
-import com.vaadin.flow.component.HasElement
-import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.contextmenu.ContextMenu
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -18,17 +17,26 @@ import com.vaadin.flow.router.Route
 import org.dmg.monsterhub.data.setting.Folder
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
+import org.dmg.monsterhub.repository.FeatureContainerItemRepository
+import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
+import org.dmg.monsterhub.service.FeatureContainerServiceLocator
+import org.dmg.monsterhub.service.FeatureDataRepository
 import org.dmg.monsterhub.service.SettingService
-import com.vaadin.flow.component.grid.dnd.GridDropMode
 
 
 @Route("setting/:settingId/edit")
 class SettingView(
-    val settingService: SettingService,
-    val objectDataProviderService: ObjectTreeDataProviderService
+    private val settingService: SettingService,
+    private val objectDataProviderService: ObjectTreeDataProviderService,
+    private val objectFinderDataProviderService: ObjectFinderDataProviderService,
+    private val featureDataRepository: FeatureDataRepository,
+    private val featureContainerItemRepository: FeatureContainerItemRepository,
+    private val featureDataDesignationRepository: FeatureDataDesignationRepository,
+    private val featureContainerServiceLocator: FeatureContainerServiceLocator
 ) : HorizontalLayout(), BeforeEnterObserver, HasDynamicTitle {
   lateinit var setting: Setting
   lateinit var data: ObjectTreeDataProvider
+  lateinit var fiderData: ObjectFinderDataProviderForSetting
 
   override fun beforeEnter(event: BeforeEnterEvent?) {
     if (event != null) {
@@ -39,25 +47,26 @@ class SettingView(
   private fun set(settingId: Long) {
     setting = settingService.get(settingId)
     data = objectDataProviderService(setting)
+    fiderData = objectFinderDataProviderService(setting)
+
+    var edit: EditPanel? = null
+    val rightPanel = VerticalLayout().apply {
+      height = "100%"
+      width = "100%"
+      isPadding = false
+      isSpacing = false
+    }
 
     add(VerticalLayout().apply {
-      add(HorizontalLayout().apply {
-        add(Button(Icon(VaadinIcon.FOLDER_ADD)) {
-          data.add(Folder().apply {
-            name = "Папка"
-          })
-        })
-        add(Button(Icon(VaadinIcon.PLUS)) {
-
-        })
-
-        width = "100%"
-        isPadding = false
-      })
+      fun click(item: SettingObject) {
+        if (edit != null) {
+          rightPanel.remove(edit)
+        }
+        edit = EditPanel(item, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator)
+        rightPanel.add(edit)
+      }
 
       val tree = TreeGrid<SettingObject>().also { tree ->
-        var draggedItem: SettingObject? = null
-
         tree.addComponentHierarchyColumn { obj ->
           val item: Component = when (obj) {
             is Folder -> HorizontalLayout().apply {
@@ -76,7 +85,7 @@ class SettingView(
                 val toAdd = it.addItem("Добавить")
                 data.dataProviders().forEach { dataProvider ->
                   toAdd.subMenu.addItem(dataProvider.name) {
-                    ChangeDialog("Создать", "Название") {
+                    ChangeDialog("Создать", "") {
                       data.add(dataProvider.create().apply {
                         name = it
                         parent = obj
@@ -103,35 +112,28 @@ class SettingView(
           }
         }
 
-        tree.setSelectionMode(Grid.SelectionMode.NONE);
-        tree.isRowsDraggable = true;
+        tree.setSelectionMode(Grid.SelectionMode.SINGLE);
 
-        tree.addDragStartListener {
-          draggedItem = it.getDraggedItems().get(0)
-          tree.dropMode = GridDropMode.BETWEEN
-        }
-        tree.addDragEndListener {
-          draggedItem = null
-          tree.dropMode = null
-        }
-        tree.addDropListener {
-          val new: SettingObject = it.dropTargetItem.get()
-          draggedItem?.let {
-            if (new != it && new is Folder) {
-              data.move(it, new)
-            }
-          }
-        }
+        tree.addItemClickListener { click(it.item) }
 
         tree.setDataProvider(data)
+
+        tree.addThemeVariants(GridVariant.LUMO_COMPACT)
       }
 
 
       add(tree)
 
+      height = "100%"
+      width = "30%"
       isPadding = false
       isSpacing = false
     })
+
+    add(rightPanel)
+
+    height = "100%"
+    width = "100%"
   }
 
   override fun getPageTitle(): String = "MonsterHub. ${setting.name}"

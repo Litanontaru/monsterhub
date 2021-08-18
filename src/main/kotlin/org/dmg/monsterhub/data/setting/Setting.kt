@@ -4,20 +4,20 @@ import org.dmg.monsterhub.data.Named
 import javax.persistence.*
 
 @Entity
-class Setting: Named {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long = 0
+class Setting : Named {
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  var id: Long = 0
 
-    override var name: String = ""
+  override var name: String = ""
 
-    @ManyToMany(cascade = [CascadeType.ALL])
-    @JoinTable(
-            name = "base_setting",
-            joinColumns = [JoinColumn(name = "setting_id")],
-            inverseJoinColumns = [JoinColumn(name = "base_id")]
-    )
-    var base: MutableList<Setting> = mutableListOf()
+  @ManyToMany
+  @JoinTable(
+      name = "base_setting",
+      joinColumns = [JoinColumn(name = "setting_id")],
+      inverseJoinColumns = [JoinColumn(name = "base_id")]
+  )
+  var base: MutableList<Setting> = mutableListOf()
 
-    var description: String = ""
+  var description: String = ""
 }

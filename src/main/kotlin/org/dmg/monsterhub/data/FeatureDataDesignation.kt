@@ -8,12 +8,12 @@ import javax.persistence.Id
 
 @Entity
 class FeatureDataDesignation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long = 0
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  var id: Long = 0
 
-    var designationKey: String = ""
+  var designationKey: String = ""
 
-    @Type(type="text")
-    var value: String = ""
+  @Type(type = "text")
+  var value: String = ""
 }

@@ -29,7 +29,7 @@ class ObjectTreeDataProvider(
     dataProviders
         .flatMap { it.getAllBySetting(setting) }
         .groupBy { it.parent }
-        .mapValues { it.value.toMutableList() }
+        .mapValues { it.value.asSequence().sortedBy { it.name }.toMutableList() }
         .also { children.putAll(it) }
   }
 
@@ -72,12 +72,12 @@ class ObjectTreeDataProvider(
 
   fun move(settingObject: SettingObject, new: Folder?) {
     action(settingObject) {
-      it.save(settingObject)
-
       children[settingObject.parent]?.also {
         it -= settingObject
       }
       settingObject.parent = new
+      it.save(settingObject)
+
       children.getOrPut(settingObject.parent) { mutableListOf() } += settingObject
       refreshAll()
     }

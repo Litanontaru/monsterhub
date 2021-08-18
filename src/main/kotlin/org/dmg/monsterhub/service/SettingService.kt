@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service
 
 @Service
 class SettingService(
-        val repository: SettingRepository
+    val repository: SettingRepository
 ) {
-    fun get(id: Long) = repository.getById(id)
+  fun get(id: Long) = repository.getById(id)
 
-    fun save(setting: Setting) {
-        repository.save(setting)
-    }
+  fun save(setting: Setting) {
+    repository.save(setting)
+  }
 }

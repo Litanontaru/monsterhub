@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class MonsterhubApplication
 
 fun main(args: Array<String>) {
-	runApplication<MonsterhubApplication>(*args)
+  runApplication<MonsterhubApplication>(*args)
 }

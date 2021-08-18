@@ -5,4 +5,4 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "old_weapon_attack_feature")
-class WeaponAttackFeature: AbstractWeaponFeature()
+class WeaponAttackFeature : AbstractWeaponFeature()

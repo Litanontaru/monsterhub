@@ -7,8 +7,8 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "old_weapon_feature")
-class WeaponFeature: AbstractWeaponFeature() {
-    @ManyToOne
-    @JoinColumn(name="weapon_id", nullable=true)
-    lateinit var weapon: Weapon
+class WeaponFeature : AbstractWeaponFeature() {
+  @ManyToOne
+  @JoinColumn(name = "weapon_id", nullable = true)
+  lateinit var weapon: Weapon
 }

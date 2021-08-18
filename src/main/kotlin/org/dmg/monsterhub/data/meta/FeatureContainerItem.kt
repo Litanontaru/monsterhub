@@ -7,13 +7,13 @@ import javax.persistence.Id
 
 @Entity
 class FeatureContainerItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long = 0
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  var id: Long = 0
 
-    lateinit var featureType: String
+  lateinit var featureType: String
 
-    var name: String = ""
+  var name: String = ""
 
-    var onlyOne: Boolean = false
+  var onlyOne: Boolean = false
 }

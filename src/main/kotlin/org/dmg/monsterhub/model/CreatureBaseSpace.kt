@@ -9,78 +9,78 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 
 class CreatureBaseSpace(
-        val creature: OldCreature,
-        val creatureService: CreatureService
-): VerticalLayout() {
-    init {
-        add(Label("Основан на монстрах"))
-        val baseLayout = VerticalLayout().apply {
-            creature.base.forEach { add(createBaseSpace(it)) }
+    val creature: OldCreature,
+    val creatureService: CreatureService
+) : VerticalLayout() {
+  init {
+    add(Label("Основан на монстрах"))
+    val baseLayout = VerticalLayout().apply {
+      creature.base.forEach { add(createBaseSpace(it)) }
 
-            width = "100%"
-            isPadding = false
-            isSpacing = false
-        }
-        add(baseLayout)
-        add(createAddBaseCreature {
-            baseLayout.add(createBaseSpace(it))
-        })
+      width = "100%"
+      isPadding = false
+      isSpacing = false
+    }
+    add(baseLayout)
+    add(createAddBaseCreature {
+      baseLayout.add(createBaseSpace(it))
+    })
 
-        width = "100%"
-        isPadding = false
-        isSpacing = false
+    width = "100%"
+    isPadding = false
+    isSpacing = false
+  }
+
+  private fun createBaseSpace(base: OldCreature) = HorizontalLayout().apply {
+    val result = this
+
+    val name = TextField().apply {
+      value = base.name
+
+      width = "100%"
+      isReadOnly = true
     }
 
-    private fun createBaseSpace(base: OldCreature) = HorizontalLayout().apply {
-        val result = this
-
-        val name = TextField().apply {
-            value = base.name
-
-            width = "100%"
-            isReadOnly = true
-        }
-
-        val delete = Button(Icon(VaadinIcon.TRASH)) {
-            creature.base.remove(base)
-            result.isVisible = false
-        }
-
-        add(name)
-        add(delete)
-
-        width = "100%"
-        isPadding = false
+    val delete = Button(Icon(VaadinIcon.TRASH)) {
+      creature.base.remove(base)
+      result.isVisible = false
     }
 
-    private fun createAddBaseCreature(onAdd: (OldCreature) -> Unit) = HorizontalLayout().apply {
-        val name = TextField().apply {
-            width = "100%"
+    add(name)
+    add(delete)
 
-            value = ""
-        }
-        var theBase: OldCreature? = null
+    width = "100%"
+    isPadding = false
+  }
 
-        val add = Button(Icon(VaadinIcon.PLUS))
-        add.addClickListener {
-            theBase?.let {
-                creature.base.add(it)
-                onAdd(it)
-                theBase = null
-                name.value = ""
-            }
-        }
+  private fun createAddBaseCreature(onAdd: (OldCreature) -> Unit) = HorizontalLayout().apply {
+    val name = TextField().apply {
+      width = "100%"
 
-        name.addValueChangeListener {
-            creatureService.find(it.value)
-                    ?.let { theBase = it }
-                    ?: run { theBase = null }
-        }
-
-        add(name)
-        add(add)
-
-        width = "100%"
-        isPadding = false
+      value = ""
     }
+    var theBase: OldCreature? = null
+
+    val add = Button(Icon(VaadinIcon.PLUS))
+    add.addClickListener {
+      theBase?.let {
+        creature.base.add(it)
+        onAdd(it)
+        theBase = null
+        name.value = ""
+      }
+    }
+
+    name.addValueChangeListener {
+      creatureService.find(it.value)
+          ?.let { theBase = it }
+          ?: run { theBase = null }
+    }
+
+    add(name)
+    add(add)
+
+    width = "100%"
+    isPadding = false
+  }
 }
