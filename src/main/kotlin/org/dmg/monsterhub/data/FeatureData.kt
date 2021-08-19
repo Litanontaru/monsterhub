@@ -4,7 +4,7 @@ import org.dmg.monsterhub.data.meta.Feature
 import javax.persistence.*
 
 @Entity
-class FeatureData: FeatureContainerData {
+class FeatureData : FeatureContainerData {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   var id: Long = 0
@@ -21,14 +21,26 @@ class FeatureData: FeatureContainerData {
   @JoinColumn(name = "feature_data_id")
   var designations: MutableList<FeatureDataDesignation> = mutableListOf()
 
-  fun display() = feature.name + " " + (
-      (if (x == 0) emptySequence() else sequenceOf(x)) +
-          (if (y == 0) emptySequence() else sequenceOf(y)) +
-          (if (z == 0) emptySequence() else sequenceOf(z)) +
-          designations.asSequence().map { it.value }
-      ).joinToString()
-
   @OneToMany(orphanRemoval = true)
   @JoinColumn(name = "main_feature_id")
   override var features: MutableList<FeatureData> = mutableListOf()
+
+  fun display(): String {
+    return (sequenceOf(feature.name) +
+
+        (if (x == 0) emptySequence() else sequenceOf(x)) +
+        (if (y == 0) emptySequence() else sequenceOf(y)) +
+        (if (z == 0) emptySequence() else sequenceOf(z)) +
+
+        feature.designations.asSequence()
+            .mapNotNull { key -> designations.find { it.designationKey == key } }
+            .map { it.value } +
+
+        feature.containFeatureTypes.asSequence()
+            .flatMap { key -> features.asSequence().filter { it.feature.featureType == key.featureType } }
+            .map { it.display() }
+
+        )
+        .joinToString()
+  }
 }
