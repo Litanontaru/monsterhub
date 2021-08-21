@@ -346,6 +346,7 @@ class EditPanel(
       val addButton = Button(Icon(VaadinIcon.PLUS)) {
         addNew.optionalValue.ifPresent {
           dataProvider.add(it as Creature)
+          addNew.value = null
         }
       }.apply {
         addThemeVariants(ButtonVariant.LUMO_SMALL)
