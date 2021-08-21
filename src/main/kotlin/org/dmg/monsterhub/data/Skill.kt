@@ -4,6 +4,6 @@ import org.dmg.monsterhub.data.meta.Feature
 import javax.persistence.Entity
 
 @Entity
-class Perk: Feature() {
+class Skill: Feature() {
   var skillType: SkillType = SkillType.OFFENSE
 }

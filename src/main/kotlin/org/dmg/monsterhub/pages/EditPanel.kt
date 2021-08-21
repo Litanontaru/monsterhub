@@ -466,6 +466,7 @@ class EditPanel(
                 val newFeatureData = FeatureData().apply { feature = it as Feature }
                 featureDataRepository.save(newFeatureData)
                 dataProvider.add(newFeatureData)
+                addNew.value = null
               }
             }.apply {
               addThemeVariants(ButtonVariant.LUMO_SMALL)
@@ -511,7 +512,16 @@ class EditPanel(
   }
 
   private fun featureDataSpace(obj: FeatureData) {
-    add(Label(obj.feature.name))
+    add(HorizontalLayout().apply {
+      val label = Label(obj.feature.name)
+      val editButton = Button(Icon(VaadinIcon.EDIT)) {
+        EditDialog(obj.feature, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator).open()
+      }.apply {
+        addThemeVariants(ButtonVariant.LUMO_SMALL)
+      }
+      add(label, editButton)
+      setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, editButton)
+    })
 
     add(TextArea().apply {
       value = obj.feature.description
@@ -520,9 +530,9 @@ class EditPanel(
       width = "100%"
     })
 
-    addNumber("X", obj.x, { update { obj.x = it } }, obj.feature.x)
-    addNumber("Y", obj.y, { update { obj.y = it } }, obj.feature.y)
-    addNumber("Z", obj.z, { update { obj.z = it } }, obj.feature.z)
+    addNumber("X", obj.x, obj.xa, { update { obj.x = it } }, { update { obj.xa = it } }, obj.feature.x)
+    addNumber("Y", obj.y, obj.ya, { update { obj.y = it } }, { update { obj.ya = it } }, obj.feature.y)
+    addNumber("Z", obj.z, obj.za, { update { obj.z = it } }, { update { obj.za = it } }, obj.feature.z)
 
     obj.feature.designations.forEach { key ->
       if (key.endsWith("*")) {
@@ -562,7 +572,9 @@ class EditPanel(
   private fun addNumber(
       label: String,
       value: Int,
+      valueA: Int,
       setter: (Int) -> Unit,
+      setterA: (Int) -> Unit,
       option: NumberOption
   ) {
     when (option) {
@@ -582,11 +594,42 @@ class EditPanel(
           addValueChangeListener { setter(it.value.toIntOrNull() ?: 0) }
         })
       }
-      NumberOption.DAMAGE -> TODO()
+      NumberOption.DAMAGE -> add(
+          HorizontalLayout().apply {
+            val damage = TextField(label).apply {
+              this.value = value.toString()
+              addValueChangeListener { setter(it.value.toIntOrNull()?.takeIf { it >= 1 } ?: 0) }
+            }
+            val slash = Label("/")
+            val destruction = TextField().apply {
+              this.value = valueA.toString()
+              addValueChangeListener { setterA(it.value.toIntOrNull()?.takeIf { it >= 1 } ?: 0) }
+            }
+            add(damage, slash, destruction)
+            setVerticalComponentAlignment(FlexComponent.Alignment.END, damage, slash, destruction)
+          }
+      )
       NumberOption.IMPORTANCE -> {
-        add(TextField(label).apply {
-          this.value = value.toString()
-          addValueChangeListener { setter(it.value.toIntOrNull()?.takeIf { it >= 1 && it <= 9 } ?: 0) }
+        val options = listOf(
+            "Никогда или Никакую роль",
+            "Малую Редко",
+            "Важную Редко",
+            "Малую Вероятно",
+            "Эпическую Редко",
+            "Малую Часто",
+            "Важную Вероятно",
+            "Важную Часто",
+            "Эпическую Вероятно",
+            "Эпическую Часто"
+        )
+
+        add(ComboBox<Int>().apply {
+          setItems((0..9).toList())
+          setItemLabelGenerator { options[it] }
+          this.value = value
+          addValueChangeListener { setter(it.value.takeIf { it >= 0 && it <= 9 } ?: 0) }
+
+          width = "100%"
         })
       }
     }

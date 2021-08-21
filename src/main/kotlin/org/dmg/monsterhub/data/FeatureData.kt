@@ -14,8 +14,11 @@ class FeatureData : FeatureContainerData {
   lateinit var feature: Feature
 
   var x: Int = 0
+  var xa: Int = 0
   var y: Int = 0
+  var ya: Int = 0
   var z: Int = 0
+  var za: Int = 0
 
   @OneToMany(orphanRemoval = true)
   @JoinColumn(name = "feature_data_id")
@@ -28,9 +31,9 @@ class FeatureData : FeatureContainerData {
   fun display(): String {
     return (sequenceOf(feature.name) +
 
-        (if (x == 0) emptySequence() else sequenceOf(x)) +
-        (if (y == 0) emptySequence() else sequenceOf(y)) +
-        (if (z == 0) emptySequence() else sequenceOf(z)) +
+        combo(x, xa) +
+        combo(y, ya) +
+        combo(z, za) +
 
         feature.designations.asSequence()
             .mapNotNull { key -> designations.find { it.designationKey == key } }
@@ -43,4 +46,11 @@ class FeatureData : FeatureContainerData {
         )
         .joinToString()
   }
+
+  private fun combo(x: Int, xa: Int) =
+      if (x == 0) {
+        if (xa == 0) emptySequence() else sequenceOf("0/$xa")
+      } else {
+        if (xa == 0) sequenceOf("$x") else sequenceOf("$x/$xa")
+      }
 }
