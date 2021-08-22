@@ -27,6 +27,8 @@ class FolderDataProvider(
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
 
+  override fun refresh(one: SettingObject) = repository.getById(one.id)
+
   override fun save(one: SettingObject) {
     repository.save(one as Folder)
   }

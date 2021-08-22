@@ -359,10 +359,14 @@ class EditPanel(
     val grid = Grid<Creature>().apply {
       addColumn { it.name }
       addComponentColumn { base ->
-        Button(Icon(VaadinIcon.CLOSE_SMALL)) {
-          dataProvider.delete(base)
-        }.apply {
-          addThemeVariants(ButtonVariant.LUMO_SMALL)
+        HorizontalLayout().apply {
+          add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
+            dataProvider.delete(base)
+          }.apply {
+            addThemeVariants(ButtonVariant.LUMO_SMALL)
+          })
+
+          isPadding = false
         }
       }
       setItems(dataProvider as DataProvider<Creature, Void>)

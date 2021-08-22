@@ -4,7 +4,7 @@ import org.dmg.monsterhub.data.Named
 import javax.persistence.*
 
 @MappedSuperclass
-open class SettingObject: Named {
+open class SettingObject : Named {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   open var id: Long = 0
@@ -20,4 +20,15 @@ open class SettingObject: Named {
   open var parent: Folder? = null
 
   override fun toString(): String = "${this.javaClass.simpleName}($name)"
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is SettingObject) return false
+    if (id != other.id) return false
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return id.hashCode()
+  }
 }

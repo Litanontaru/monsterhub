@@ -5,7 +5,7 @@ import javax.persistence.*
 
 @Entity
 class Creature : SettingObject(), FeatureContainerData, Hierarchical<Creature> {
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "Base_Creature",
       joinColumns = [JoinColumn(name = "creature_id")],

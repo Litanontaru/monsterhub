@@ -17,6 +17,8 @@ interface SettingObjectDataProvider {
 
   fun countAlikeBySettings(name: String, settings: List<Setting>): Int
 
+  fun refresh(one: SettingObject): SettingObject
+
   fun save(one: SettingObject)
 
   fun delete(one: SettingObject)

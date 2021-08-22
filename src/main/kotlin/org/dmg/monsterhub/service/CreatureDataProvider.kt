@@ -30,6 +30,8 @@ class CreatureDataProvider(
   override fun countAlikeBySettings(name: String, settings: List<Setting>) =
       repository.countByNameContainingAndSettingIn(name, settings)
 
+  override fun refresh(one: SettingObject) = repository.getById(one.id)
+
   override fun save(one: SettingObject) {
     repository.save(one as Creature)
   }

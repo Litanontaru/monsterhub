@@ -53,12 +53,14 @@ class ObjectTreeDataProvider(
 
   fun roots() = children[null] ?: listOf<SettingObject>()
 
-  fun add(settingObject: SettingObject) {
-    action(settingObject) {
-      settingObject.setting = setting
-      it.save(settingObject)
-      children.getOrPut(settingObject.parent) { mutableListOf() } += settingObject
-      refreshAll()
+  fun add(newSettingObject: SettingObject) {
+    action(newSettingObject) {
+      newSettingObject.setting = setting
+      it.save(newSettingObject)
+      val savedSettingObject = it.refresh(newSettingObject)
+      children.getOrPut(savedSettingObject.parent) { mutableListOf() } += savedSettingObject
+
+      refreshItem(newSettingObject.parent, true)
     }
   }
 
@@ -90,7 +92,8 @@ class ObjectTreeDataProvider(
       children[settingObject.parent]?.also {
         it -= settingObject
       }
-      refreshAll()
+
+      refreshItem(settingObject.parent, true)
     }
   }
 
