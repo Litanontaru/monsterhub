@@ -22,10 +22,8 @@ class CreatureDataProvider(
 
   override fun getAllBySetting(setting: Setting): List<SettingObject> = repository.findAllBySetting(setting)
 
-  override fun getAlikeBySettings(name: String, settings: List<Setting>, pageable: Pageable): List<Creature> {
-    val list = repository.findAllByNameContainingAndSettingIn(name, settings, pageable)
-    return list
-  }
+  override fun getAlikeBySettings(name: String, settings: List<Setting>, pageable: Pageable) =
+      repository.findAllByNameContainingAndSettingIn(name, settings, pageable)
 
   override fun countAlikeBySettings(name: String, settings: List<Setting>) =
       repository.countByNameContainingAndSettingIn(name, settings)
