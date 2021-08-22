@@ -10,6 +10,7 @@ import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
+import com.vaadin.flow.component.orderedlayout.Scroller
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.tabs.Tab
 import com.vaadin.flow.component.tabs.Tabs
@@ -43,8 +44,18 @@ class EditPanel(
 ) : VerticalLayout() {
   init {
     if (obj is Creature) {
-      val configPage = VerticalLayout().apply { configSpace(obj) }.apply { isVisible = !showStats }
-      val statsPage = CreatureStatsSpace(obj, creatureService).apply { isVisible = showStats }
+      val configPage = Scroller(
+          VerticalLayout().apply { configSpace(obj) }
+      ).apply {
+        setSizeFull()
+        scrollDirection = Scroller.ScrollDirection.VERTICAL
+        isVisible = !showStats
+      }
+      val statsPage = Scroller(CreatureStatsSpace(obj, creatureService)).apply {
+        setSizeFull()
+        scrollDirection = Scroller.ScrollDirection.VERTICAL
+        isVisible = showStats
+      }
       val pages = listOf(configPage, statsPage)
 
       val configTab = Tab("Конфигурация")
@@ -58,11 +69,11 @@ class EditPanel(
 
         addSelectedChangeListener {
           pages.forEach { it.isVisible = false }
-          val verticalLayout = tabPages[it.selectedTab]
+          val layout = tabPages[it.selectedTab]
 
-          verticalLayout?.isVisible = true
+          layout?.isVisible = true
 
-          showStats = verticalLayout == statsPage
+          showStats = layout == statsPage
         }
       })
     } else {
