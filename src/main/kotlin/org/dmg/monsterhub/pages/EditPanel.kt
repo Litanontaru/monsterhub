@@ -171,6 +171,15 @@ class EditPanel(
     })
 
     val grid = Grid<FeatureContainerItem>().apply {
+      fun edit(containerItem: FeatureContainerItem) {
+        FeatureContaiterItemEditDialog(containerItem) {
+          featureContainerItemRepository.save(it)
+          dataProvider.refreshItem(it)
+        }.open()
+      }
+
+      addItemDoubleClickListener { edit(it.item) }
+
       addColumn { it.featureType }
       addColumn { it.name }
       addColumn { it.onlyOne }
@@ -178,10 +187,7 @@ class EditPanel(
       addComponentColumn { containerItem ->
         HorizontalLayout().apply {
           add(Button(Icon(VaadinIcon.EDIT)) {
-            FeatureContaiterItemEditDialog(containerItem) {
-              featureContainerItemRepository.save(it)
-              dataProvider.refreshItem(it)
-            }.open()
+            edit(containerItem)
           }.apply {
             addThemeVariants(ButtonVariant.LUMO_SMALL)
           })
@@ -482,14 +488,20 @@ class EditPanel(
           })
 
           val grid = Grid<FeatureData>().apply {
+            fun edit(item: FeatureData) {
+              EditDialog(item, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator) {
+                dataProvider.update(item)
+              }.open()
+            }
+
+            addItemDoubleClickListener { edit(it.item) }
+
             addColumn { it.display() }
 
             addComponentColumn { featureData ->
               HorizontalLayout().apply {
                 add(Button(Icon(VaadinIcon.EDIT)) {
-                  EditDialog(featureData, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator) {
-                    dataProvider.update(featureData)
-                  }.open()
+                  edit(featureData)
                 }.apply {
                   addThemeVariants(ButtonVariant.LUMO_SMALL)
                 })
