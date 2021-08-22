@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class PerkDataProvider(
     val repository: PerkRepository
-) : SettingObjectDataProvider {
+) : SimpleSettingObjectDataProvider() {
   override val objectClass: Class<*> = Perk::class.java
 
   override val type: String = "PERK"

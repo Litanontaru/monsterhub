@@ -25,7 +25,7 @@ class ObjectFinderDataProviderForSetting(
 
   operator fun invoke(type: String): ObjectFinderDataProvider =
       ObjectFinderDataProvider(
-          dataProviders.find { it.type == type }!!,
+          dataProviders.find { it.supportType(type) }!!,
           getRecursive(setting).toList()
       )
 }

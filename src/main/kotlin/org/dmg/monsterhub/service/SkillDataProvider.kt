@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class SkillDataProvider(
     val repository: SkillRepository
-) : SettingObjectDataProvider {
+) : SimpleSettingObjectDataProvider() {
   override val objectClass: Class<*> = Skill::class.java
 
   override val type: String = "SKILL"

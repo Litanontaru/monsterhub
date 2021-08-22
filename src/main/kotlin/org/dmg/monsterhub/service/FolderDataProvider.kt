@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class FolderDataProvider(
     val repository: FolderRepository
-) : SettingObjectDataProvider {
+) : SimpleSettingObjectDataProvider() {
   override val objectClass: Class<*> = Folder::class.java
 
   override val type: String = "FOLDER"

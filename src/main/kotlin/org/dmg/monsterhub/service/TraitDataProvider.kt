@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class TraitDataProvider(
     val repository: TraitRepository
-) : SettingObjectDataProvider {
+) : SimpleSettingObjectDataProvider() {
   override val objectClass: Class<*> = Trait::class.java
 
   override val type: String = "TRAIT"

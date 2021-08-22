@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable
 interface SettingObjectDataProvider {
   val objectClass: Class<*>
 
-  val type: String
+  fun supportType(type: String): Boolean
 
   val name: String
 

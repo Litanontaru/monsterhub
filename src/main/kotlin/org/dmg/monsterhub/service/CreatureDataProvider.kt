@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 @Service
 class CreatureDataProvider(
     val repository: CreatureRepository
-) : SettingObjectDataProvider, FeatureContainerService {
+) : SimpleSettingObjectDataProvider(), FeatureContainerService {
   override val objectClass: Class<*> = Creature::class.java
 
   override val type: String = "CREATURE"
