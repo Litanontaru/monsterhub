@@ -61,9 +61,13 @@ class ObjectTreeDataProvider(
       val savedSettingObject = it.refresh(newSettingObject)
       children.getOrPut(savedSettingObject.parent) { mutableListOf() } += savedSettingObject
 
-      refreshItem(newSettingObject.parent, true)
-      if (onAdd != null) {
-        onAdd!!(savedSettingObject)
+      if (newSettingObject.parent != null) {
+        refreshItem(newSettingObject.parent, true)
+        if (onAdd != null) {
+          onAdd!!(savedSettingObject)
+        }
+      } else {
+        refreshAll()
       }
     }
   }
@@ -97,7 +101,11 @@ class ObjectTreeDataProvider(
         it -= settingObject
       }
 
-      refreshItem(settingObject.parent, true)
+      if (settingObject.parent != null) {
+        refreshItem(settingObject.parent, true)
+      } else {
+        refreshAll()
+      }
     }
   }
 

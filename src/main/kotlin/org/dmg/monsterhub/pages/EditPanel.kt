@@ -229,7 +229,7 @@ class EditPanel(
           val newFeatureContainerItem = FeatureContainerItem().apply { featureType = addNew.value }
           featureContainerItemRepository.save(newFeatureContainerItem)
           dataProvider.add(newFeatureContainerItem)
-          addNew.value = null
+          addNew.value = ""
         }
       }.apply {
         addThemeVariants(ButtonVariant.LUMO_SMALL)

@@ -43,7 +43,8 @@ class FreeFeatureDataProvider(
         "NONE",
         "POISON_EFFECT",
         "POISON_DELAY",
-        "POISONING_WAY"
+        "POISONING_WAY",
+        "DISEASE"
     )
   }
 }

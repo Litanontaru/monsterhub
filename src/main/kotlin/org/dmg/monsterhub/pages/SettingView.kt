@@ -36,7 +36,7 @@ class SettingView(
     private val featureDataDesignationRepository: FeatureDataDesignationRepository,
     private val featureContainerServiceLocator: FeatureContainerServiceLocator,
     private val creatureService: CreatureService
-    ) : Div(), BeforeEnterObserver, HasDynamicTitle {
+) : Div(), BeforeEnterObserver, HasDynamicTitle {
   lateinit var setting: Setting
   lateinit var data: ObjectTreeDataProvider
   lateinit var fiderData: ObjectFinderDataProviderForSetting
@@ -94,38 +94,9 @@ class SettingView(
             else -> Label(obj.name)
           }
 
-          item.apply {
-            ContextMenu().also {
-              if (obj is Folder) {
-                val toAdd = it.addItem("Добавить")
-                data.dataProviders().forEach { dataProvider ->
-                  toAdd.subMenu.addItem(dataProvider.name) {
-                    ChangeDialog("Создать", "") {
-                      data.add(dataProvider.create().apply {
-                        name = it
-                        parent = obj
-                      })
-                    }.open()
-                  }
-                }
-
-                it.addItem("Переименовать") {
-                  ChangeDialog("Новое название", obj.name) {
-                    obj.name = it
-                    data.update(obj)
-                  }.open()
-                }
-
-              }
-
-              it.addItem("Удалить") {
-                data.delete(obj)
-              }
-
-              it.target = this
-            }
-          }
+          item.apply { contextMenu(obj) }
         }
+        tree.contextMenu(null)
 
         tree.setSelectionMode(Grid.SelectionMode.SINGLE);
 
@@ -159,6 +130,41 @@ class SettingView(
 
     height = "100%"
     width = "100%"
+  }
+
+  private fun Component.contextMenu(obj: SettingObject?) {
+    ContextMenu().also {
+      if (obj == null || obj is Folder) {
+        val toAdd = it.addItem("Добавить")
+        data.dataProviders().forEach { dataProvider ->
+          toAdd.subMenu.addItem(dataProvider.name) {
+            ChangeDialog("Создать", "") {
+              data.add(dataProvider.create().apply {
+                name = it
+                if (obj is Folder) parent = obj
+              })
+            }.open()
+          }
+        }
+      }
+
+      if (obj != null) {
+        if (obj is Folder) {
+          it.addItem("Переименовать") {
+            ChangeDialog("Новое название", obj.name) {
+              obj.name = it
+              data.update(obj)
+            }.open()
+          }
+        }
+
+        it.addItem("Удалить") {
+          data.delete(obj)
+        }
+      }
+
+      it.target = this
+    }
   }
 
   override fun getPageTitle(): String = "MonsterHub. ${setting.name}"
