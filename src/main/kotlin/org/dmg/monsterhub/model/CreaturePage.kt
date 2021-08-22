@@ -11,7 +11,7 @@ import com.vaadin.flow.router.HasDynamicTitle
 
 class CreaturePage(
     private val creature: OldCreature,
-    private val creatureService: CreatureService,
+    private val creatureService: OldCreatureService,
     private val traitsService: TraitsService
 ) : Dialog(), HasDynamicTitle {
 

@@ -10,7 +10,7 @@ import com.vaadin.flow.component.textfield.TextField
 
 class CreatureBaseSpace(
     val creature: OldCreature,
-    val creatureService: CreatureService
+    val creatureService: OldCreatureService
 ) : VerticalLayout() {
   init {
     add(Label("Основан на монстрах"))

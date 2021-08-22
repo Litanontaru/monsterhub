@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.data
 
 import org.dmg.monsterhub.data.meta.Feature
+import org.dmg.monsterhub.model.ValueRate
 import javax.persistence.Entity
 
 @Entity
@@ -16,4 +17,23 @@ class Trait : Feature() {
   var moveBase: String? = null
   var moveAlt: String? = null
   var common: String? = null
+
+  fun rates() = sequenceOf(
+      offenceBase,
+      offenceAlt,
+      defenceBase,
+      defenceAlt,
+      perceptionBase,
+      perceptionAlt,
+      handsBase,
+      handsAlt,
+      moveBase,
+      moveAlt,
+      common
+  )
+      .map { ValueRate(it ?: "") }
+
+  companion object {
+    val TRAIT = "TRAIT"
+  }
 }

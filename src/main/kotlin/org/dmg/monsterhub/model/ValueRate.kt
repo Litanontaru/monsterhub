@@ -8,7 +8,7 @@ data class ValueRate(val initValue: String) {
   private val secondArgument: Double
 
   init {
-    val stickMinus = initValue.replace("- ", "-")
+    val stickMinus = initValue.toUpperCase().replace("- ", "-")
     val parts = stickMinus
         .split("\\s+".toRegex())
         .asSequence()

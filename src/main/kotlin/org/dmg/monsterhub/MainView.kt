@@ -8,7 +8,7 @@ import org.dmg.monsterhub.service.SettingService
 
 @Route
 class MainView(
-//    creatureService: CreatureService,
+//    creatureService: OldCreatureService,
 //    traitsService: TraitsService,
 //    weaponService: WeaponService
     settingService: SettingService

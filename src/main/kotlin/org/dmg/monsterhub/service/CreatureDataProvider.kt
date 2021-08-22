@@ -2,6 +2,7 @@ package org.dmg.monsterhub.service
 
 import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.data.FeatureContainerData
+import org.dmg.monsterhub.data.Trait.Companion.TRAIT
 import org.dmg.monsterhub.data.meta.FeatureContainer
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.data.setting.Setting
@@ -46,7 +47,7 @@ class CreatureDataProvider(
     override val containFeatureTypes: MutableList<FeatureContainerItem> = mutableListOf(
         FeatureContainerItem().apply {
           name = "Черты"
-          featureType = "TRAIT"
+          featureType = TRAIT
 
         }
     )

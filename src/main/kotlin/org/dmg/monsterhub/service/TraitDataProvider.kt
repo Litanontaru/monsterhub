@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.service
 
 import org.dmg.monsterhub.data.Trait
+import org.dmg.monsterhub.data.Trait.Companion.TRAIT
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.TraitRepository
@@ -13,7 +14,7 @@ class TraitDataProvider(
 ) : SimpleSettingObjectDataProvider() {
   override val objectClass: Class<*> = Trait::class.java
 
-  override val type: String = "TRAIT"
+  override val type: String = TRAIT
 
   override val name: String = "Черта"
 

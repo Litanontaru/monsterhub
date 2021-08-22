@@ -1,5 +1,6 @@
 package org.dmg.monsterhub.data
 
+import org.dmg.monsterhub.data.Trait.Companion.TRAIT
 import org.dmg.monsterhub.data.setting.SettingObject
 import javax.persistence.*
 
@@ -16,4 +17,19 @@ class Creature : SettingObject(), FeatureContainerData, Hierarchical<Creature> {
   @OneToMany(orphanRemoval = true)
   @JoinColumn(name = "feature_container_id")
   override var features: MutableList<FeatureData> = mutableListOf()
+
+  fun getAllTraits(): Sequence<FeatureData> = base
+      .map { it.getAllTraits() }
+      .fold(myTraits(), ::combine)
+
+  fun myTraits(): Sequence<FeatureData> = features
+      .asSequence()
+      .filter { it.feature.featureType == TRAIT }
+
+  private fun combine(left: Sequence<FeatureData>, right: Sequence<FeatureData>): Sequence<FeatureData> {
+    val names = left.map { it.feature.name }.toSet()
+    val groups = left.mapNotNull { it.feature.selectionGroup }.toSet()
+
+    return left + right.filter { it.feature.name !in names && (it.feature.selectionGroup !in groups) }
+  }
 }

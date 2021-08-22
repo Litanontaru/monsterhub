@@ -5,7 +5,7 @@ import java.lang.Math.max
 import java.lang.Math.min
 
 @Service
-class CreatureService(
+class OldCreatureService(
     val repositoryOld: OldCreatureRepository,
     val traitsService: TraitsService,
     val weaponService: WeaponService,

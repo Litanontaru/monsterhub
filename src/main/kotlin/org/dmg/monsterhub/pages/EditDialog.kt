@@ -7,6 +7,7 @@ import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import org.dmg.monsterhub.repository.FeatureContainerItemRepository
 import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
+import org.dmg.monsterhub.service.CreatureService
 import org.dmg.monsterhub.service.FeatureContainerServiceLocator
 import org.dmg.monsterhub.service.FeatureDataRepository
 
@@ -18,6 +19,7 @@ class EditDialog(
     private val featureContainerItemRepository: FeatureContainerItemRepository,
     private val featureDataDesignationRepository: FeatureDataDesignationRepository,
     private val featureContainerServiceLocator: FeatureContainerServiceLocator,
+    private val creatureService: CreatureService,
     private val onUpdate: (() -> Unit)? = null
 ): Dialog() {
   init {
@@ -30,6 +32,8 @@ class EditDialog(
           featureContainerItemRepository,
           featureDataDesignationRepository,
           featureContainerServiceLocator,
+          creatureService,
+          false,
           onUpdate
       ))
       add(Button(Icon(VaadinIcon.CLOSE)) {

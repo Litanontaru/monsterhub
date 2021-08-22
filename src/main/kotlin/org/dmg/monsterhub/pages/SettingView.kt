@@ -20,6 +20,7 @@ import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.FeatureContainerItemRepository
 import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
+import org.dmg.monsterhub.service.CreatureService
 import org.dmg.monsterhub.service.FeatureContainerServiceLocator
 import org.dmg.monsterhub.service.FeatureDataRepository
 import org.dmg.monsterhub.service.SettingService
@@ -33,8 +34,9 @@ class SettingView(
     private val featureDataRepository: FeatureDataRepository,
     private val featureContainerItemRepository: FeatureContainerItemRepository,
     private val featureDataDesignationRepository: FeatureDataDesignationRepository,
-    private val featureContainerServiceLocator: FeatureContainerServiceLocator
-) : Div(), BeforeEnterObserver, HasDynamicTitle {
+    private val featureContainerServiceLocator: FeatureContainerServiceLocator,
+    private val creatureService: CreatureService
+    ) : Div(), BeforeEnterObserver, HasDynamicTitle {
   lateinit var setting: Setting
   lateinit var data: ObjectTreeDataProvider
   lateinit var fiderData: ObjectFinderDataProviderForSetting
@@ -60,10 +62,22 @@ class SettingView(
 
     val leftPanel = VerticalLayout().apply {
       fun click(item: SettingObject) {
+        val showStats = edit?.showStats ?: false
         if (edit != null) {
           rightPanel.remove(edit)
         }
-        edit = EditPanel(item, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator)
+        edit = EditPanel(
+            item,
+            data,
+            fiderData,
+            featureDataRepository,
+            featureContainerItemRepository,
+            featureDataDesignationRepository,
+            featureContainerServiceLocator,
+            creatureService,
+            showStats
+        )
+
         rightPanel.add(edit)
       }
 
