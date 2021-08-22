@@ -19,11 +19,11 @@ class FolderDataProvider(
 
   override fun getAllBySetting(setting: Setting): List<SettingObject> = repository.findAllBySetting(setting)
 
-  override fun getAlikeBySettings(name: String, settings: List<Setting>, pageable: Pageable): List<SettingObject> {
+  override fun getAlikeBySettings(type: String, name: String, settings: List<Setting>, pageable: Pageable): List<SettingObject> {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
 
-  override fun countAlikeBySettings(name: String, settings: List<Setting>): Int {
+  override fun countAlikeBySettings(type: String, name: String, settings: List<Setting>): Int {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
 

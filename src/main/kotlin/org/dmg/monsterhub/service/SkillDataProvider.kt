@@ -19,10 +19,10 @@ class SkillDataProvider(
 
   override fun getAllBySetting(setting: Setting): List<SettingObject> = repository.findAllBySetting(setting)
 
-  override fun getAlikeBySettings(name: String, settings: List<Setting>, pageable: Pageable) =
+  override fun getAlikeBySettings(type: String, name: String, settings: List<Setting>, pageable: Pageable) =
       repository.findAllByNameContainingAndSettingIn(name, settings, pageable)
 
-  override fun countAlikeBySettings(name: String, settings: List<Setting>) =
+  override fun countAlikeBySettings(type: String, name: String, settings: List<Setting>) =
       repository.countByNameContainingAndSettingIn(name, settings)
 
   override fun refresh(one: SettingObject) = repository.getById(one.id)

@@ -25,12 +25,14 @@ class ObjectFinderDataProviderForSetting(
 
   operator fun invoke(type: String): ObjectFinderDataProvider =
       ObjectFinderDataProvider(
+          type,
           dataProviders.find { it.supportType(type) }!!,
           getRecursive(setting).toList()
       )
 }
 
 class ObjectFinderDataProvider(
+    private val type: String,
     private val dataProvider: SettingObjectDataProvider,
     private val settings: List<Setting>
 ) : AbstractBackEndDataProvider<SettingObject, String>() {
@@ -41,7 +43,7 @@ class ObjectFinderDataProvider(
           ?.let {
             query.page
             query.pageSize
-            dataProvider.countAlikeBySettings(it, settings)
+            dataProvider.countAlikeBySettings(type, it, settings)
           }
           ?: 0
 
@@ -51,7 +53,7 @@ class ObjectFinderDataProvider(
           ?.orElse(null)
           ?.let {
             dataProvider
-                .getAlikeBySettings(it, settings, PageRequest.of(query.page, query.pageSize))
+                .getAlikeBySettings(type, it, settings, PageRequest.of(query.page, query.pageSize))
                 .stream()
           }
           ?: Stream.empty<SettingObject>()

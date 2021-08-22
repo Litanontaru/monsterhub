@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface FreeFeatureRepository: JpaRepository<FreeFeature, Long> {
   fun findAllBySetting(setting: Setting): List<FreeFeature>
 
-  fun findAllByNameContainingAndSettingIn(name: String, settings: List<Setting>, pageable: Pageable): List<FreeFeature>
+  fun findAllByFeatureTypeAndNameContainingAndSettingIn(type: String, name: String, settings: List<Setting>, pageable: Pageable): List<FreeFeature>
 
-  fun countByNameContainingAndSettingIn(name: String, settings: List<Setting>): Int
+  fun countByFeatureTypeAndNameContainingAndSettingIn(type: String, name: String, settings: List<Setting>): Int
 }

@@ -13,9 +13,9 @@ interface SettingObjectDataProvider {
 
   fun getAllBySetting(setting: Setting): List<SettingObject>
 
-  fun getAlikeBySettings(name: String, settings: List<Setting>, pageable: Pageable): List<SettingObject>
+  fun getAlikeBySettings(type: String, name: String, settings: List<Setting>, pageable: Pageable): List<SettingObject>
 
-  fun countAlikeBySettings(name: String, settings: List<Setting>): Int
+  fun countAlikeBySettings(type: String, name: String, settings: List<Setting>): Int
 
   fun refresh(one: SettingObject): SettingObject
 

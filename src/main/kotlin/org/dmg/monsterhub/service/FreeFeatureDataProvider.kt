@@ -20,11 +20,11 @@ class FreeFeatureDataProvider(
 
   override fun getAllBySetting(setting: Setting): List<SettingObject> = repository.findAllBySetting(setting)
 
-  override fun getAlikeBySettings(name: String, settings: List<Setting>, pageable: Pageable) =
-      repository.findAllByNameContainingAndSettingIn(name, settings, pageable)
+  override fun getAlikeBySettings(type: String, name: String, settings: List<Setting>, pageable: Pageable) =
+      repository.findAllByFeatureTypeAndNameContainingAndSettingIn(type, name, settings, pageable)
 
-  override fun countAlikeBySettings(name: String, settings: List<Setting>) =
-      repository.countByNameContainingAndSettingIn(name, settings)
+  override fun countAlikeBySettings(type: String, name: String, settings: List<Setting>) =
+      repository.countByFeatureTypeAndNameContainingAndSettingIn(type, name, settings)
 
   override fun refresh(one: SettingObject) = repository.getById(one.id)
 
