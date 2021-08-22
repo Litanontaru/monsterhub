@@ -1,11 +1,11 @@
 package org.dmg.monsterhub.data
 
 import org.dmg.monsterhub.data.Trait.Companion.TRAIT
-import org.dmg.monsterhub.data.setting.SettingObject
+import org.dmg.monsterhub.data.meta.Feature
 import javax.persistence.*
 
 @Entity
-class Creature : SettingObject(), FeatureContainerData, Hierarchical<Creature> {
+class Creature : Feature(), FeatureContainerData, Hierarchical<Creature> {
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "Base_Creature",

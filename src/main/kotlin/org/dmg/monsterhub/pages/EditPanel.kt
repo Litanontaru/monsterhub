@@ -95,11 +95,11 @@ class EditPanel(
       freeFeatureSpace(obj)
     }
 
-    if (obj is Feature) {
+    if (obj is Feature && obj !is Creature) {
       featureSpace(obj)
     }
 
-    if (obj is FeatureContainer) {
+    if (obj is FeatureContainer && obj !is Creature) {
       featureContainerSpace(obj)
     }
 

@@ -39,7 +39,7 @@ class CreatureDataProvider(
     repository.delete(one as Creature)
   }
 
-  override fun create(): SettingObject = Creature()
+  override fun create(): SettingObject = Creature().apply { featureType = type }
 
   override fun containerMeta(obj: FeatureContainerData): FeatureContainer = CreatureMeta
 
