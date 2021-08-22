@@ -19,6 +19,7 @@ class Creature : SettingObject(), FeatureContainerData, Hierarchical<Creature> {
   override var features: MutableList<FeatureData> = mutableListOf()
 
   fun getAllTraits(): Sequence<FeatureData> = base
+      .distinct()
       .map { it.getAllTraits() }
       .fold(myTraits(), ::combine)
 
