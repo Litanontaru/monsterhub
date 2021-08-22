@@ -24,6 +24,7 @@ import org.dmg.monsterhub.repository.FeatureContainerItemRepository
 import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
 import org.dmg.monsterhub.service.FeatureContainerServiceLocator
 import org.dmg.monsterhub.service.FeatureDataRepository
+import org.dmg.monsterhub.service.FreeFeatureDataProvider
 
 class EditPanel(
     private val obj: Any,
@@ -39,6 +40,11 @@ class EditPanel(
     if (obj is SettingObject) {
       settingObjectSpace(obj)
     }
+
+    if (obj is FreeFeature) {
+      freeFeatureSpace(obj)
+    }
+
     if (obj is Feature) {
       featureSpace(obj)
     }
@@ -74,6 +80,18 @@ class EditPanel(
       value = obj.name
       addValueChangeListener {
         update { obj.name = it.value }
+      }
+      width = "100%"
+    })
+  }
+
+  private fun freeFeatureSpace(obj: FreeFeature) {
+    add(ComboBox<String>("Тип").apply {
+      setItems(FreeFeatureDataProvider.MY_TYPES)
+
+      value = obj.featureType
+      addValueChangeListener {
+        update { obj.featureType = it.value }
       }
       width = "100%"
     })
