@@ -24,6 +24,7 @@ class ObjectTreeDataProvider(
 ) : AbstractBackEndHierarchicalDataProvider<SettingObject, Unit>() {
 
   var children = mutableMapOf<Folder?, MutableList<SettingObject>>()
+  var onAdd: ((SettingObject) -> Unit)? = null
 
   init {
     dataProviders
@@ -61,6 +62,9 @@ class ObjectTreeDataProvider(
       children.getOrPut(savedSettingObject.parent) { mutableListOf() } += savedSettingObject
 
       refreshItem(newSettingObject.parent, true)
+      if (onAdd != null) {
+        onAdd!!(savedSettingObject)
+      }
     }
   }
 

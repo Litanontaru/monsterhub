@@ -117,6 +117,10 @@ class SettingView(
         tree.addItemClickListener { click(it.item) }
 
         tree.setDataProvider(data)
+        data.onAdd = {
+          tree.select(it)
+          click(it)
+        }
 
         tree.addThemeVariants(GridVariant.LUMO_COMPACT)
       }
