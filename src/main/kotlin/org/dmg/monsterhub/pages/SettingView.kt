@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.contextmenu.ContextMenu
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.GridVariant
+import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -33,7 +34,7 @@ class SettingView(
     private val featureContainerItemRepository: FeatureContainerItemRepository,
     private val featureDataDesignationRepository: FeatureDataDesignationRepository,
     private val featureContainerServiceLocator: FeatureContainerServiceLocator
-) : HorizontalLayout(), BeforeEnterObserver, HasDynamicTitle {
+) : Div(), BeforeEnterObserver, HasDynamicTitle {
   lateinit var setting: Setting
   lateinit var data: ObjectTreeDataProvider
   lateinit var fiderData: ObjectFinderDataProviderForSetting
@@ -57,7 +58,7 @@ class SettingView(
       isSpacing = false
     }
 
-    add(VerticalLayout().apply {
+    val leftPanel = VerticalLayout().apply {
       fun click(item: SettingObject) {
         if (edit != null) {
           rightPanel.remove(edit)
@@ -132,9 +133,15 @@ class SettingView(
       width = "30%"
       isPadding = false
       isSpacing = false
-    })
+    }
 
-    add(rightPanel)
+    val apply = HorizontalLayout().apply {
+      add(leftPanel, rightPanel)
+
+      setSizeFull()
+      isPadding = true
+    }
+    add(apply)
 
     height = "100%"
     width = "100%"

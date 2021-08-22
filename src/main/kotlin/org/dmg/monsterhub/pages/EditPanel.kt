@@ -515,7 +515,7 @@ class EditPanel(
 
             addItemDoubleClickListener { edit(it.item) }
 
-            addColumn { it.display() }
+            addColumn { it.display() }.isAutoWidth = true
 
             addComponentColumn { featureData ->
               HorizontalLayout().apply {
@@ -533,8 +533,8 @@ class EditPanel(
 
                 isPadding = false
               }
-
             }
+
             setItems(dataProvider as DataProvider<FeatureData, Void>)
 
             width = "100%"
