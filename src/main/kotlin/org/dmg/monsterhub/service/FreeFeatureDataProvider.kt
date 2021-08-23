@@ -41,10 +41,26 @@ class FreeFeatureDataProvider(
   companion object {
     val MY_TYPES = setOf(
         "NONE",
+
         "POISON_EFFECT",
         "POISON_DELAY",
         "POISONING_WAY",
-        "DISEASE"
+
+        "DISEASE",
+
+        "POWER_EFFECT",
+
+        "ACTIVATION_ROLL",
+        "ACTIVATION_EVENT",
+        "ACTIVATION_DURATION",
+        "ACTIVATION_PAYMENT",
+        "POWER_CONDITION",
+        "POWER_RESERVE",
+        "EFFECT_DURATION",
+        "EFFECT_DISTANCE",
+        "AREA_OF_EFFECT",
+        "EFFECT_TARGET_TYPE",
+        "EFFECT_THREAT"
     )
   }
 }
