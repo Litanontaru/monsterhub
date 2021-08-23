@@ -1,11 +1,10 @@
 package org.dmg.monsterhub.data
 
 import org.dmg.monsterhub.data.Trait.Companion.TRAIT
-import org.dmg.monsterhub.data.meta.Feature
 import javax.persistence.*
 
 @Entity
-class Creature : Feature(), FeatureContainerData, Hierarchical<Creature> {
+class Creature : ContainerData(), Hierarchical<Creature> {
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "Base_Creature",
@@ -13,10 +12,6 @@ class Creature : Feature(), FeatureContainerData, Hierarchical<Creature> {
       inverseJoinColumns = [JoinColumn(name = "base_id")]
   )
   override var base: MutableList<Creature> = mutableListOf()
-
-  @OneToMany(orphanRemoval = true)
-  @JoinColumn(name = "feature_container_id")
-  override var features: MutableList<FeatureData> = mutableListOf()
 
   fun getAllTraits(): Sequence<FeatureData> = base
       .distinct()

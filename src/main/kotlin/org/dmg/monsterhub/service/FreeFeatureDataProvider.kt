@@ -39,6 +39,22 @@ class FreeFeatureDataProvider(
   override fun create(): SettingObject = FreeFeature().apply { featureType = "NONE" }
 
   companion object {
+    val POWER_EFFECT = "POWER_EFFECT"
+
+    val EFFECT_DURATION = "EFFECT_DURATION"
+    val EFFECT_DISTANCE = "EFFECT_DISTANCE"
+    val AREA_OF_EFFECT = "AREA_OF_EFFECT"
+    val EFFECT_TARGET_TYPE = "EFFECT_TARGET_TYPE"
+    val EFFECT_THREAT = "EFFECT_THREAT"
+
+    val ACTIVATION_ROLL = "ACTIVATION_ROLL"
+    val ACTIVATION_EVENT = "ACTIVATION_EVENT"
+    val ACTIVATION_DURATION = "ACTIVATION_DURATION"
+    val ACTIVATION_PAYMENT = "ACTIVATION_PAYMENT"
+    val POWER_CONDITION = "POWER_CONDITION"
+    val POWER_RESERVE = "POWER_RESERVE"
+
+
     val MY_TYPES = setOf(
         "NONE",
 
@@ -48,19 +64,20 @@ class FreeFeatureDataProvider(
 
         "DISEASE",
 
-        "POWER_EFFECT",
+        POWER_EFFECT,
 
-        "ACTIVATION_ROLL",
-        "ACTIVATION_EVENT",
-        "ACTIVATION_DURATION",
-        "ACTIVATION_PAYMENT",
-        "POWER_CONDITION",
-        "POWER_RESERVE",
-        "EFFECT_DURATION",
-        "EFFECT_DISTANCE",
-        "AREA_OF_EFFECT",
-        "EFFECT_TARGET_TYPE",
-        "EFFECT_THREAT"
+        EFFECT_DURATION,
+        EFFECT_DISTANCE,
+        AREA_OF_EFFECT,
+        EFFECT_TARGET_TYPE,
+        EFFECT_THREAT,
+
+        ACTIVATION_ROLL,
+        ACTIVATION_EVENT,
+        ACTIVATION_DURATION,
+        ACTIVATION_PAYMENT,
+        POWER_CONDITION,
+        POWER_RESERVE
     )
   }
 }
