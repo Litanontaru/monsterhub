@@ -77,7 +77,9 @@ class FreeFeatureDataProvider(
         ACTIVATION_DURATION,
         ACTIVATION_PAYMENT,
         POWER_CONDITION,
-        POWER_RESERVE
+        POWER_RESERVE,
+
+        "COUNTER_SIZE_TABLE"
     )
   }
 }
