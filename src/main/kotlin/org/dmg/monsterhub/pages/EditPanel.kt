@@ -499,7 +499,7 @@ class EditPanel(
               }
             } else {
               HorizontalLayout().apply {
-                val label = Label(existing.display())
+                val label = Label(type.name + ": " + existing.display())
 
                 val editButton = Button(Icon(VaadinIcon.EDIT)) {
                   EditDialog(existing, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator, creatureService) {
