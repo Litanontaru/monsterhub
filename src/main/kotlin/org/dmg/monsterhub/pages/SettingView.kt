@@ -100,7 +100,7 @@ class SettingView(
 
         tree.setSelectionMode(Grid.SelectionMode.SINGLE);
 
-        tree.addItemClickListener { click(it.item) }
+        tree.addItemClickListener { it.item?.let { click(it) } }
 
         tree.setDataProvider(data)
         data.onAdd = {
