@@ -79,7 +79,15 @@ class FreeFeatureDataProvider(
         POWER_CONDITION,
         POWER_RESERVE,
 
-        "COUNTER_SIZE_TABLE"
+        "COUNTER_SIZE_TABLE",
+
+        "AREA_SPHERE",
+        "AREA_CUBE",
+        "AREA_EXPLOSION",
+        "AREA_LINE",
+        "AREA_CONE",
+
+        "COLLISION"
     )
   }
 }

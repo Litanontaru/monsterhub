@@ -9,6 +9,8 @@ import javax.persistence.*
 open class Feature : SettingObject(), FeatureContainer {
   open lateinit var featureType: String
 
+  open var rate: String? = null
+
   @Type(type = "text")
   open var description: String = ""
 

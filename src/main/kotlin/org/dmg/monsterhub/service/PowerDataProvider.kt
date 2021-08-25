@@ -83,7 +83,6 @@ class PowerDataProvider(
         FeatureContainerItem().apply {
           name = "Тип цели"
           featureType = EFFECT_TARGET_TYPE
-          onlyOne = true
         },
 
         FeatureContainerItem().apply {
