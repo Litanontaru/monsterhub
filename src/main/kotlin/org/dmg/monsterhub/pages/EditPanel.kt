@@ -17,9 +17,7 @@ import com.vaadin.flow.component.tabs.Tabs
 import com.vaadin.flow.component.textfield.TextArea
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.treegrid.TreeGrid
-import com.vaadin.flow.data.provider.BackEndDataProvider
 import com.vaadin.flow.data.provider.DataProvider
-import com.vaadin.flow.data.provider.hierarchy.BackEndHierarchicalDataProvider
 import org.dmg.monsterhub.data.*
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.meta.FeatureContainer
@@ -744,7 +742,7 @@ class EditPanel(
     if (meta != null) {
       val dataProvider = PowerTreeDataProvider(obj, meta)
       add(TreeGrid<FeatureContainerVo>().apply {
-        addHierarchyColumn { item -> item.name}
+        addHierarchyColumn { it.name }
 
         setDataProvider(dataProvider)
 
