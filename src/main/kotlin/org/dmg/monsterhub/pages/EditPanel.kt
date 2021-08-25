@@ -16,7 +16,10 @@ import com.vaadin.flow.component.tabs.Tab
 import com.vaadin.flow.component.tabs.Tabs
 import com.vaadin.flow.component.textfield.TextArea
 import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.component.treegrid.TreeGrid
+import com.vaadin.flow.data.provider.BackEndDataProvider
 import com.vaadin.flow.data.provider.DataProvider
+import com.vaadin.flow.data.provider.hierarchy.BackEndHierarchicalDataProvider
 import org.dmg.monsterhub.data.*
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.meta.FeatureContainer
@@ -117,6 +120,10 @@ class EditPanel(
 
     if (obj is FeatureContainerData) {
       featureContainerDataSpace(obj)
+    }
+
+    if (obj is Power) {
+      powerTreeSpace(obj)
     }
 
     height = "100%"
@@ -464,6 +471,130 @@ class EditPanel(
     add(grid)
   }
 
+  private fun VerticalLayout.featureDataSpace(obj: FeatureData) {
+    add(HorizontalLayout().apply {
+      val label = Label(obj.feature.name)
+      val editButton = Button(Icon(VaadinIcon.EDIT)) {
+        EditDialog(obj.feature, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator, creatureService).open()
+      }.apply {
+        addThemeVariants(ButtonVariant.LUMO_SMALL)
+      }
+      add(label, editButton)
+      setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, editButton)
+    })
+
+    add(TextArea().apply {
+      value = obj.feature.description
+      isReadOnly = true
+
+      width = "100%"
+    })
+
+    addNumber("X", obj.x, obj.xa, { update { obj.x = it } }, { update { obj.xa = it } }, obj.feature.x)
+    addNumber("Y", obj.y, obj.ya, { update { obj.y = it } }, { update { obj.ya = it } }, obj.feature.y)
+    addNumber("Z", obj.z, obj.za, { update { obj.z = it } }, { update { obj.za = it } }, obj.feature.z)
+
+    obj.feature.designations.forEach { key ->
+      if (key.endsWith("*")) {
+        val oneKey = key.substring(0, key.length - 1)
+        add(TextArea(oneKey).apply {
+          this.value = obj.designations.find { it.designationKey == oneKey }?.value ?: ""
+          addValueChangeListener { assignDesignation(obj, oneKey, it.value) }
+
+          width = "100%"
+        })
+      } else {
+        add(TextField(key).apply {
+          this.value = obj.designations.find { it.designationKey == key }?.value ?: ""
+          addValueChangeListener { assignDesignation(obj, key, it.value) }
+
+          width = "100%"
+        })
+      }
+    }
+  }
+
+  private fun assignDesignation(obj: FeatureData, key: String, newValue: String) {
+    obj.designations
+        .find { it.designationKey == key }
+        ?.run { update { this.value = newValue } }
+        ?: update {
+          val featureDataDesignation = featureDataDesignationRepository.save(
+              FeatureDataDesignation().apply {
+                this.designationKey = key
+                this.value = newValue
+              }
+          )
+          obj.designations.add(featureDataDesignation)
+        }
+  }
+
+  private fun addNumber(
+      label: String,
+      value: Int,
+      valueA: Int,
+      setter: (Int) -> Unit,
+      setterA: (Int) -> Unit,
+      option: NumberOption
+  ) {
+    when (option) {
+      NumberOption.NONE -> {
+        //do nothing
+      }
+      NumberOption.POSITIVE -> {
+        add(TextField(label).apply {
+          this.value = value.toString()
+          addValueChangeListener { setter(it.value.toIntOrNull()?.takeIf { it >= 0 } ?: 0) }
+        })
+      }
+      NumberOption.POSITIVE_AND_INFINITE -> TODO()
+      NumberOption.FREE -> {
+        add(TextField(label).apply {
+          this.value = value.toString()
+          addValueChangeListener { setter(it.value.toIntOrNull() ?: 0) }
+        })
+      }
+      NumberOption.DAMAGE -> add(
+          HorizontalLayout().apply {
+            val damage = TextField(label).apply {
+              this.value = value.toString()
+              addValueChangeListener { setter(it.value.toIntOrNull()?.takeIf { it >= 1 } ?: 0) }
+            }
+            val slash = Label("/")
+            val destruction = TextField().apply {
+              this.value = valueA.toString()
+              addValueChangeListener { setterA(it.value.toIntOrNull()?.takeIf { it >= 1 } ?: 0) }
+            }
+            add(damage, slash, destruction)
+            setVerticalComponentAlignment(FlexComponent.Alignment.END, damage, slash, destruction)
+          }
+      )
+      NumberOption.IMPORTANCE -> {
+        val options = listOf(
+            "Никогда или Никакую роль",
+            "Малую Редко",
+            "Важную Редко",
+            "Малую Вероятно",
+            "Эпическую Редко",
+            "Малую Часто",
+            "Важную Вероятно",
+            "Важную Часто",
+            "Эпическую Вероятно",
+            "Эпическую Часто"
+        )
+
+        add(ComboBox<Int>().apply {
+          setItems((0..9).toList())
+          setItemLabelGenerator { options[it] }
+          this.value = value
+          addValueChangeListener { setter(it.value.takeIf { it >= 0 && it <= 9 } ?: 0) }
+
+          width = "100%"
+        })
+      }
+    }
+  }
+
   private fun VerticalLayout.featureContainerDataSpace(obj: FeatureContainerData) {
     val meta = featureContainerServiceLocator.containerMeta(obj)
     if (meta != null) {
@@ -608,127 +739,18 @@ class EditPanel(
     }
   }
 
-  private fun VerticalLayout.featureDataSpace(obj: FeatureData) {
-    add(HorizontalLayout().apply {
-      val label = Label(obj.feature.name)
-      val editButton = Button(Icon(VaadinIcon.EDIT)) {
-        EditDialog(obj.feature, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator, creatureService).open()
-      }.apply {
-        addThemeVariants(ButtonVariant.LUMO_SMALL)
-      }
-      add(label, editButton)
-      setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, editButton)
-    })
+  private fun VerticalLayout.powerTreeSpace(obj: FeatureContainerData) {
+    val meta = featureContainerServiceLocator.containerMeta(obj)
+    if (meta != null) {
+      val dataProvider = PowerTreeDataProvider(obj, meta)
+      add(TreeGrid<FeatureContainerVo>().apply {
+        addHierarchyColumn { item -> item.name}
 
-    add(TextArea().apply {
-      value = obj.feature.description
-      isReadOnly = true
+        setDataProvider(dataProvider)
 
-      width = "100%"
-    })
-
-    addNumber("X", obj.x, obj.xa, { update { obj.x = it } }, { update { obj.xa = it } }, obj.feature.x)
-    addNumber("Y", obj.y, obj.ya, { update { obj.y = it } }, { update { obj.ya = it } }, obj.feature.y)
-    addNumber("Z", obj.z, obj.za, { update { obj.z = it } }, { update { obj.za = it } }, obj.feature.z)
-
-    obj.feature.designations.forEach { key ->
-      if (key.endsWith("*")) {
-        val oneKey = key.substring(0, key.length - 1)
-        add(TextArea(oneKey).apply {
-          this.value = obj.designations.find { it.designationKey == oneKey }?.value ?: ""
-          addValueChangeListener { assignDesignation(obj, oneKey, it.value) }
-
-          width = "100%"
-        })
-      } else {
-        add(TextField(key).apply {
-          this.value = obj.designations.find { it.designationKey == key }?.value ?: ""
-          addValueChangeListener { assignDesignation(obj, key, it.value) }
-
-          width = "100%"
-        })
-      }
-    }
-  }
-
-  private fun assignDesignation(obj: FeatureData, key: String, newValue: String) {
-    obj.designations
-        .find { it.designationKey == key }
-        ?.run { update { this.value = newValue } }
-        ?: update {
-          val featureDataDesignation = featureDataDesignationRepository.save(
-              FeatureDataDesignation().apply {
-                this.designationKey = key
-                this.value = newValue
-              }
-          )
-          obj.designations.add(featureDataDesignation)
-        }
-  }
-
-  private fun addNumber(
-      label: String,
-      value: Int,
-      valueA: Int,
-      setter: (Int) -> Unit,
-      setterA: (Int) -> Unit,
-      option: NumberOption
-  ) {
-    when (option) {
-      NumberOption.NONE -> {
-        //do nothing
-      }
-      NumberOption.POSITIVE -> {
-        add(TextField(label).apply {
-          this.value = value.toString()
-          addValueChangeListener { setter(it.value.toIntOrNull()?.takeIf { it >= 0 } ?: 0) }
-        })
-      }
-      NumberOption.POSITIVE_AND_INFINITE -> TODO()
-      NumberOption.FREE -> {
-        add(TextField(label).apply {
-          this.value = value.toString()
-          addValueChangeListener { setter(it.value.toIntOrNull() ?: 0) }
-        })
-      }
-      NumberOption.DAMAGE -> add(
-          HorizontalLayout().apply {
-            val damage = TextField(label).apply {
-              this.value = value.toString()
-              addValueChangeListener { setter(it.value.toIntOrNull()?.takeIf { it >= 1 } ?: 0) }
-            }
-            val slash = Label("/")
-            val destruction = TextField().apply {
-              this.value = valueA.toString()
-              addValueChangeListener { setterA(it.value.toIntOrNull()?.takeIf { it >= 1 } ?: 0) }
-            }
-            add(damage, slash, destruction)
-            setVerticalComponentAlignment(FlexComponent.Alignment.END, damage, slash, destruction)
-          }
-      )
-      NumberOption.IMPORTANCE -> {
-        val options = listOf(
-            "Никогда или Никакую роль",
-            "Малую Редко",
-            "Важную Редко",
-            "Малую Вероятно",
-            "Эпическую Редко",
-            "Малую Часто",
-            "Важную Вероятно",
-            "Важную Часто",
-            "Эпическую Вероятно",
-            "Эпическую Часто"
-        )
-
-        add(ComboBox<Int>().apply {
-          setItems((0..9).toList())
-          setItemLabelGenerator { options[it] }
-          this.value = value
-          addValueChangeListener { setter(it.value.takeIf { it >= 0 && it <= 9 } ?: 0) }
-
-          width = "100%"
-        })
-      }
+        width = "100%"
+        isHeightByRows = true
+      })
     }
   }
 
