@@ -25,4 +25,9 @@ class PowerTreeDataProvider(
     null -> meta.containFeatureTypes.size
     else -> query.parent.count
   }
+
+  fun add(new: FeatureContainerVo, parent: FeatureContainerVo) {
+
+    refreshItem(parent, true)
+  }
 }

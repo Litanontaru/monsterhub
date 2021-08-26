@@ -742,7 +742,70 @@ class EditPanel(
     if (meta != null) {
       val dataProvider = PowerTreeDataProvider(obj, meta)
       add(TreeGrid<FeatureContainerVo>().apply {
+        var selectedItem: FeatureContainerVo? = null
+        addSelectionListener {
+          val oldSelected = selectedItem
+          selectedItem = it.firstSelectedItem.orElse(null)
+          if (oldSelected != null) {
+            dataProvider.refreshItem(oldSelected)
+          }
+          if (selectedItem != null) {
+            dataProvider.refreshItem(selectedItem)
+          }
+        }
+
         addHierarchyColumn { it.name }
+        addComponentColumn { item ->
+
+          HorizontalLayout().apply {
+            isVisible = item == selectedItem
+
+            val components = mutableListOf<Component>()
+
+            if (item.canAdd) {
+              val addNew = ComboBox<SettingObject>().apply {
+                setItems(fiderData(item.featureType) as DataProvider<SettingObject, String>)
+                setItemLabelGenerator { it.name }
+              }
+
+              components.add(addNew)
+              components.add(Button(Icon(VaadinIcon.PLUS)) {
+                addNew.optionalValue.ifPresent {
+                  update(item) {
+                    val new = FeatureData().apply { feature = it as Feature }
+                    featureDataRepository.save(new)
+                    item.add(new)
+                    dataProvider.refreshItem(item, true)
+                  }
+
+                  addNew.value = null
+                }
+              }.apply {
+                addThemeVariants(ButtonVariant.LUMO_SMALL)
+              })
+            }
+            if (item.canEdit) {
+
+              components.add(Button(Icon(VaadinIcon.EDIT)) {
+                EditDialog(item.featureData!!, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator, creatureService) {
+                  featureDataRepository.save(item.featureData!!)
+                  dataProvider.refreshItem(item)
+                }.open()
+              }.apply {
+                addThemeVariants(ButtonVariant.LUMO_SMALL)
+              })
+
+              components.add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
+                //todo
+              }.apply {
+                addThemeVariants(ButtonVariant.LUMO_SMALL)
+              })
+            }
+
+            add(*components.toTypedArray())
+            setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, *components.toTypedArray())
+          }
+        }
 
         setDataProvider(dataProvider)
 

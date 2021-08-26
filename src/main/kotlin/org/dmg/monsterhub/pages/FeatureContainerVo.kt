@@ -15,7 +15,6 @@ class FeatureContainerVo(
     false -> LIST
   }
 
-
   val name: String
     get() = when (type) {
       CONTAINER -> featureData?.display() ?: ""
@@ -31,7 +30,31 @@ class FeatureContainerVo(
     }
 
   val featureType: String
-      get() = item!!.featureType
+    get() = item!!.featureType
+
+  //--------------------------------------------------------------------------------------------------------------------
+
+  val canAdd: Boolean
+    get() = when (type) {
+      CONTAINER -> false
+      ONE -> featureData == null
+      LIST -> true
+    }
+
+  fun add(new: FeatureData) {
+    data.features.add(new)
+  }
+
+  val canEdit: Boolean
+    get() = when (type) {
+      CONTAINER -> data is FeatureData
+      ONE -> featureData != null
+      LIST -> false
+    }
+
+  fun delete(old: FeatureData) {
+    data.features.remove(old)
+  }
 
   //--------------------------------------------------------------------------------------------------------------------
 
