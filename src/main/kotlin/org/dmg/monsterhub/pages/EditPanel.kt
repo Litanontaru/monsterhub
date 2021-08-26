@@ -78,7 +78,13 @@ class EditPanel(
         }
       })
     } else {
-      configSpace(obj)
+      add(Scroller(
+          VerticalLayout().apply { configSpace(obj) }
+      ).apply {
+        setSizeFull()
+        scrollDirection = Scroller.ScrollDirection.VERTICAL
+        isVisible = !showStats
+      })
     }
 
     height = "100%"
@@ -90,6 +96,10 @@ class EditPanel(
   private fun VerticalLayout.configSpace(obj: Any) {
     if (obj is SettingObject) {
       settingObjectSpace(obj)
+    }
+
+    if (obj is Power) {
+      powerTreeSpace(obj)
     }
 
     if (obj is FreeFeature) {
@@ -118,10 +128,6 @@ class EditPanel(
 
     if (obj is FeatureContainerData && obj !is Power) {
       featureContainerDataSpace(obj)
-    }
-
-    if (obj is Power) {
-      powerTreeSpace(obj)
     }
 
     height = "100%"
@@ -527,7 +533,7 @@ class EditPanel(
         }
   }
 
-  private fun addNumber(
+  private fun VerticalLayout.addNumber(
       label: String,
       value: Int,
       valueA: Int,
@@ -771,12 +777,14 @@ class EditPanel(
               components.add(addNew)
               components.add(Button(Icon(VaadinIcon.PLUS)) {
                 addNew.optionalValue.ifPresent {
-                  update(item) {
-                    val new = FeatureData().apply { feature = it as Feature }
-                    featureDataRepository.save(new)
-                    item.add(new)
-                    dataProvider.refreshItem(item, true)
+                  update(obj) {
+                    update(item) {
+                      val new = FeatureData().apply { feature = it as Feature }
+                      featureDataRepository.save(new)
+                      item.add(new)
+                    }
                   }
+                  dataProvider.refreshItem(item, true)
 
                   addNew.value = null
                 }
@@ -788,18 +796,24 @@ class EditPanel(
 
               components.add(Button(Icon(VaadinIcon.EDIT)) {
                 EditDialog(item.featureData!!, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator, creatureService) {
-                  featureDataRepository.save(item.featureData!!)
-                  dataProvider.refreshItem(item)
+                  update(obj) {
+                    featureDataRepository.save(item.featureData!!)
+                    dataProvider.refreshItem(item)
+                  }
                 }.open()
               }.apply {
                 addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
               })
 
               components.add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
-                item.delete()?.let {
-                  dataProvider.refreshItem(it, true)
-                } ?: run {
-                  dataProvider.refreshAll()
+                update(obj) {
+                  item.delete()?.let {
+                    update(item) {}
+                    dataProvider.refreshItem(it, true)
+                  } ?: run {
+                    update(item) {}
+                    dataProvider.refreshAll()
+                  }
                 }
               }.apply {
                 addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)

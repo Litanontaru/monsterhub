@@ -36,8 +36,14 @@ class FeatureData : FeatureContainerData {
         combo(z, za) +
 
         feature.designations.asSequence()
-            .mapNotNull { key -> designations.find { it.designationKey == key } }
-            .map { it.value } +
+            .mapNotNull { key ->
+              val search = if (key.endsWith("*")) key.substring(0, key.length - 1) else key
+              designations.find { it.designationKey == search }
+            }
+            .map { it.value }
+            .filter { it.isNotBlank() }
+            .map { it.lines()[0] }
+            .filter { it.isNotBlank() } +
 
         feature.containFeatureTypes.asSequence()
             .flatMap { key -> features.asSequence().filter { it.feature.featureType == key.featureType } }
