@@ -116,7 +116,7 @@ class EditPanel(
       featureDataSpace(obj)
     }
 
-    if (obj is FeatureContainerData) {
+    if (obj is FeatureContainerData && obj !is Power) {
       featureContainerDataSpace(obj)
     }
 
@@ -781,7 +781,7 @@ class EditPanel(
                   addNew.value = null
                 }
               }.apply {
-                addThemeVariants(ButtonVariant.LUMO_SMALL)
+                addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
               })
             }
             if (item.canEdit) {
@@ -792,15 +792,22 @@ class EditPanel(
                   dataProvider.refreshItem(item)
                 }.open()
               }.apply {
-                addThemeVariants(ButtonVariant.LUMO_SMALL)
+                addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
               })
 
               components.add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
-                //todo
+                item.delete()?.let {
+                  dataProvider.refreshItem(it, true)
+                } ?: run {
+                  dataProvider.refreshAll()
+                }
               }.apply {
-                addThemeVariants(ButtonVariant.LUMO_SMALL)
+                addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
               })
             }
+
+            isPadding = false
+            isMargin = false
 
             add(*components.toTypedArray())
             setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, *components.toTypedArray())

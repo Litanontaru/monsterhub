@@ -7,7 +7,9 @@ import org.dmg.monsterhub.pages.ItemType.*
 
 class FeatureContainerVo(
     private val data: FeatureContainerData,
-    private val item: FeatureContainerItem?
+    private val item: FeatureContainerItem?,
+
+    private val parent: FeatureContainerVo?
 ) {
   val type: ItemType = when (item?.onlyOne) {
     null -> CONTAINER
@@ -18,13 +20,13 @@ class FeatureContainerVo(
   val name: String
     get() = when (type) {
       CONTAINER -> featureData?.display() ?: ""
-      ONE -> item!!.name + ": " + (featureData?.display() ?: " - ")
+      ONE -> item!!.name + ": " + (featureData?.display() ?: "")
       LIST -> item!!.name
     }
 
   val featureData: FeatureData?
     get() = when (type) {
-      CONTAINER -> data as FeatureData
+      CONTAINER -> data.takeIf { it is FeatureData }?.let { it as FeatureData }
       ONE -> data.features.filter { it.feature.featureType == featureType }.singleOrNull()
       LIST -> throw IllegalStateException()
     }
@@ -52,8 +54,17 @@ class FeatureContainerVo(
       LIST -> false
     }
 
-  fun delete(old: FeatureData) {
-    data.features.remove(old)
+  fun delete(): FeatureContainerVo? {
+    return parent?.also { parent ->
+      featureData?.also {
+        parent.data.features.remove(it)
+      }
+    } ?: run {
+      featureData?.also {
+        data.features.remove(it)
+      }
+      null
+    }
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -70,12 +81,12 @@ class FeatureContainerVo(
           .features
           .asSequence()
           .filter { it.feature.featureType == featureType }
-          .map { FeatureContainerVo(it, null) }
+          .map { FeatureContainerVo(it, null, this) }
           .toList()
       else -> featureData
           ?.feature
           ?.containFeatureTypes
-          ?.map { FeatureContainerVo(featureData!!, it) }
+          ?.map { FeatureContainerVo(featureData!!, it, this) }
           ?: emptyList()
     }
 

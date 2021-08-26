@@ -19,7 +19,7 @@ class PowerTreeDataProvider(
     else -> query.parent.children.stream()
   }
 
-  fun top() = meta.containFeatureTypes.map { FeatureContainerVo(containerData, it) }
+  fun top() = meta.containFeatureTypes.map { FeatureContainerVo(containerData, it, null) }
 
   override fun getChildCount(query: HierarchicalQuery<FeatureContainerVo, Unit>?) = when (query?.parent) {
     null -> meta.containFeatureTypes.size
