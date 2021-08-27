@@ -10,7 +10,7 @@ class FeatureContainerVo(
     private val data: FeatureContainerData,
     private val item: FeatureContainerItem?,
 
-    private val parent: FeatureContainerVo?
+    val parent: FeatureContainerVo?
 ) {
   val type: ItemType = when (item?.onlyOne) {
     null -> CONTAINER
@@ -67,17 +67,24 @@ class FeatureContainerVo(
       LIST -> false
     }
 
-  fun delete(): FeatureContainerVo? {
-    return parent?.also { parent ->
-      featureData?.also {
-        parent.data.features.remove(it)
+  fun delete(): FeatureContainerVo? = when (type) {
+    CONTAINER ->
+      parent?.also { parent ->
+        featureData?.also {
+          parent.data.features.remove(it)
+        }
+      } ?: run {
+        featureData?.also {
+          data.features.remove(it)
+        }
+        null
       }
-    } ?: run {
-      featureData?.also {
+    ONE ->
+      featureData?.let {
         data.features.remove(it)
+        null
       }
-      null
-    }
+    LIST -> throw IllegalStateException()
   }
 
   //--------------------------------------------------------------------------------------------------------------------

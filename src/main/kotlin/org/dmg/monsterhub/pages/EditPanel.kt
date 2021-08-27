@@ -3,6 +3,7 @@ package org.dmg.monsterhub.pages
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
+import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Label
@@ -551,7 +552,40 @@ class EditPanel(
           addValueChangeListener { setter(it.value.toIntOrNull()?.takeIf { it >= 0 } ?: 0) }
         })
       }
-      NumberOption.POSITIVE_AND_INFINITE -> TODO()
+      NumberOption.POSITIVE_AND_INFINITE -> add(
+          HorizontalLayout().apply {
+            val isInfinite = value == Int.MAX_VALUE
+
+            val field = TextField(label).apply {
+              this.value = if (isInfinite) "" else value.toString()
+              isEnabled = !isInfinite
+
+              addValueChangeListener {
+                setter(it.value.toIntOrNull()?.takeIf { it >= 0 } ?: 0)
+              }
+            }
+            val inifinite = Checkbox("Бесконечность").apply {
+              this.value = isInfinite
+
+              addValueChangeListener {
+                if (it.value) {
+                  field.value = ""
+                  field.isEnabled = false
+
+                  setter(Int.MAX_VALUE)
+                } else {
+                  field.value = "0"
+                  field.isEnabled = true
+
+                  setter(0)
+                }
+              }
+            }
+
+            add(field, inifinite)
+            setVerticalComponentAlignment(FlexComponent.Alignment.END, field, inifinite)
+          }
+      )
       NumberOption.FREE -> {
         add(TextField(label).apply {
           this.value = value.toString()
@@ -763,7 +797,9 @@ class EditPanel(
         addHierarchyColumn { it.name }.apply {
           isAutoWidth = true
         }
-        addColumn { it.rate }
+        addColumn { it.rate }.apply {
+          isAutoWidth = true
+        }
         addComponentColumn { item ->
 
           HorizontalLayout().apply {
@@ -788,6 +824,7 @@ class EditPanel(
                     }
                   }
                   dataProvider.refreshItem(item, true)
+                  item.parent?.let { dataProvider.refreshItem(it) }
 
                   addNew.value = null
                 }
@@ -802,6 +839,7 @@ class EditPanel(
                   update(obj) {
                     featureDataRepository.save(item.featureData!!)
                     dataProvider.refreshItem(item)
+                    item.parent?.let { dataProvider.refreshItem(it) }
                   }
                 }.open()
               }.apply {

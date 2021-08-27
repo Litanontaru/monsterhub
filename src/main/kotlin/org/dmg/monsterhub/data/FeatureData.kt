@@ -59,8 +59,13 @@ class FeatureData : FeatureContainerData {
       if (x == 0) {
         if (xa == 0) emptySequence() else sequenceOf("0/$xa")
       } else {
-        if (xa == 0) sequenceOf("$x") else sequenceOf("$x/$xa")
+        if (xa == 0) sequenceOf(f(x)) else sequenceOf("$x/$xa")
       }
+
+  private fun f(x: Int) = when (x) {
+    Int.MAX_VALUE -> "Бесконечность"
+    else -> x.toString()
+  }
 
   @Transient
   val context: (String) -> BigDecimal = {
