@@ -16,14 +16,7 @@ class CreatureService {
     val values = allTraits
         .map { data ->
           (data.feature as Trait)
-              .formulas {
-                when (it) {
-                  "X" -> (data.x + data.xa).toBigDecimal()
-                  "Y" -> (data.y + data.ya).toBigDecimal()
-                  "Z" -> (data.z + data.za).toBigDecimal()
-                  else -> throw IllegalArgumentException()
-                }
-              }
+              .formulas(data.context)
               .map { it.calculate().toInt() }
               .toList()
         }

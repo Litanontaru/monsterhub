@@ -1,7 +1,7 @@
 package org.dmg.monsterhub.data
 
 import org.dmg.monsterhub.data.meta.Feature
-import org.dmg.monsterhub.service.Formula
+import org.dmg.monsterhub.service.Formula.toFormula
 import java.math.BigDecimal
 import javax.persistence.Entity
 
@@ -32,7 +32,7 @@ class Trait : Feature() {
       moveAlt,
       common
   )
-      .map { Formula(it ?: "", context) }
+      .map { it.toFormula(context) }
 
   companion object {
     val TRAIT = "TRAIT"

@@ -87,15 +87,14 @@ class FCap(private val value: FNode, private val cap: FNode) : FNode {
 
 object Formula {
   private val PATTERN = "(\\d+(.\\d+)?)|X|Y|Z|-|\\+|\\*|/|\\(|\\)|\\|".toRegex()
-  private val ZERO = FConst(BigDecimal.ZERO)
 
   operator fun invoke(value: String, context: (String) -> BigDecimal): FNode {
     if (value.isBlank()) {
-      return ZERO
+      return FNone
     }
     val parts = PATTERN.findAll(value.toUpperCase()).toList()
     if (parts.isEmpty()) {
-      return ZERO
+      return FNone
     }
     var i = 0
 
@@ -140,11 +139,17 @@ object Formula {
     return parse()
   }
 
+  fun String?.toFormula(context: (String) -> BigDecimal) = this
+      ?.let { Formula(it, context) }
+      ?: FNone
+
+
   @JvmStatic
   fun main(args: Array<String>) {
     val x = BigDecimal("2.0")
 
     listOf(
+        null,
         "1",
         "1.0",
         "1 + X",
@@ -160,6 +165,6 @@ object Formula {
         "1 + x|1",
         "1 + (x|10)/10"
     )
-        .forEach { println(it + " = " + Formula(it) { x }.calculate()) }
+        .forEach { println(it + " = " + it.toFormula { x }.calculate()) }
   }
 }

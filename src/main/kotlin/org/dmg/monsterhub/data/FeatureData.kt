@@ -1,6 +1,8 @@
 package org.dmg.monsterhub.data
 
 import org.dmg.monsterhub.data.meta.Feature
+import org.dmg.monsterhub.service.Formula.toFormula
+import java.math.BigDecimal
 import javax.persistence.*
 
 @Entity
@@ -59,4 +61,17 @@ class FeatureData : FeatureContainerData {
       } else {
         if (xa == 0) sequenceOf("$x") else sequenceOf("$x/$xa")
       }
+
+  val context: (String) -> BigDecimal = {
+    when (it) {
+      "X" -> (x + xa).toBigDecimal()
+      "Y" -> (y + ya).toBigDecimal()
+      "Z" -> (z + za).toBigDecimal()
+      else -> throw IllegalArgumentException()
+    }
+  }
+
+  fun rate(): BigDecimal = features
+      .map { it.rate() }
+      .fold(feature.rate.toFormula(context).calculate()) { a, b -> a + b }
 }
