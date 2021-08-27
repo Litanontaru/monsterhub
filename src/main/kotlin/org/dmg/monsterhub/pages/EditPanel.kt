@@ -760,7 +760,10 @@ class EditPanel(
           }
         }
 
-        addHierarchyColumn { it.name }
+        addHierarchyColumn { it.name }.apply {
+          isAutoWidth = true
+        }
+        addColumn { it.rate }
         addComponentColumn { item ->
 
           HorizontalLayout().apply {

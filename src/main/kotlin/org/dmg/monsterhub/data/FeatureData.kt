@@ -62,6 +62,7 @@ class FeatureData : FeatureContainerData {
         if (xa == 0) sequenceOf("$x") else sequenceOf("$x/$xa")
       }
 
+  @Transient
   val context: (String) -> BigDecimal = {
     when (it) {
       "X" -> (x + xa).toBigDecimal()
