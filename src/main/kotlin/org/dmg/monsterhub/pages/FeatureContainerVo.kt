@@ -4,7 +4,7 @@ import org.dmg.monsterhub.data.FeatureContainerData
 import org.dmg.monsterhub.data.FeatureData
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.pages.ItemType.*
-import java.math.BigDecimal
+import org.dmg.monsterhub.service.Decimal
 
 class FeatureContainerVo(
     private val data: FeatureContainerData,
@@ -25,7 +25,7 @@ class FeatureContainerVo(
       LIST -> item!!.name
     }
 
-  val rate: BigDecimal?
+  val rate: Decimal?
     get() = when (type) {
       CONTAINER -> featureData?.rate()
       ONE -> featureData?.rate()
@@ -34,13 +34,13 @@ class FeatureContainerVo(
           .asSequence()
           .filter { it.feature.featureType == featureType }
           .map { it.rate() }
-          .fold(BigDecimal.ZERO) { a, b -> a + b }
+          .fold(Decimal.ZERO) { a, b -> a + b }
     }
 
   val featureData: FeatureData?
     get() = when (type) {
       CONTAINER -> data.takeIf { it is FeatureData }?.let { it as FeatureData }
-      ONE -> data.features.filter { it.feature.featureType == featureType }.singleOrNull()
+      ONE -> data.features.filter { it.feature.featureType == featureType }.take(1).singleOrNull()
       LIST -> throw IllegalStateException()
     }
 

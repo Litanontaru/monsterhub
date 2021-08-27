@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.data
 
 import org.dmg.monsterhub.data.meta.Feature
+import org.dmg.monsterhub.service.Decimal
 import org.dmg.monsterhub.service.Formula.toFormula
 import java.math.BigDecimal
 import javax.persistence.*
@@ -77,7 +78,7 @@ class FeatureData : FeatureContainerData {
     }
   }
 
-  fun rate(): BigDecimal = features
+  fun rate(): Decimal = features
       .map { it.rate() }
       .fold(feature.rate.toFormula(context).calculate()) { a, b -> a + b }
 }
