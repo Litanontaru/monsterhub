@@ -15,9 +15,17 @@ class CreatureService {
 
     val values = allTraits
         .map { data ->
-          (data.feature as Trait).rates().map { rate ->
-            rate.evaluate(data.x + data.xa, data.y + data.ya)
-          }.toList()
+          (data.feature as Trait)
+              .formulas {
+                when (it) {
+                  "X" -> (data.x + data.xa).toBigDecimal()
+                  "Y" -> (data.y + data.ya).toBigDecimal()
+                  "Z" -> (data.z + data.za).toBigDecimal()
+                  else -> throw IllegalArgumentException()
+                }
+              }
+              .map { it.calculate().toInt() }
+              .toList()
         }
         .toList()
 

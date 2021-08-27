@@ -1,7 +1,8 @@
 package org.dmg.monsterhub.data
 
 import org.dmg.monsterhub.data.meta.Feature
-import org.dmg.monsterhub.model.ValueRate
+import org.dmg.monsterhub.service.Formula
+import java.math.BigDecimal
 import javax.persistence.Entity
 
 @Entity
@@ -18,7 +19,7 @@ class Trait : Feature() {
   var moveAlt: String? = null
   var common: String? = null
 
-  fun rates() = sequenceOf(
+  fun formulas(context: (String) -> BigDecimal) = sequenceOf(
       offenceBase,
       offenceAlt,
       defenceBase,
@@ -31,7 +32,7 @@ class Trait : Feature() {
       moveAlt,
       common
   )
-      .map { ValueRate(it ?: "") }
+      .map { Formula(it ?: "", context) }
 
   companion object {
     val TRAIT = "TRAIT"
