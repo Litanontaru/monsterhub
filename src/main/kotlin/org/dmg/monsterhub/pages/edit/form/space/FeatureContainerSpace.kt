@@ -15,7 +15,7 @@ import org.dmg.monsterhub.data.meta.FeatureContainer
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.pages.edit.data.FeatureContainerItemDataProvider
 import org.dmg.monsterhub.pages.edit.form.FeatureContaiterItemEditDialog
-import org.dmg.monsterhub.pages.edit.form.ServiceLocator
+import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 
 fun HasComponents.featureContainerSpace(obj: FeatureContainer, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
   val dataProvider = FeatureContainerItemDataProvider(

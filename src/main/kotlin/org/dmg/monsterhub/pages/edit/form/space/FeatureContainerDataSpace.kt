@@ -19,7 +19,7 @@ import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.FeatureDataDataProvider
 import org.dmg.monsterhub.pages.edit.form.EditDialog
-import org.dmg.monsterhub.pages.edit.form.ServiceLocator
+import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 
 fun HasComponents.featureContainerDataSpace(obj: FeatureContainerData, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
   val meta = locator.featureContainerServiceLocator.containerMeta(obj)

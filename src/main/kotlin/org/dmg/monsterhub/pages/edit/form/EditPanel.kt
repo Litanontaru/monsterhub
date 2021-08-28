@@ -8,6 +8,7 @@ import org.dmg.monsterhub.data.*
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.meta.FeatureContainer
 import org.dmg.monsterhub.data.setting.SettingObject
+import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.space.*
 
 class EditPanel(

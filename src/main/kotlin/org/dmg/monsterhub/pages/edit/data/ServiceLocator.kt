@@ -1,4 +1,4 @@
-package org.dmg.monsterhub.pages.edit.form
+package org.dmg.monsterhub.pages.edit.data
 
 import org.dmg.monsterhub.pages.ObjectTreeDataProvider
 import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderForSetting
