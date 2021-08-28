@@ -93,7 +93,7 @@ class EditPanel(
   companion object {
     val SPACES = listOf(
         SettingObjectSpace,
-        PowerSpace,
+        PowerTreeSpace,
         FreeFeatureSpace,
         FeatureSpace,
         FeatureContainerSpace,
@@ -113,7 +113,7 @@ object SettingObjectSpace : Space {
   }
 }
 
-object PowerSpace : Space {
+object PowerTreeSpace : Space {
   override fun support(obj: Any): Boolean = obj is Power
 
   override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
