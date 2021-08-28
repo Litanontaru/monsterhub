@@ -1,5 +1,6 @@
 package org.dmg.monsterhub.pages.edit.form
 
+import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.orderedlayout.Scroller
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.tabs.Tab
@@ -68,41 +69,9 @@ class EditPanel(
   }
 
   private fun VerticalLayout.configSpace(obj: Any, update: (Any, () -> Unit) -> Unit) {
-    if (obj is SettingObject) {
-      settingObjectSpace(obj, update)
-    }
-
-    if (obj is Power) {
-      powerTreeSpace(obj, locator, update)
-    }
-
-    if (obj is FreeFeature) {
-      freeFeatureSpace(obj, update)
-    }
-
-    if (obj is Feature && obj !is Creature) {
-      featureSpace(obj, update)
-    }
-
-    if (obj is FeatureContainer && obj !is Creature) {
-      featureContainerSpace(obj, locator, update)
-    }
-
-    if (obj is Trait) {
-      traitSpace(obj, update)
-    }
-
-    if (obj is Creature) {
-      creatureSpace(obj, locator, update)
-    }
-
-    if (obj is FeatureData) {
-      featureDataSpace(obj, locator, update)
-    }
-
-    if (obj is FeatureContainerData && obj !is Power) {
-      featureContainerDataSpace(obj, locator, update)
-    }
+    SPACES.asSequence()
+        .filter { it.support(obj) }
+        .forEach { it.use(this, obj, locator, update) }
 
     height = "100%"
     width = "100%"
@@ -119,5 +88,102 @@ class EditPanel(
     if (onUpdate != null && obj == this.obj) {
       onUpdate!!()
     }
+  }
+
+  companion object {
+    val SPACES = listOf(
+        SettingObjectSpace,
+        PowerSpace,
+        FreeFeatureSpace,
+        FeatureSpace,
+        FeatureContainerSpace,
+        TraitSpace,
+        CreatureSpace,
+        FeatureDataSpace,
+        FeatureContainerDataSpace
+    )
+  }
+}
+
+interface Space {
+  fun support(obj: Any): Boolean
+
+  fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit)
+}
+
+object SettingObjectSpace : Space {
+  override fun support(obj: Any) = obj is SettingObject
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.settingObjectSpace(obj as SettingObject, update)
+  }
+}
+
+object PowerSpace : Space {
+  override fun support(obj: Any): Boolean = obj is Power
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.powerTreeSpace(obj as FeatureContainerData, locator, update)
+  }
+
+}
+
+object FreeFeatureSpace : Space {
+  override fun support(obj: Any) = obj is FreeFeature
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.freeFeatureSpace(obj as FreeFeature, update)
+  }
+
+}
+
+object FeatureSpace : Space {
+  override fun support(obj: Any) = obj is Feature && obj !is Creature
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.featureSpace(obj as Feature, update)
+  }
+
+}
+
+object FeatureContainerSpace : Space {
+  override fun support(obj: Any) = obj is FeatureContainer && obj !is Creature
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.featureContainerSpace(obj as FeatureContainer, locator, update)
+  }
+}
+
+object TraitSpace : Space {
+  override fun support(obj: Any) = obj is Trait
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.traitSpace(obj as Trait, update)
+  }
+
+}
+
+object CreatureSpace : Space {
+  override fun support(obj: Any) = obj is Creature
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.creatureSpace(obj as Creature, locator, update)
+  }
+
+}
+
+object FeatureDataSpace: Space {
+  override fun support(obj: Any) = obj is FeatureData
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.featureDataSpace(obj as FeatureData, locator, update)
+  }
+}
+
+object FeatureContainerDataSpace: Space {
+  override fun support(obj: Any) = obj is FeatureContainerData && obj !is Power
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.featureContainerDataSpace(obj as FeatureContainerData, locator, update)
   }
 }
