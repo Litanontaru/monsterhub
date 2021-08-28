@@ -22,49 +22,47 @@ object FeatureDataSpace: Space {
   override fun support(obj: Any) = obj is FeatureData
 
   override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-    featureDataSpace(parent, anyObj as FeatureData, locator, update)
-  }
-}
+    val obj = anyObj as FeatureData
 
-fun featureDataSpace(parent: HasComponents, obj: FeatureData, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-  parent.add(HorizontalLayout().apply {
-    val label = Label(obj.feature.name)
-    val editButton = Button(Icon(VaadinIcon.EDIT)) {
-      EditDialog(obj.feature, locator).open()
-    }.apply {
-      addThemeVariants(ButtonVariant.LUMO_SMALL)
-    }
-    add(label, editButton)
-    setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, editButton)
-  })
+    parent.add(HorizontalLayout().apply {
+      val label = Label(obj.feature.name)
+      val editButton = Button(Icon(VaadinIcon.EDIT)) {
+        EditDialog(obj.feature, locator).open()
+      }.apply {
+        addThemeVariants(ButtonVariant.LUMO_SMALL)
+      }
+      add(label, editButton)
+      setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, editButton)
+    })
 
-  parent.add(TextArea().apply {
-    value = obj.feature.description
-    isReadOnly = true
+    parent.add(TextArea().apply {
+      value = obj.feature.description
+      isReadOnly = true
 
-    width = "100%"
-  })
+      width = "100%"
+    })
 
-  parent.addNumber("X", obj.x, obj.xa, { update(obj) { obj.x = it } }, { update(obj) { obj.xa = it } }, obj.feature.x)
-  parent.addNumber("Y", obj.y, obj.ya, { update(obj) { obj.y = it } }, { update(obj) { obj.ya = it } }, obj.feature.y)
-  parent.addNumber("Z", obj.z, obj.za, { update(obj) { obj.z = it } }, { update(obj) { obj.za = it } }, obj.feature.z)
+    parent.addNumber("X", obj.x, obj.xa, { update(obj) { obj.x = it } }, { update(obj) { obj.xa = it } }, obj.feature.x)
+    parent.addNumber("Y", obj.y, obj.ya, { update(obj) { obj.y = it } }, { update(obj) { obj.ya = it } }, obj.feature.y)
+    parent.addNumber("Z", obj.z, obj.za, { update(obj) { obj.z = it } }, { update(obj) { obj.za = it } }, obj.feature.z)
 
-  obj.feature.designations.forEach { key ->
-    if (key.endsWith("*")) {
-      val oneKey = key.substring(0, key.length - 1)
-      parent.add(TextArea(oneKey).apply {
-        this.value = obj.designations.find { it.designationKey == oneKey }?.value ?: ""
-        addValueChangeListener { assignDesignation(obj, oneKey, it.value, locator, update) }
+    obj.feature.designations.forEach { key ->
+      if (key.endsWith("*")) {
+        val oneKey = key.substring(0, key.length - 1)
+        parent.add(TextArea(oneKey).apply {
+          this.value = obj.designations.find { it.designationKey == oneKey }?.value ?: ""
+          addValueChangeListener { assignDesignation(obj, oneKey, it.value, locator, update) }
 
-        width = "100%"
-      })
-    } else {
-      parent.add(TextField(key).apply {
-        this.value = obj.designations.find { it.designationKey == key }?.value ?: ""
-        addValueChangeListener { assignDesignation(obj, key, it.value, locator, update) }
+          width = "100%"
+        })
+      } else {
+        parent.add(TextField(key).apply {
+          this.value = obj.designations.find { it.designationKey == key }?.value ?: ""
+          addValueChangeListener { assignDesignation(obj, key, it.value, locator, update) }
 
-        width = "100%"
-      })
+          width = "100%"
+        })
+      }
     }
   }
 }

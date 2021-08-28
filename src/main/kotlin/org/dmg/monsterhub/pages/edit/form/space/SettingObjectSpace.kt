@@ -10,26 +10,24 @@ object SettingObjectSpace : Space {
   override fun support(obj: Any) = obj is SettingObject
 
   override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-    settingObjectSpace(parent, anyObj as SettingObject, update)
-  }
-}
+    val obj = anyObj as SettingObject
 
-fun settingObjectSpace(parent: HasComponents, obj: SettingObject, update: (Any, () -> Unit) -> Unit) {
-  parent.add(HorizontalLayout().apply {
-    add(TextField("Название").apply {
-      value = obj.name
-      addValueChangeListener {
-        update(obj) { obj.name = it.value }
-      }
+    parent.add(HorizontalLayout().apply {
+      add(TextField("Название").apply {
+        value = obj.name
+        addValueChangeListener {
+          update(obj) { obj.name = it.value }
+        }
+        width = "100%"
+      })
+
+      add(TextField("Показатель").apply {
+        value = obj.rate().toString()
+        width = "5em"
+        isReadOnly = true
+      })
+
       width = "100%"
     })
-
-    add(TextField("Показатель").apply {
-      value = obj.rate().toString()
-      width = "5em"
-      isReadOnly = true
-    })
-
-    width = "100%"
-  })
+  }
 }

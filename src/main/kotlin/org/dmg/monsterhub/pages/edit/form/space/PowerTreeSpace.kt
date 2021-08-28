@@ -25,106 +25,104 @@ object PowerTreeSpace : Space {
   override fun support(obj: Any): Boolean = obj is Power
 
   override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-    powerTreeSpace(parent, anyObj as FeatureContainerData, locator, update)
-  }
-}
+    val obj = anyObj as FeatureContainerData
 
-fun powerTreeSpace(parent: HasComponents, obj: FeatureContainerData, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-  val meta = locator.featureContainerServiceLocator.containerMeta(obj)
-  if (meta != null) {
-    val dataProvider = PowerTreeDataProvider(obj, meta)
-    parent.add(TreeGrid<FeatureContainerVo>().apply {
-      var selectedItem: FeatureContainerVo? = null
-      addSelectionListener {
-        val oldSelected = selectedItem
-        selectedItem = it.firstSelectedItem.orElse(null)
-        if (oldSelected != null) {
-          dataProvider.refreshItem(oldSelected)
+    val meta = locator.featureContainerServiceLocator.containerMeta(obj)
+    if (meta != null) {
+      val dataProvider = PowerTreeDataProvider(obj, meta)
+      parent.add(TreeGrid<FeatureContainerVo>().apply {
+        var selectedItem: FeatureContainerVo? = null
+        addSelectionListener {
+          val oldSelected = selectedItem
+          selectedItem = it.firstSelectedItem.orElse(null)
+          if (oldSelected != null) {
+            dataProvider.refreshItem(oldSelected)
+          }
+          if (selectedItem != null) {
+            dataProvider.refreshItem(selectedItem)
+          }
         }
-        if (selectedItem != null) {
-          dataProvider.refreshItem(selectedItem)
+
+        addHierarchyColumn { it.name }.apply {
+          isAutoWidth = true
         }
-      }
+        addColumn { it.rate }.apply {
+          isAutoWidth = true
+        }
+        addComponentColumn { item ->
 
-      addHierarchyColumn { it.name }.apply {
-        isAutoWidth = true
-      }
-      addColumn { it.rate }.apply {
-        isAutoWidth = true
-      }
-      addComponentColumn { item ->
+          HorizontalLayout().apply {
+            isVisible = item == selectedItem
 
-        HorizontalLayout().apply {
-          isVisible = item == selectedItem
+            val components = mutableListOf<Component>()
 
-          val components = mutableListOf<Component>()
+            if (item.canAdd) {
+              val addNew = ComboBox<SettingObject>().apply {
+                setItems(locator.fiderData(item.featureType) as DataProvider<SettingObject, String>)
+                setItemLabelGenerator { it.name }
+              }
 
-          if (item.canAdd) {
-            val addNew = ComboBox<SettingObject>().apply {
-              setItems(locator.fiderData(item.featureType) as DataProvider<SettingObject, String>)
-              setItemLabelGenerator { it.name }
+              components.add(addNew)
+              components.add(Button(Icon(VaadinIcon.PLUS)) {
+                addNew.optionalValue.ifPresent {
+                  update(obj) {
+                    update(item) {
+                      val new = FeatureData().apply { feature = it as Feature }
+                      locator.featureDataRepository.save(new)
+                      item.add(new)
+                    }
+                  }
+                  dataProvider.refreshItem(item, true)
+                  item.parent?.let { dataProvider.refreshItem(it) }
+
+                  addNew.value = null
+                }
+              }.apply {
+                addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
+              })
             }
+            if (item.canEdit) {
 
-            components.add(addNew)
-            components.add(Button(Icon(VaadinIcon.PLUS)) {
-              addNew.optionalValue.ifPresent {
+              components.add(Button(Icon(VaadinIcon.EDIT)) {
+                EditDialog(item.featureData!!, locator) {
+                  update(obj) {
+                    locator.featureDataRepository.save(item.featureData!!)
+                    dataProvider.refreshItem(item)
+                    item.parent?.let { dataProvider.refreshItem(it) }
+                  }
+                }.open()
+              }.apply {
+                addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
+              })
+
+              components.add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
                 update(obj) {
-                  update(item) {
-                    val new = FeatureData().apply { feature = it as Feature }
-                    locator.featureDataRepository.save(new)
-                    item.add(new)
+                  item.delete()?.let {
+                    update(item) {}
+                    dataProvider.refreshItem(it, true)
+                  } ?: run {
+                    update(item) {}
+                    dataProvider.refreshAll()
                   }
                 }
-                dataProvider.refreshItem(item, true)
-                item.parent?.let { dataProvider.refreshItem(it) }
+              }.apply {
+                addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
+              })
+            }
 
-                addNew.value = null
-              }
-            }.apply {
-              addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
-            })
+            isPadding = false
+            isMargin = false
+
+            add(*components.toTypedArray())
+            setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, *components.toTypedArray())
           }
-          if (item.canEdit) {
-
-            components.add(Button(Icon(VaadinIcon.EDIT)) {
-              EditDialog(item.featureData!!, locator) {
-                update(obj) {
-                  locator.featureDataRepository.save(item.featureData!!)
-                  dataProvider.refreshItem(item)
-                  item.parent?.let { dataProvider.refreshItem(it) }
-                }
-              }.open()
-            }.apply {
-              addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
-            })
-
-            components.add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
-              update(obj) {
-                item.delete()?.let {
-                  update(item) {}
-                  dataProvider.refreshItem(it, true)
-                } ?: run {
-                  update(item) {}
-                  dataProvider.refreshAll()
-                }
-              }
-            }.apply {
-              addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
-            })
-          }
-
-          isPadding = false
-          isMargin = false
-
-          add(*components.toTypedArray())
-          setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, *components.toTypedArray())
         }
-      }
 
-      setDataProvider(dataProvider)
+        setDataProvider(dataProvider)
 
-      width = "100%"
-      isHeightByRows = true
-    })
+        width = "100%"
+        isHeightByRows = true
+      })
+    }
   }
 }

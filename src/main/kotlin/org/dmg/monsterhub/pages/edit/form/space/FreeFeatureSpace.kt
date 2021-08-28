@@ -12,29 +12,27 @@ object FreeFeatureSpace : Space {
   override fun support(obj: Any) = obj is FreeFeature
 
   override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-    freeFeatureSpace(parent, anyObj as FreeFeature, update)
-  }
-}
+    val obj = anyObj as FreeFeature
 
-fun freeFeatureSpace(parent: HasComponents, obj: FreeFeature, update: (Any, () -> Unit) -> Unit) {
-  parent.add(HorizontalLayout().apply {
-    add(ComboBox<String>("Тип").apply {
-      setItems(FreeFeatureDataProvider.MY_TYPES)
+    parent.add(HorizontalLayout().apply {
+      add(ComboBox<String>("Тип").apply {
+        setItems(FreeFeatureDataProvider.MY_TYPES)
 
-      value = obj.featureType
-      addValueChangeListener {
-        update(obj) { obj.featureType = it.value }
-      }
+        value = obj.featureType
+        addValueChangeListener {
+          update(obj) { obj.featureType = it.value }
+        }
+        width = "100%"
+      })
+
+      add(TextField("Показатель").apply {
+        value = obj.rate ?: ""
+        addValueChangeListener {
+          update(obj) { obj.rate = it.value.takeIf { it.isNotBlank() } }
+        }
+      })
+
       width = "100%"
     })
-
-    add(TextField("Показатель").apply {
-      value = obj.rate ?: ""
-      addValueChangeListener {
-        update(obj) { obj.rate = it.value.takeIf { it.isNotBlank() } }
-      }
-    })
-
-    width = "100%"
-  })
+  }
 }
