@@ -4,19 +4,20 @@ import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.textfield.TextField
 import org.dmg.monsterhub.data.FreeFeature
 import org.dmg.monsterhub.data.PowerEffect
-import org.dmg.monsterhub.data.setting.SettingObject
+import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 
-object RateSpace: Space {
-  override fun support(obj: Any) = obj is SettingObject && !(obj is FreeFeature || obj is PowerEffect)
+object EditableRateSpace : Space {
+  override fun support(obj: Any) = obj is FreeFeature || obj is PowerEffect
 
   override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
-    val obj = anyObj as SettingObject
+    val obj = anyObj as Feature
 
     return listOf(TextField("Показатель").apply {
-      value = obj.rate().toString()
-      width = "5em"
-      isReadOnly = true
+      value = obj.rate ?: ""
+      addValueChangeListener {
+        update(obj) { obj.rate = it.value.takeIf { it.isNotBlank() } }
+      }
     })
   }
 }

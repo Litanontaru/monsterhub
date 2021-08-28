@@ -12,12 +12,12 @@ object SettingObjectSpace : Space {
   override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
     val obj = anyObj as SettingObject
 
-    return listOf((TextField("Название").apply {
+    return listOf(TextField("Название").apply {
       value = obj.name
       addValueChangeListener {
         update(obj) { obj.name = it.value }
       }
       width = "100%"
-    }))
+    })
   }
 }
