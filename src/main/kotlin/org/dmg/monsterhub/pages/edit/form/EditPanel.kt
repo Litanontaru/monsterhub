@@ -105,12 +105,6 @@ class EditPanel(
   }
 }
 
-interface Space {
-  fun support(obj: Any): Boolean
-
-  fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit)
-}
-
 object SettingObjectSpace : Space {
   override fun support(obj: Any) = obj is SettingObject
 
@@ -125,7 +119,6 @@ object PowerSpace : Space {
   override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
     parent.powerTreeSpace(obj as FeatureContainerData, locator, update)
   }
-
 }
 
 object FreeFeatureSpace : Space {
