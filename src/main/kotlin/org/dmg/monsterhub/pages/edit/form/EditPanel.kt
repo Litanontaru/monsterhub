@@ -25,22 +25,12 @@ import org.dmg.monsterhub.data.meta.FeatureContainer
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.data.meta.NumberOption
 import org.dmg.monsterhub.data.setting.SettingObject
-import org.dmg.monsterhub.pages.ObjectTreeDataProvider
 import org.dmg.monsterhub.pages.edit.data.*
-import org.dmg.monsterhub.repository.FeatureContainerItemRepository
-import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
-import org.dmg.monsterhub.service.FeatureContainerServiceLocator
-import org.dmg.monsterhub.service.FeatureDataRepository
 import org.dmg.monsterhub.service.FreeFeatureDataProvider
 
 class EditPanel(
     private val obj: Any,
-    private val data: ObjectTreeDataProvider,
-    private val fiderData: ObjectFinderDataProviderForSetting,
-    private val featureDataRepository: FeatureDataRepository,
-    private val featureContainerItemRepository: FeatureContainerItemRepository,
-    private val featureDataDesignationRepository: FeatureDataDesignationRepository,
-    private val featureContainerServiceLocator: FeatureContainerServiceLocator,
+    private val locator: ServiceLocator,
     var showStats: Boolean,
     private val onUpdate: (() -> Unit)? = null
 ) : VerticalLayout() {
@@ -260,7 +250,7 @@ class EditPanel(
       val addButton = Button(Icon(VaadinIcon.PLUS)) {
         addNew.optionalValue.ifPresent {
           val newFeatureContainerItem = FeatureContainerItem().apply { featureType = addNew.value }
-          featureContainerItemRepository.save(newFeatureContainerItem)
+          locator.featureContainerItemRepository.save(newFeatureContainerItem)
           dataProvider.add(newFeatureContainerItem)
           addNew.value = ""
         }
@@ -275,7 +265,7 @@ class EditPanel(
     val grid = Grid<FeatureContainerItem>().apply {
       fun edit(containerItem: FeatureContainerItem) {
         FeatureContaiterItemEditDialog(containerItem) {
-          featureContainerItemRepository.save(it)
+          locator.featureContainerItemRepository.save(it)
           dataProvider.refreshItem(it)
         }.open()
       }
@@ -447,7 +437,7 @@ class EditPanel(
       val label = Label("Основа")
 
       val addNew = ComboBox<SettingObject>().apply {
-        setItems(fiderData("CREATURE") as DataProvider<SettingObject, String>)
+        setItems(locator.fiderData("CREATURE") as DataProvider<SettingObject, String>)
         setItemLabelGenerator { it.name }
       }
 
@@ -490,7 +480,7 @@ class EditPanel(
     add(HorizontalLayout().apply {
       val label = Label(obj.feature.name)
       val editButton = Button(Icon(VaadinIcon.EDIT)) {
-        EditDialog(obj.feature, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator).open()
+        EditDialog(obj.feature, locator).open()
       }.apply {
         addThemeVariants(ButtonVariant.LUMO_SMALL)
       }
@@ -534,7 +524,7 @@ class EditPanel(
         .find { it.designationKey == key }
         ?.run { update { this.value = newValue } }
         ?: update {
-          val featureDataDesignation = featureDataDesignationRepository.save(
+          val featureDataDesignation = locator.featureDataDesignationRepository.save(
               FeatureDataDesignation().apply {
                 this.designationKey = key
                 this.value = newValue
@@ -644,7 +634,7 @@ class EditPanel(
   }
 
   private fun VerticalLayout.featureContainerDataSpace(obj: FeatureContainerData) {
-    val meta = featureContainerServiceLocator.containerMeta(obj)
+    val meta = locator.featureContainerServiceLocator.containerMeta(obj)
     if (meta != null) {
       meta.containFeatureTypes.forEach { type ->
         if (type.onlyOne) {
@@ -667,14 +657,14 @@ class EditPanel(
                 val label = Label(type.name)
 
                 val addNew = ComboBox<SettingObject>().apply {
-                  setItems(fiderData(type.featureType) as DataProvider<SettingObject, String>)
+                  setItems(locator.fiderData(type.featureType) as DataProvider<SettingObject, String>)
                   setItemLabelGenerator { it.name }
                 }
 
                 val addButton = Button(Icon(VaadinIcon.PLUS)) {
                   addNew.optionalValue.ifPresent {
                     val newFeatureData = FeatureData().apply { feature = it as Feature }
-                    featureDataRepository.save(newFeatureData)
+                    locator.featureDataRepository.save(newFeatureData)
                     obj.features.add(newFeatureData)
                     update {}
 
@@ -692,8 +682,8 @@ class EditPanel(
                 val label = Label(type.name + ": " + existing.display())
 
                 val editButton = Button(Icon(VaadinIcon.EDIT)) {
-                  EditDialog(existing, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator) {
-                    featureDataRepository.save(existing)
+                  EditDialog(existing, locator) {
+                    locator.featureDataRepository.save(existing)
                     label.text = existing.display()
                   }.open()
                 }.apply {
@@ -701,7 +691,7 @@ class EditPanel(
                 }
                 val closeButton = Button(Icon(VaadinIcon.CLOSE_SMALL)) {
                   update { obj.features.remove(existing) }
-                  featureDataRepository.delete(existing)
+                  locator.featureDataRepository.delete(existing)
 
                   updateOneFeaturePanel()
                 }.apply {
@@ -727,14 +717,14 @@ class EditPanel(
             val label = Label(type.name)
 
             val addNew = ComboBox<SettingObject>().apply {
-              setItems(fiderData(type.featureType) as DataProvider<SettingObject, String>)
+              setItems(locator.fiderData(type.featureType) as DataProvider<SettingObject, String>)
               setItemLabelGenerator { it.name }
             }
 
             val addButton = Button(Icon(VaadinIcon.PLUS)) {
               addNew.optionalValue.ifPresent {
                 val newFeatureData = FeatureData().apply { feature = it as Feature }
-                featureDataRepository.save(newFeatureData)
+                locator.featureDataRepository.save(newFeatureData)
                 dataProvider.add(newFeatureData)
                 addNew.value = null
               }
@@ -748,7 +738,7 @@ class EditPanel(
 
           val grid = Grid<FeatureData>().apply {
             fun edit(item: FeatureData) {
-              EditDialog(item, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator) {
+              EditDialog(item, locator) {
                 dataProvider.update(item)
               }.open()
             }
@@ -788,7 +778,7 @@ class EditPanel(
   }
 
   private fun VerticalLayout.powerTreeSpace(obj: FeatureContainerData) {
-    val meta = featureContainerServiceLocator.containerMeta(obj)
+    val meta = locator.featureContainerServiceLocator.containerMeta(obj)
     if (meta != null) {
       val dataProvider = PowerTreeDataProvider(obj, meta)
       add(TreeGrid<FeatureContainerVo>().apply {
@@ -819,7 +809,7 @@ class EditPanel(
 
             if (item.canAdd) {
               val addNew = ComboBox<SettingObject>().apply {
-                setItems(fiderData(item.featureType) as DataProvider<SettingObject, String>)
+                setItems(locator.fiderData(item.featureType) as DataProvider<SettingObject, String>)
                 setItemLabelGenerator { it.name }
               }
 
@@ -829,7 +819,7 @@ class EditPanel(
                   update(obj) {
                     update(item) {
                       val new = FeatureData().apply { feature = it as Feature }
-                      featureDataRepository.save(new)
+                      locator.featureDataRepository.save(new)
                       item.add(new)
                     }
                   }
@@ -845,9 +835,9 @@ class EditPanel(
             if (item.canEdit) {
 
               components.add(Button(Icon(VaadinIcon.EDIT)) {
-                EditDialog(item.featureData!!, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator) {
+                EditDialog(item.featureData!!, locator) {
                   update(obj) {
-                    featureDataRepository.save(item.featureData!!)
+                    locator.featureDataRepository.save(item.featureData!!)
                     dataProvider.refreshItem(item)
                     item.parent?.let { dataProvider.refreshItem(it) }
                   }
@@ -894,8 +884,8 @@ class EditPanel(
   private fun update(obj: Any, action: () -> Unit) {
     action()
     when (obj) {
-      is SettingObject -> data.update(obj)
-      is FeatureData -> featureDataRepository.save(obj)
+      is SettingObject -> locator.data.update(obj)
+      is FeatureData -> locator.featureDataRepository.save(obj)
     }
     if (onUpdate != null && obj == this.obj) {
       onUpdate!!()

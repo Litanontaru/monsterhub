@@ -14,24 +14,14 @@ import org.dmg.monsterhub.service.FeatureDataRepository
 
 class EditDialog(
     private val obj: Any,
-    private val data: ObjectTreeDataProvider,
-    private val fiderData: ObjectFinderDataProviderForSetting,
-    private val featureDataRepository: FeatureDataRepository,
-    private val featureContainerItemRepository: FeatureContainerItemRepository,
-    private val featureDataDesignationRepository: FeatureDataDesignationRepository,
-    private val featureContainerServiceLocator: FeatureContainerServiceLocator,
+    private val locator: ServiceLocator,
     private val onUpdate: (() -> Unit)? = null
 ): Dialog() {
   init {
     add(VerticalLayout().apply {
       add(EditPanel(
           obj,
-          data,
-          fiderData,
-          featureDataRepository,
-          featureContainerItemRepository,
-          featureDataDesignationRepository,
-          featureContainerServiceLocator,
+          locator,
           false,
           onUpdate
       ))

@@ -18,10 +18,11 @@ import com.vaadin.flow.router.Route
 import org.dmg.monsterhub.data.setting.Folder
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
-import org.dmg.monsterhub.pages.edit.form.ChangeDialog
-import org.dmg.monsterhub.pages.edit.form.EditPanel
 import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderForSetting
 import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderService
+import org.dmg.monsterhub.pages.edit.form.ChangeDialog
+import org.dmg.monsterhub.pages.edit.form.EditPanel
+import org.dmg.monsterhub.pages.edit.form.ServiceLocator
 import org.dmg.monsterhub.repository.FeatureContainerItemRepository
 import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
 import org.dmg.monsterhub.service.FeatureContainerServiceLocator
@@ -70,12 +71,14 @@ class SettingView(
         }
         edit = EditPanel(
             item,
-            data,
-            fiderData,
-            featureDataRepository,
-            featureContainerItemRepository,
-            featureDataDesignationRepository,
-            featureContainerServiceLocator,
+            ServiceLocator(
+                data,
+                fiderData,
+                featureDataRepository,
+                featureContainerItemRepository,
+                featureDataDesignationRepository,
+                featureContainerServiceLocator
+            ),
             showStats
         )
 
