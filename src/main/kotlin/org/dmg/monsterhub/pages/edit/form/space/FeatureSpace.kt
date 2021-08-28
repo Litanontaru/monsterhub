@@ -1,6 +1,6 @@
 package org.dmg.monsterhub.pages.edit.form.space
 
-import com.vaadin.flow.component.HasComponents
+import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.textfield.TextArea
@@ -13,7 +13,8 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object FeatureSpace : Space {
   override fun support(obj: Any) = obj is Feature && obj !is Creature
 
-  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+    val parent = mutableListOf<Component>()
     val obj = anyObj as Feature
 
     parent.add(TextArea("Описание").apply {
@@ -79,5 +80,7 @@ object FeatureSpace : Space {
       }
       width = "100%"
     })
+
+    return parent
   }
 }

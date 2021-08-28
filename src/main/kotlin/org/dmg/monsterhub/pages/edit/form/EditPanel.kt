@@ -1,5 +1,7 @@
 package org.dmg.monsterhub.pages.edit.form
 
+import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.Scroller
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.tabs.Tab
@@ -18,11 +20,10 @@ class EditPanel(
 ) : VerticalLayout() {
   init {
     if (obj is Creature) {
-      val configPage = Scroller(vertical(SPACES)).apply {
-        setSizeFull()
-        scrollDirection = Scroller.ScrollDirection.VERTICAL
+      val configPage = dashBoard(SPACES).apply {
         isVisible = !showStats
       }
+
       val statsPage = Scroller(CreatureStatsSpace(obj)).apply {
         setSizeFull()
         scrollDirection = Scroller.ScrollDirection.VERTICAL
@@ -49,9 +50,7 @@ class EditPanel(
         }
       })
     } else {
-      add(Scroller(vertical(SPACES)).apply {
-        setSizeFull()
-        scrollDirection = Scroller.ScrollDirection.VERTICAL
+      add(dashBoard(SPACES).apply {
         isVisible = !showStats
       })
     }
@@ -62,18 +61,43 @@ class EditPanel(
     isSpacing = false
   }
 
-  private fun vertical(spaces: List<Space>) =
-      VerticalLayout().also { vertical ->
-        spaces
-            .asSequence()
-            .filter { it.support(obj) }
-            .forEach { it.use(vertical, obj, locator, this::update) }
-
-        height = "100%"
-        width = "100%"
-        isPadding = false
-        isSpacing = false
+  private fun dashBoard(spaces: List<List<Space>>) = spaces
+      .map { toComponents(it) }
+      .filter { it.isNotEmpty() }
+      .map { horizontal(it.map { vertical(it) }) }
+      .let { vertical(it) }
+      .let {
+        Scroller(it).apply {
+          setSizeFull()
+          scrollDirection = Scroller.ScrollDirection.VERTICAL
+        }
       }
+
+  private fun toComponents(spaces: List<Space>) = spaces
+      .asSequence()
+      .filter { it.support(obj) }
+      .map { it.use(obj, locator, this::update) }
+      .toList()
+
+  private fun vertical(components: List<Component>): Component = when {
+    components.size == 1 -> components[0]
+    else -> VerticalLayout().apply {
+      add(*components.toTypedArray())
+
+      isPadding = false
+      isSpacing = false
+    }
+  }
+
+  private fun horizontal(components: List<Component>): Component = when {
+    components.size == 1 -> components[0]
+    else -> HorizontalLayout().apply {
+      add(*components.toTypedArray())
+
+      width = "100%"
+      isPadding = false
+    }
+  }
 
   private fun update(obj: Any, action: () -> Unit) {
     action()
@@ -88,15 +112,15 @@ class EditPanel(
 
   companion object {
     val SPACES = listOf(
-        SettingObjectSpace,
-        PowerTreeSpace,
-        FreeFeatureSpace,
-        FeatureSpace,
-        FeatureContainerSpace,
-        TraitSpace,
-        CreatureSpace,
-        FeatureDataSpace,
-        FeatureContainerDataSpace
+        listOf(SettingObjectSpace),
+        listOf(PowerTreeSpace),
+        listOf(FreeFeatureSpace),
+        listOf(FeatureSpace),
+        listOf(FeatureContainerSpace),
+        listOf(TraitSpace),
+        listOf(CreatureSpace),
+        listOf(FeatureDataSpace),
+        listOf(FeatureContainerDataSpace)
     )
   }
 }

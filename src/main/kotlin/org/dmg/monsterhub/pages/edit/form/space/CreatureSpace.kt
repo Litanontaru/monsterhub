@@ -1,6 +1,6 @@
 package org.dmg.monsterhub.pages.edit.form.space
 
-import com.vaadin.flow.component.HasComponents
+import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.combobox.ComboBox
@@ -19,7 +19,9 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object CreatureSpace : Space {
   override fun support(obj: Any) = obj is Creature
 
-  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+    val parent = mutableListOf<Component>()
+
     val dataProvider = CreatureHierarchyDataProvider(
         anyObj as Creature,
         { update(it) {} }
@@ -64,5 +66,7 @@ object CreatureSpace : Space {
       isHeightByRows = true
     }
     parent.add(grid)
+
+    return parent
   }
 }

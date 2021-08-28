@@ -1,6 +1,6 @@
 package org.dmg.monsterhub.pages.edit.form.space
 
-import com.vaadin.flow.component.HasComponents
+import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.checkbox.Checkbox
@@ -15,13 +15,14 @@ import com.vaadin.flow.component.textfield.TextField
 import org.dmg.monsterhub.data.FeatureData
 import org.dmg.monsterhub.data.FeatureDataDesignation
 import org.dmg.monsterhub.data.meta.NumberOption
-import org.dmg.monsterhub.pages.edit.form.EditDialog
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
+import org.dmg.monsterhub.pages.edit.form.EditDialog
 
-object FeatureDataSpace: Space {
+object FeatureDataSpace : Space {
   override fun support(obj: Any) = obj is FeatureData
 
-  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+    val parent = mutableListOf<Component>()
     val obj = anyObj as FeatureData
 
     parent.add(HorizontalLayout().apply {
@@ -42,9 +43,9 @@ object FeatureDataSpace: Space {
       width = "100%"
     })
 
-    parent.addNumber("X", obj.x, obj.xa, { update(obj) { obj.x = it } }, { update(obj) { obj.xa = it } }, obj.feature.x)
-    parent.addNumber("Y", obj.y, obj.ya, { update(obj) { obj.y = it } }, { update(obj) { obj.ya = it } }, obj.feature.y)
-    parent.addNumber("Z", obj.z, obj.za, { update(obj) { obj.z = it } }, { update(obj) { obj.za = it } }, obj.feature.z)
+    addNumber(parent, "X", obj.x, obj.xa, { update(obj) { obj.x = it } }, { update(obj) { obj.xa = it } }, obj.feature.x)
+    addNumber(parent, "Y", obj.y, obj.ya, { update(obj) { obj.y = it } }, { update(obj) { obj.ya = it } }, obj.feature.y)
+    addNumber(parent, "Z", obj.z, obj.za, { update(obj) { obj.z = it } }, { update(obj) { obj.za = it } }, obj.feature.z)
 
     obj.feature.designations.forEach { key ->
       if (key.endsWith("*")) {
@@ -64,6 +65,8 @@ object FeatureDataSpace: Space {
         })
       }
     }
+
+    return parent
   }
 }
 
@@ -82,7 +85,8 @@ private fun assignDesignation(obj: FeatureData, key: String, newValue: String, l
       }
 }
 
-private fun HasComponents.addNumber(
+private fun addNumber(
+    parent: MutableList<Component>,
     label: String,
     value: Int,
     valueA: Int,
@@ -95,12 +99,12 @@ private fun HasComponents.addNumber(
       //do nothing
     }
     NumberOption.POSITIVE -> {
-      add(TextField(label).apply {
+      parent.add(TextField(label).apply {
         this.value = value.toString()
         addValueChangeListener { setter(it.value.toIntOrNull()?.takeIf { it >= 0 } ?: 0) }
       })
     }
-    NumberOption.POSITIVE_AND_INFINITE -> add(
+    NumberOption.POSITIVE_AND_INFINITE -> parent.add(
         HorizontalLayout().apply {
           val isInfinite = value == Int.MAX_VALUE
 
@@ -135,12 +139,12 @@ private fun HasComponents.addNumber(
         }
     )
     NumberOption.FREE -> {
-      add(TextField(label).apply {
+      parent.add(TextField(label).apply {
         this.value = value.toString()
         addValueChangeListener { setter(it.value.toIntOrNull() ?: 0) }
       })
     }
-    NumberOption.DAMAGE -> add(
+    NumberOption.DAMAGE -> parent.add(
         HorizontalLayout().apply {
           val damage = TextField(label).apply {
             this.value = value.toString()
@@ -169,7 +173,7 @@ private fun HasComponents.addNumber(
           "Эпическую Часто"
       )
 
-      add(ComboBox<Int>().apply {
+      parent.add(ComboBox<Int>().apply {
         setItems((0..9).toList())
         setItemLabelGenerator { options[it] }
         this.value = value

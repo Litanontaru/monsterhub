@@ -1,6 +1,6 @@
 package org.dmg.monsterhub.pages.edit.form.space
 
-import com.vaadin.flow.component.HasComponents
+import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -11,7 +11,8 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object TraitSpace : Space {
   override fun support(obj: Any) = obj is Trait
 
-  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+    val parent = mutableListOf<Component>()
     val obj = anyObj as Trait
 
     parent.add(Label("Показатели черты"))
@@ -135,5 +136,7 @@ object TraitSpace : Space {
       width = "100%"
       isPadding = false
     })
+
+    return parent
   }
 }

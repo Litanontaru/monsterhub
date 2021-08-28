@@ -1,6 +1,6 @@
 package org.dmg.monsterhub.pages.edit.form.space
 
-import com.vaadin.flow.component.HasComponents
+import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
@@ -15,13 +15,15 @@ import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.data.meta.FeatureContainer
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.pages.edit.data.FeatureContainerItemDataProvider
-import org.dmg.monsterhub.pages.edit.form.FeatureContaiterItemEditDialog
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
+import org.dmg.monsterhub.pages.edit.form.FeatureContaiterItemEditDialog
 
 object FeatureContainerSpace : Space {
   override fun support(obj: Any) = obj is FeatureContainer && obj !is Creature
 
-  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+    val parent = mutableListOf<Component>()
+
     val dataProvider = FeatureContainerItemDataProvider(
         anyObj as FeatureContainer,
         { update(it) {} }
@@ -84,5 +86,7 @@ object FeatureContainerSpace : Space {
       isHeightByRows = true
     }
     parent.add(grid)
+
+    return parent
   }
 }

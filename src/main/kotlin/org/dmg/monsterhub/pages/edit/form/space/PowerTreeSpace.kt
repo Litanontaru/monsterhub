@@ -1,7 +1,6 @@
 package org.dmg.monsterhub.pages.edit.form.space
 
 import com.vaadin.flow.component.Component
-import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.combobox.ComboBox
@@ -18,13 +17,14 @@ import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.FeatureContainerVo
 import org.dmg.monsterhub.pages.edit.data.PowerTreeDataProvider
-import org.dmg.monsterhub.pages.edit.form.EditDialog
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
+import org.dmg.monsterhub.pages.edit.form.EditDialog
 
 object PowerTreeSpace : Space {
   override fun support(obj: Any): Boolean = obj is Power
 
-  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+    val parent = mutableListOf<Component>()
     val obj = anyObj as FeatureContainerData
 
     val meta = locator.featureContainerServiceLocator.containerMeta(obj)
@@ -124,5 +124,7 @@ object PowerTreeSpace : Space {
         isHeightByRows = true
       })
     }
+
+    return parent
   }
 }

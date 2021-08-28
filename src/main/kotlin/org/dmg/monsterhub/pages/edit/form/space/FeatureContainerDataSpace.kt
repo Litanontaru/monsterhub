@@ -22,10 +22,11 @@ import org.dmg.monsterhub.pages.edit.data.FeatureDataDataProvider
 import org.dmg.monsterhub.pages.edit.form.EditDialog
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 
-object FeatureContainerDataSpace: Space {
+object FeatureContainerDataSpace : Space {
   override fun support(obj: Any) = obj is FeatureContainerData && obj !is Power
 
-  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+    val parent = mutableListOf<Component>()
     val obj = anyObj as FeatureContainerData
 
     val meta = locator.featureContainerServiceLocator.containerMeta(obj)
@@ -169,5 +170,7 @@ object FeatureContainerDataSpace: Space {
         }
       }
     }
+
+    return parent
   }
 }

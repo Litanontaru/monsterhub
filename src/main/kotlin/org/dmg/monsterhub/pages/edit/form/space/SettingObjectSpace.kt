@@ -1,6 +1,6 @@
 package org.dmg.monsterhub.pages.edit.form.space
 
-import com.vaadin.flow.component.HasComponents
+import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.textfield.TextField
 import org.dmg.monsterhub.data.setting.SettingObject
@@ -9,7 +9,8 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object SettingObjectSpace : Space {
   override fun support(obj: Any) = obj is SettingObject
 
-  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+    val parent = mutableListOf<Component>()
     val obj = anyObj as SettingObject
 
     parent.add(HorizontalLayout().apply {
@@ -29,5 +30,7 @@ object SettingObjectSpace : Space {
 
       width = "100%"
     })
+
+    return parent
   }
 }

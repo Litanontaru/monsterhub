@@ -8,7 +8,7 @@ import org.dmg.monsterhub.service.CreatureService
 
 class CreatureStatsSpace(
     private val creature: Creature
-): VerticalLayout() {
+) : VerticalLayout() {
   init {
     add(Accordion().apply {
       val superiority = CreatureService.superiority(creature)
