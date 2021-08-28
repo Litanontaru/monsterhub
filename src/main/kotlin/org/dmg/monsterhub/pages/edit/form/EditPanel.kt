@@ -112,7 +112,7 @@ class EditPanel(
 
   companion object {
     val SPACES = listOf(
-        listOf(SettingObjectSpace, SkillLikeSpace),
+        listOf(SettingObjectSpace, SkillLikeSpace, RateSpace),
         listOf(PowerTreeSpace),
         listOf(FreeFeatureSpace),
         listOf(FeatureSpace),

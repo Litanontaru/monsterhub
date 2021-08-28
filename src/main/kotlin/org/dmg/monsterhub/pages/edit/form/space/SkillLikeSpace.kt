@@ -10,10 +10,9 @@ object SkillLikeSpace : Space {
   override fun support(obj: Any) = obj is SkillLike
 
   override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
-    val parent = mutableListOf<Component>()
     val obj = anyObj as SkillLike
 
-    parent.add(ComboBox<SkillType>("Тип навыка").apply {
+    return listOf(ComboBox<SkillType>("Тип навыка").apply {
       setItems(SkillType.values().toList())
       setItemLabelGenerator { it.display }
 
@@ -23,7 +22,5 @@ object SkillLikeSpace : Space {
         update(obj) { obj.skillType = it.value }
       }
     })
-
-    return parent
   }
 }
