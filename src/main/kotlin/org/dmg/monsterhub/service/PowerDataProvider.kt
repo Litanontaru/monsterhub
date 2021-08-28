@@ -17,8 +17,8 @@ import org.dmg.monsterhub.service.FreeFeatureDataProvider.Companion.EFFECT_DURAT
 import org.dmg.monsterhub.service.FreeFeatureDataProvider.Companion.EFFECT_TARGET_TYPE
 import org.dmg.monsterhub.service.FreeFeatureDataProvider.Companion.EFFECT_THREAT
 import org.dmg.monsterhub.service.FreeFeatureDataProvider.Companion.POWER_CONDITION
-import org.dmg.monsterhub.service.FreeFeatureDataProvider.Companion.POWER_EFFECT
 import org.dmg.monsterhub.service.FreeFeatureDataProvider.Companion.POWER_RESERVE
+import org.dmg.monsterhub.service.PowerEffectDataProvider.Companion.POWER_EFFECT
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 

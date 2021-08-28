@@ -39,8 +39,6 @@ class FreeFeatureDataProvider(
   override fun create(): SettingObject = FreeFeature().apply { featureType = "NONE" }
 
   companion object {
-    val POWER_EFFECT = "POWER_EFFECT"
-
     val EFFECT_DURATION = "EFFECT_DURATION"
     val EFFECT_DISTANCE = "EFFECT_DISTANCE"
     val AREA_OF_EFFECT = "AREA_OF_EFFECT"
@@ -63,8 +61,6 @@ class FreeFeatureDataProvider(
         "POISONING_WAY",
 
         "DISEASE",
-
-        POWER_EFFECT,
 
         EFFECT_DURATION,
         EFFECT_DISTANCE,
