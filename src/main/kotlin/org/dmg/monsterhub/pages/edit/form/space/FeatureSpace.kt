@@ -13,13 +13,13 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object FeatureSpace : Space {
   override fun support(obj: Any) = obj is Feature && obj !is Creature
 
-  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-    parent.featureSpace(obj as Feature, update)
+  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    featureSpace(parent, anyObj as Feature, update)
   }
 }
 
-fun HasComponents.featureSpace(obj: Feature, update: (Any, () -> Unit) -> Unit) {
-  add(TextArea("Описание").apply {
+fun featureSpace(parent: HasComponents, obj: Feature, update: (Any, () -> Unit) -> Unit) {
+  parent.add(TextArea("Описание").apply {
     value = obj.description
     addValueChangeListener {
       update(obj) { obj.description = it.value }
@@ -27,7 +27,7 @@ fun HasComponents.featureSpace(obj: Feature, update: (Any, () -> Unit) -> Unit) 
     width = "100%"
   })
 
-  add(HorizontalLayout().apply {
+  parent.add(HorizontalLayout().apply {
     add(ComboBox<String>("X").apply {
       setItems(NumberOption.display)
       value = obj.x.displayName
@@ -75,7 +75,7 @@ fun HasComponents.featureSpace(obj: Feature, update: (Any, () -> Unit) -> Unit) 
     isPadding = false
   })
 
-  add(TextArea("Указывать").apply {
+  parent.add(TextArea("Указывать").apply {
     value = obj.designations.joinToString("\n")
     addValueChangeListener {
       update(obj) { obj.designations = it.value.lines().filter { it.isNotBlank() } }

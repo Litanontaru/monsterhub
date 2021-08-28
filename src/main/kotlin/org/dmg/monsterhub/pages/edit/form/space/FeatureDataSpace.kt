@@ -21,13 +21,13 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object FeatureDataSpace: Space {
   override fun support(obj: Any) = obj is FeatureData
 
-  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-    parent.featureDataSpace(obj as FeatureData, locator, update)
+  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    featureDataSpace(parent, anyObj as FeatureData, locator, update)
   }
 }
 
-fun HasComponents.featureDataSpace(obj: FeatureData, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-  add(HorizontalLayout().apply {
+fun featureDataSpace(parent: HasComponents, obj: FeatureData, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+  parent.add(HorizontalLayout().apply {
     val label = Label(obj.feature.name)
     val editButton = Button(Icon(VaadinIcon.EDIT)) {
       EditDialog(obj.feature, locator).open()
@@ -38,28 +38,28 @@ fun HasComponents.featureDataSpace(obj: FeatureData, locator: ServiceLocator, up
     setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, editButton)
   })
 
-  add(TextArea().apply {
+  parent.add(TextArea().apply {
     value = obj.feature.description
     isReadOnly = true
 
     width = "100%"
   })
 
-  addNumber("X", obj.x, obj.xa, { update(obj) { obj.x = it } }, { update(obj) { obj.xa = it } }, obj.feature.x)
-  addNumber("Y", obj.y, obj.ya, { update(obj) { obj.y = it } }, { update(obj) { obj.ya = it } }, obj.feature.y)
-  addNumber("Z", obj.z, obj.za, { update(obj) { obj.z = it } }, { update(obj) { obj.za = it } }, obj.feature.z)
+  parent.addNumber("X", obj.x, obj.xa, { update(obj) { obj.x = it } }, { update(obj) { obj.xa = it } }, obj.feature.x)
+  parent.addNumber("Y", obj.y, obj.ya, { update(obj) { obj.y = it } }, { update(obj) { obj.ya = it } }, obj.feature.y)
+  parent.addNumber("Z", obj.z, obj.za, { update(obj) { obj.z = it } }, { update(obj) { obj.za = it } }, obj.feature.z)
 
   obj.feature.designations.forEach { key ->
     if (key.endsWith("*")) {
       val oneKey = key.substring(0, key.length - 1)
-      add(TextArea(oneKey).apply {
+      parent.add(TextArea(oneKey).apply {
         this.value = obj.designations.find { it.designationKey == oneKey }?.value ?: ""
         addValueChangeListener { assignDesignation(obj, oneKey, it.value, locator, update) }
 
         width = "100%"
       })
     } else {
-      add(TextField(key).apply {
+      parent.add(TextField(key).apply {
         this.value = obj.designations.find { it.designationKey == key }?.value ?: ""
         addValueChangeListener { assignDesignation(obj, key, it.value, locator, update) }
 

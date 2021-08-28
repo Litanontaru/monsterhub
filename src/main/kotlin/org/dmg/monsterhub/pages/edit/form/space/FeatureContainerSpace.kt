@@ -21,18 +21,18 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object FeatureContainerSpace : Space {
   override fun support(obj: Any) = obj is FeatureContainer && obj !is Creature
 
-  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-    parent.featureContainerSpace(obj as FeatureContainer, locator, update)
+  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    featureContainerSpace(parent, anyObj as FeatureContainer, locator, update)
   }
 }
 
-fun HasComponents.featureContainerSpace(obj: FeatureContainer, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+fun featureContainerSpace(parent: HasComponents, obj: FeatureContainer, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
   val dataProvider = FeatureContainerItemDataProvider(
       obj,
       { update(it) {} }
   )
 
-  add(HorizontalLayout().apply {
+  parent.add(HorizontalLayout().apply {
     val label = Label("Дополнительные свойства")
 
     val addNew = TextField()
@@ -90,5 +90,5 @@ fun HasComponents.featureContainerSpace(obj: FeatureContainer, locator: ServiceL
     isHeightByRows = true
   }
 
-  add(grid)
+  parent.add(grid)
 }

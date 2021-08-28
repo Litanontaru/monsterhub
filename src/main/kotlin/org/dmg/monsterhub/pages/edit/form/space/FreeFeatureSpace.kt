@@ -11,13 +11,13 @@ import org.dmg.monsterhub.service.FreeFeatureDataProvider
 object FreeFeatureSpace : Space {
   override fun support(obj: Any) = obj is FreeFeature
 
-  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-    parent.freeFeatureSpace(obj as FreeFeature, update)
+  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    freeFeatureSpace(parent, anyObj as FreeFeature, update)
   }
 }
 
-fun HasComponents.freeFeatureSpace(obj: FreeFeature, update: (Any, () -> Unit) -> Unit) {
-  add(HorizontalLayout().apply {
+fun freeFeatureSpace(parent: HasComponents, obj: FreeFeature, update: (Any, () -> Unit) -> Unit) {
+  parent.add(HorizontalLayout().apply {
     add(ComboBox<String>("Тип").apply {
       setItems(FreeFeatureDataProvider.MY_TYPES)
 

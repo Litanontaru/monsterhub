@@ -11,15 +11,15 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object TraitSpace : Space {
   override fun support(obj: Any) = obj is Trait
 
-  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-    parent.traitSpace(obj as Trait, update)
+  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    traitSpace(parent, anyObj as Trait, update)
   }
 }
 
-fun HasComponents.traitSpace(obj: Trait, update: (Any, () -> Unit) -> Unit) {
-  add(Label("Показатели черты"))
+fun traitSpace(parent: HasComponents, obj: Trait, update: (Any, () -> Unit) -> Unit) {
+  parent.add(Label("Показатели черты"))
 
-  add(HorizontalLayout().apply {
+  parent.add(HorizontalLayout().apply {
     val offence = VerticalLayout().apply {
       add(TextField("Напападение").apply {
         value = obj.offenceBase ?: ""

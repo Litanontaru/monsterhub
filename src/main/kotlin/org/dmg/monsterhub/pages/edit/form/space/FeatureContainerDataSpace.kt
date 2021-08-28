@@ -25,150 +25,148 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object FeatureContainerDataSpace: Space {
   override fun support(obj: Any) = obj is FeatureContainerData && obj !is Power
 
-  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-    parent.featureContainerDataSpace(obj as FeatureContainerData, locator, update)
-  }
-}
+  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    val obj = anyObj as FeatureContainerData
 
-fun HasComponents.featureContainerDataSpace(obj: FeatureContainerData, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-  val meta = locator.featureContainerServiceLocator.containerMeta(obj)
-  if (meta != null) {
-    meta.containFeatureTypes.forEach { type ->
-      if (type.onlyOne) {
-        val place = VerticalLayout().apply {
-          width = "100%"
-          isPadding = false
-          isSpacing = false
-        }
-        add(place)
-
-        var featurePanel: Component? = null
-        fun updateOneFeaturePanel() {
-          if (featurePanel != null) {
-            place.remove(featurePanel)
+    val meta = locator.featureContainerServiceLocator.containerMeta(obj)
+    if (meta != null) {
+      meta.containFeatureTypes.forEach { type ->
+        if (type.onlyOne) {
+          val place = VerticalLayout().apply {
+            width = "100%"
+            isPadding = false
+            isSpacing = false
           }
+          parent.add(place)
 
-          val existing = obj.features.find { it.feature.featureType == type.featureType }
-          featurePanel = if (existing == null) {
-            HorizontalLayout().apply {
-              val label = Label(type.name)
+          var featurePanel: Component? = null
+          fun updateOneFeaturePanel() {
+            if (featurePanel != null) {
+              place.remove(featurePanel)
+            }
 
-              val addNew = ComboBox<SettingObject>().apply {
-                setItems(locator.fiderData(type.featureType) as DataProvider<SettingObject, String>)
-                setItemLabelGenerator { it.name }
+            val existing = obj.features.find { it.feature.featureType == type.featureType }
+            featurePanel = if (existing == null) {
+              HorizontalLayout().apply {
+                val label = Label(type.name)
+
+                val addNew = ComboBox<SettingObject>().apply {
+                  setItems(locator.fiderData(type.featureType) as DataProvider<SettingObject, String>)
+                  setItemLabelGenerator { it.name }
+                }
+
+                val addButton = Button(Icon(VaadinIcon.PLUS)) {
+                  addNew.optionalValue.ifPresent {
+                    val newFeatureData = FeatureData().apply { feature = it as Feature }
+                    locator.featureDataRepository.save(newFeatureData)
+                    obj.features.add(newFeatureData)
+                    update(obj) {}
+
+                    updateOneFeaturePanel()
+                  }
+                }.apply {
+                  addThemeVariants(ButtonVariant.LUMO_SMALL)
+                }
+
+                add(label, addNew, addButton)
+                setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, addNew, addButton)
               }
+            } else {
+              HorizontalLayout().apply {
+                val label = Label(type.name + ": " + existing.display())
 
-              val addButton = Button(Icon(VaadinIcon.PLUS)) {
-                addNew.optionalValue.ifPresent {
-                  val newFeatureData = FeatureData().apply { feature = it as Feature }
-                  locator.featureDataRepository.save(newFeatureData)
-                  obj.features.add(newFeatureData)
-                  update(obj) {}
+                val editButton = Button(Icon(VaadinIcon.EDIT)) {
+                  EditDialog(existing, locator) {
+                    locator.featureDataRepository.save(existing)
+                    label.text = existing.display()
+                  }.open()
+                }.apply {
+                  addThemeVariants(ButtonVariant.LUMO_SMALL)
+                }
+                val closeButton = Button(Icon(VaadinIcon.CLOSE_SMALL)) {
+                  update(obj) { obj.features.remove(existing) }
+                  locator.featureDataRepository.delete(existing)
 
                   updateOneFeaturePanel()
+                }.apply {
+                  addThemeVariants(ButtonVariant.LUMO_SMALL)
                 }
-              }.apply {
-                addThemeVariants(ButtonVariant.LUMO_SMALL)
-              }
 
-              add(label, addNew, addButton)
-              setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, addNew, addButton)
+                add(label, editButton, closeButton)
+                setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, editButton, closeButton)
+              }
             }
-          } else {
-            HorizontalLayout().apply {
-              val label = Label(type.name + ": " + existing.display())
-
-              val editButton = Button(Icon(VaadinIcon.EDIT)) {
-                EditDialog(existing, locator) {
-                  locator.featureDataRepository.save(existing)
-                  label.text = existing.display()
-                }.open()
-              }.apply {
-                addThemeVariants(ButtonVariant.LUMO_SMALL)
-              }
-              val closeButton = Button(Icon(VaadinIcon.CLOSE_SMALL)) {
-                update(obj) { obj.features.remove(existing) }
-                locator.featureDataRepository.delete(existing)
-
-                updateOneFeaturePanel()
-              }.apply {
-                addThemeVariants(ButtonVariant.LUMO_SMALL)
-              }
-
-              add(label, editButton, closeButton)
-              setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, editButton, closeButton)
-            }
+            place.add(featurePanel)
           }
-          place.add(featurePanel)
+
+          updateOneFeaturePanel()
+        } else {
+          val dataProvider = FeatureDataDataProvider(
+              type.featureType,
+              obj,
+              { update(it) {} }
+          )
+
+          parent.add(HorizontalLayout().apply {
+            val label = Label(type.name)
+
+            val addNew = ComboBox<SettingObject>().apply {
+              setItems(locator.fiderData(type.featureType) as DataProvider<SettingObject, String>)
+              setItemLabelGenerator { it.name }
+            }
+
+            val addButton = Button(Icon(VaadinIcon.PLUS)) {
+              addNew.optionalValue.ifPresent {
+                val newFeatureData = FeatureData().apply { feature = it as Feature }
+                locator.featureDataRepository.save(newFeatureData)
+                dataProvider.add(newFeatureData)
+                addNew.value = null
+              }
+            }.apply {
+              addThemeVariants(ButtonVariant.LUMO_SMALL)
+            }
+
+            add(label, addNew, addButton)
+            setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, addNew, addButton)
+          })
+
+          val grid = Grid<FeatureData>().apply {
+            fun edit(item: FeatureData) {
+              EditDialog(item, locator) {
+                dataProvider.update(item)
+              }.open()
+            }
+
+            addItemDoubleClickListener { edit(it.item) }
+
+            addColumn { it.display() }.isAutoWidth = true
+
+            addComponentColumn { featureData ->
+              HorizontalLayout().apply {
+                add(Button(Icon(VaadinIcon.EDIT)) {
+                  edit(featureData)
+                }.apply {
+                  addThemeVariants(ButtonVariant.LUMO_SMALL)
+                })
+
+                add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
+                  dataProvider.delete(featureData)
+                }.apply {
+                  addThemeVariants(ButtonVariant.LUMO_SMALL)
+                })
+
+                isPadding = false
+              }
+            }
+
+            setItems(dataProvider as DataProvider<FeatureData, Void>)
+
+            width = "100%"
+            isHeightByRows = true
+          }
+
+          parent.add(grid)
         }
-
-        updateOneFeaturePanel()
-      } else {
-        val dataProvider = FeatureDataDataProvider(
-            type.featureType,
-            obj,
-            { update(it) {} }
-        )
-
-        add(HorizontalLayout().apply {
-          val label = Label(type.name)
-
-          val addNew = ComboBox<SettingObject>().apply {
-            setItems(locator.fiderData(type.featureType) as DataProvider<SettingObject, String>)
-            setItemLabelGenerator { it.name }
-          }
-
-          val addButton = Button(Icon(VaadinIcon.PLUS)) {
-            addNew.optionalValue.ifPresent {
-              val newFeatureData = FeatureData().apply { feature = it as Feature }
-              locator.featureDataRepository.save(newFeatureData)
-              dataProvider.add(newFeatureData)
-              addNew.value = null
-            }
-          }.apply {
-            addThemeVariants(ButtonVariant.LUMO_SMALL)
-          }
-
-          add(label, addNew, addButton)
-          setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, addNew, addButton)
-        })
-
-        val grid = Grid<FeatureData>().apply {
-          fun edit(item: FeatureData) {
-            EditDialog(item, locator) {
-              dataProvider.update(item)
-            }.open()
-          }
-
-          addItemDoubleClickListener { edit(it.item) }
-
-          addColumn { it.display() }.isAutoWidth = true
-
-          addComponentColumn { featureData ->
-            HorizontalLayout().apply {
-              add(Button(Icon(VaadinIcon.EDIT)) {
-                edit(featureData)
-              }.apply {
-                addThemeVariants(ButtonVariant.LUMO_SMALL)
-              })
-
-              add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
-                dataProvider.delete(featureData)
-              }.apply {
-                addThemeVariants(ButtonVariant.LUMO_SMALL)
-              })
-
-              isPadding = false
-            }
-          }
-
-          setItems(dataProvider as DataProvider<FeatureData, Void>)
-
-          width = "100%"
-          isHeightByRows = true
-        }
-
-        add(grid)
       }
     }
   }

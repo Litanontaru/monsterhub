@@ -19,56 +19,50 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object CreatureSpace : Space {
   override fun support(obj: Any) = obj is Creature
 
-  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-    parent.creatureSpace(obj as Creature, locator, update)
-  }
-}
+  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    val dataProvider = CreatureHierarchyDataProvider(
+        anyObj as Creature,
+        { update(it) {} }
+    )
 
-fun HasComponents.creatureSpace(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-  val dataProvider = CreatureHierarchyDataProvider(
-      obj,
-      { update(it) {} }
-  )
+    parent.add(HorizontalLayout().apply {
+      val label = Label("Основа")
 
-  add(HorizontalLayout().apply {
-    val label = Label("Основа")
-
-    val addNew = ComboBox<SettingObject>().apply {
-      setItems(locator.fiderData("CREATURE") as DataProvider<SettingObject, String>)
-      setItemLabelGenerator { it.name }
-    }
-
-    val addButton = Button(Icon(VaadinIcon.PLUS)) {
-      addNew.optionalValue.ifPresent {
-        dataProvider.add(it as Creature)
-        addNew.value = null
+      val addNew = ComboBox<SettingObject>().apply {
+        setItems(locator.fiderData("CREATURE") as DataProvider<SettingObject, String>)
+        setItemLabelGenerator { it.name }
       }
-    }.apply {
-      addThemeVariants(ButtonVariant.LUMO_SMALL)
-    }
 
-    add(label, addNew, addButton)
-    setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, addNew, addButton)
-  })
-
-  val grid = Grid<Creature>().apply {
-    addColumn { it.name }
-    addComponentColumn { base ->
-      HorizontalLayout().apply {
-        add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
-          dataProvider.delete(base)
-        }.apply {
-          addThemeVariants(ButtonVariant.LUMO_SMALL)
-        })
-
-        isPadding = false
+      val addButton = Button(Icon(VaadinIcon.PLUS)) {
+        addNew.optionalValue.ifPresent {
+          dataProvider.add(it as Creature)
+          addNew.value = null
+        }
+      }.apply {
+        addThemeVariants(ButtonVariant.LUMO_SMALL)
       }
+
+      add(label, addNew, addButton)
+      setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, addNew, addButton)
+    })
+    val grid = Grid<Creature>().apply {
+      addColumn { it.name }
+      addComponentColumn { base ->
+        HorizontalLayout().apply {
+          add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
+            dataProvider.delete(base)
+          }.apply {
+            addThemeVariants(ButtonVariant.LUMO_SMALL)
+          })
+
+          isPadding = false
+        }
+      }
+      setItems(dataProvider as DataProvider<Creature, Void>)
+
+      width = "100%"
+      isHeightByRows = true
     }
-    setItems(dataProvider as DataProvider<Creature, Void>)
-
-    width = "100%"
-    isHeightByRows = true
+    parent.add(grid)
   }
-
-  add(grid)
 }

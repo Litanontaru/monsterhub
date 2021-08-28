@@ -9,13 +9,13 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object SettingObjectSpace : Space {
   override fun support(obj: Any) = obj is SettingObject
 
-  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
-    parent.settingObjectSpace(obj as SettingObject, update)
+  override fun use(parent: HasComponents, anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    settingObjectSpace(parent, anyObj as SettingObject, update)
   }
 }
 
-fun HasComponents.settingObjectSpace(obj: SettingObject, update: (Any, () -> Unit) -> Unit) {
-  add(HorizontalLayout().apply {
+fun settingObjectSpace(parent: HasComponents, obj: SettingObject, update: (Any, () -> Unit) -> Unit) {
+  parent.add(HorizontalLayout().apply {
     add(TextField("Название").apply {
       value = obj.name
       addValueChangeListener {
