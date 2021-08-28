@@ -103,7 +103,14 @@ class EditPanel(
     action()
     when (obj) {
       is SettingObject -> locator.data.update(obj)
-      is FeatureData -> locator.featureDataRepository.save(obj)
+      is FeatureData -> {
+        if (obj.deleteOnly) {
+          obj.features.forEach { update(it) { it.deleteOnly = true } }
+          locator.featureDataRepository.delete(obj)
+        } else {
+          locator.featureDataRepository.save(obj)
+        }
+      }
     }
     if (onUpdate != null && obj == this.obj) {
       onUpdate!!()

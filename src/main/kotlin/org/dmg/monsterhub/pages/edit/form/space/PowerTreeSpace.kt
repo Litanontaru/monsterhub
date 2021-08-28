@@ -43,11 +43,12 @@ object PowerTreeSpace : Space {
           }
         }
 
-        addHierarchyColumn { it.name }.apply {
-          isAutoWidth = true
+        addHierarchyColumn { it.name }.also {
+          it.isAutoWidth = true
         }
-        addColumn { it.rate?.takeIf { it.isNotBlank() } }.apply {
-          isAutoWidth = true
+        addColumn { it.rate?.takeIf { it.isNotBlank() } }.also {
+          it.width = "6em"
+          it.flexGrow = 0
         }
         addComponentColumn { item ->
 
@@ -68,7 +69,7 @@ object PowerTreeSpace : Space {
                   update(obj) {
                     update(item) {
                       val new = FeatureData().apply { feature = it as Feature }
-                      locator.featureDataRepository.save(new)
+                      update(new) { }
                       item.add(new)
                     }
                   }
@@ -86,7 +87,7 @@ object PowerTreeSpace : Space {
               components.add(Button(Icon(VaadinIcon.EDIT)) {
                 EditDialog(item.featureData!!, locator) {
                   update(obj) {
-                    locator.featureDataRepository.save(item.featureData!!)
+                    update(item.featureData!!) { }
                     dataProvider.refreshItem(item)
                     item.parent?.let { dataProvider.refreshItem(it) }
                   }
@@ -105,6 +106,7 @@ object PowerTreeSpace : Space {
                     dataProvider.refreshAll()
                   }
                 }
+                item.featureData?.let { update(it) { it.deleteOnly = true } }
               }.apply {
                 addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
               })

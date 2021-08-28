@@ -31,6 +31,9 @@ class FeatureData : FeatureContainerData {
   @JoinColumn(name = "main_feature_id")
   override var features: MutableList<FeatureData> = mutableListOf()
 
+  @Transient
+  var deleteOnly: Boolean = false
+
   fun display(): String {
     return (sequenceOf(feature.name) +
 

@@ -1,7 +1,6 @@
 package org.dmg.monsterhub.pages.edit.form.space
 
 import com.vaadin.flow.component.Component
-import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.combobox.ComboBox
@@ -19,8 +18,8 @@ import org.dmg.monsterhub.data.Power
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.FeatureDataDataProvider
-import org.dmg.monsterhub.pages.edit.form.EditDialog
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
+import org.dmg.monsterhub.pages.edit.form.EditDialog
 
 object FeatureContainerDataSpace : Space {
   override fun support(obj: Any) = obj is FeatureContainerData && obj !is Power
@@ -58,10 +57,11 @@ object FeatureContainerDataSpace : Space {
 
                 val addButton = Button(Icon(VaadinIcon.PLUS)) {
                   addNew.optionalValue.ifPresent {
-                    val newFeatureData = FeatureData().apply { feature = it as Feature }
-                    locator.featureDataRepository.save(newFeatureData)
-                    obj.features.add(newFeatureData)
-                    update(obj) {}
+                    update(obj) {
+                      val newFeatureData = FeatureData().apply { feature = it as Feature }
+                      update(newFeatureData) {}
+                      obj.features.add(newFeatureData)
+                    }
 
                     updateOneFeaturePanel()
                   }
@@ -78,7 +78,7 @@ object FeatureContainerDataSpace : Space {
 
                 val editButton = Button(Icon(VaadinIcon.EDIT)) {
                   EditDialog(existing, locator) {
-                    locator.featureDataRepository.save(existing)
+                    update(existing) {}
                     label.text = existing.display()
                   }.open()
                 }.apply {
@@ -86,7 +86,7 @@ object FeatureContainerDataSpace : Space {
                 }
                 val closeButton = Button(Icon(VaadinIcon.CLOSE_SMALL)) {
                   update(obj) { obj.features.remove(existing) }
-                  locator.featureDataRepository.delete(existing)
+                  update(existing) { existing.deleteOnly = true }
 
                   updateOneFeaturePanel()
                 }.apply {
@@ -119,7 +119,8 @@ object FeatureContainerDataSpace : Space {
             val addButton = Button(Icon(VaadinIcon.PLUS)) {
               addNew.optionalValue.ifPresent {
                 val newFeatureData = FeatureData().apply { feature = it as Feature }
-                locator.featureDataRepository.save(newFeatureData)
+                update(newFeatureData) {}
+
                 dataProvider.add(newFeatureData)
                 addNew.value = null
               }
@@ -151,6 +152,8 @@ object FeatureContainerDataSpace : Space {
                 })
 
                 add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
+                  update(featureData) { featureData.deleteOnly = true }
+
                   dataProvider.delete(featureData)
                 }.apply {
                   addThemeVariants(ButtonVariant.LUMO_SMALL)
