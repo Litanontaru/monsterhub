@@ -6,7 +6,9 @@ import java.math.BigDecimal
 import javax.persistence.Entity
 
 @Entity
-class Power : ContainerData() {
+class Power : ContainerData(), SkillLike {
+  override var skillType: SkillType = SkillType.OFFENSE
+
   private fun multiplier() = features
       .map { it.rate() }
       .filter { it.type == DecimalType.MULT }
