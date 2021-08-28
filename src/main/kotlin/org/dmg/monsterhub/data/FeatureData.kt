@@ -74,9 +74,25 @@ class FeatureData : FeatureContainerData {
       "X" -> (x + xa).toBigDecimal()
       "Y" -> (y + ya).toBigDecimal()
       "Z" -> (z + za).toBigDecimal()
+      "Н" -> skillRate(SkillType.OFFENSE)
+      "З" -> skillRate(SkillType.DEFENCE)
+      "О" -> skillRate(SkillType.COMMON)
       else -> throw IllegalArgumentException()
     }
   }
+
+  private fun skillRate(type: SkillType) = if (getSkillType() == type) BigDecimal.ONE else BigDecimal.ZERO
+
+  private fun getSkillType(): SkillType? = getOwnSkillType()
+      ?: features
+          .asSequence()
+          .mapNotNull { it.getSkillType() }
+          .first()
+
+  private fun getOwnSkillType() = feature
+      .takeIf { feature is SkillLike }
+      ?.let { it as SkillLike }
+      ?.skillType
 
   fun rate(): Decimal = features
       .map { it.rate() }
