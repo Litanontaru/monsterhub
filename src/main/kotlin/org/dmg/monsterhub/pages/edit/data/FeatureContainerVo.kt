@@ -1,9 +1,9 @@
-package org.dmg.monsterhub.pages
+package org.dmg.monsterhub.pages.edit.data
 
 import org.dmg.monsterhub.data.FeatureContainerData
 import org.dmg.monsterhub.data.FeatureData
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
-import org.dmg.monsterhub.pages.ItemType.*
+import org.dmg.monsterhub.pages.edit.data.ItemType.*
 import org.dmg.monsterhub.service.Decimal
 
 class FeatureContainerVo(

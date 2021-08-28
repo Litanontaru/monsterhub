@@ -1,4 +1,4 @@
-package org.dmg.monsterhub.pages
+package org.dmg.monsterhub.pages.edit.form
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
@@ -25,6 +25,8 @@ import org.dmg.monsterhub.data.meta.FeatureContainer
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.data.meta.NumberOption
 import org.dmg.monsterhub.data.setting.SettingObject
+import org.dmg.monsterhub.pages.ObjectTreeDataProvider
+import org.dmg.monsterhub.pages.edit.data.*
 import org.dmg.monsterhub.repository.FeatureContainerItemRepository
 import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
 import org.dmg.monsterhub.service.FeatureContainerServiceLocator

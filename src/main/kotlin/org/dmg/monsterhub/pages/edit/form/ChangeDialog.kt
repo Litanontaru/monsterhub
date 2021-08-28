@@ -1,4 +1,4 @@
-package org.dmg.monsterhub.pages
+package org.dmg.monsterhub.pages.edit.form
 
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.dialog.Dialog

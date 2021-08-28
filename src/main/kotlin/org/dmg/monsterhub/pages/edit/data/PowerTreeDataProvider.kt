@@ -1,4 +1,4 @@
-package org.dmg.monsterhub.pages
+package org.dmg.monsterhub.pages.edit.data
 
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery

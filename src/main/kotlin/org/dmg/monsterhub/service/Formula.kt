@@ -94,7 +94,7 @@ class FCast(private val value: FNode, private val type: DecimalType) : FNode {
 }
 
 object Formula {
-  private val PATTERN = "(\\d+(.\\d+)?)|X|Y|Z|ПЭ|ПК|×|-|\\+|\\*|/|\\(|\\)|\\|".toRegex()
+  private val PATTERN = "(\\d+(.\\d+)?)|X|Y|Z|ПЭ|ПК|×|Н|З|О|-|\\+|\\*|/|\\(|\\)|\\|".toRegex()
 
   operator fun invoke(value: String, context: (String) -> BigDecimal): FNode {
     if (value.isBlank()) {
@@ -118,7 +118,7 @@ object Formula {
 
         if (part in setOf("ПЭ", "ПК", "×")) {
           result = result cast DecimalType(part)
-        } else if (part in setOf("X", "Y", "Z")) {
+        } else if (part in setOf("X", "Y", "Z", "Н", "З", "О")) {
           result = action(result, FVar { context(part).toDecimal() })
           action = times
         } else if (part.toBigDecimalOrNull() != null) {
