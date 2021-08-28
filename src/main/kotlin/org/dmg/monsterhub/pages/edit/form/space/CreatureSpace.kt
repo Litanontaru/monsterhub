@@ -1,4 +1,4 @@
-package org.dmg.monsterhub.pages.edit.form
+package org.dmg.monsterhub.pages.edit.form.space
 
 import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.button.Button
@@ -14,6 +14,7 @@ import com.vaadin.flow.data.provider.DataProvider
 import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.CreatureHierarchyDataProvider
+import org.dmg.monsterhub.pages.edit.form.ServiceLocator
 
 fun HasComponents.creatureSpace(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
   val dataProvider = CreatureHierarchyDataProvider(

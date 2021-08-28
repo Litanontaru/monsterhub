@@ -1,4 +1,4 @@
-package org.dmg.monsterhub.pages.edit.form
+package org.dmg.monsterhub.pages.edit.form.space
 
 import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.button.Button
@@ -15,6 +15,8 @@ import com.vaadin.flow.component.textfield.TextField
 import org.dmg.monsterhub.data.FeatureData
 import org.dmg.monsterhub.data.FeatureDataDesignation
 import org.dmg.monsterhub.data.meta.NumberOption
+import org.dmg.monsterhub.pages.edit.form.EditDialog
+import org.dmg.monsterhub.pages.edit.form.ServiceLocator
 
 fun HasComponents.featureDataSpace(obj: FeatureData, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
   add(HorizontalLayout().apply {

@@ -1,4 +1,4 @@
-package org.dmg.monsterhub.pages.edit.form
+package org.dmg.monsterhub.pages.edit.form.space
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.HasComponents
@@ -18,6 +18,8 @@ import org.dmg.monsterhub.data.FeatureData
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.FeatureDataDataProvider
+import org.dmg.monsterhub.pages.edit.form.EditDialog
+import org.dmg.monsterhub.pages.edit.form.ServiceLocator
 
 fun HasComponents.featureContainerDataSpace(obj: FeatureContainerData, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
   val meta = locator.featureContainerServiceLocator.containerMeta(obj)

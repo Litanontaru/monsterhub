@@ -1,4 +1,4 @@
-package org.dmg.monsterhub.pages.edit.form
+package org.dmg.monsterhub.pages.edit.form.space
 
 import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.combobox.ComboBox
