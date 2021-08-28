@@ -4,6 +4,15 @@ import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.textfield.TextField
 import org.dmg.monsterhub.data.setting.SettingObject
+import org.dmg.monsterhub.pages.edit.data.ServiceLocator
+
+object SettingObjectSpace : Space {
+  override fun support(obj: Any) = obj is SettingObject
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.settingObjectSpace(obj as SettingObject, update)
+  }
+}
 
 fun HasComponents.settingObjectSpace(obj: SettingObject, update: (Any, () -> Unit) -> Unit) {
   add(HorizontalLayout().apply {

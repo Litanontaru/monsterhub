@@ -5,8 +5,18 @@ import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.textfield.TextArea
 import com.vaadin.flow.component.textfield.TextField
+import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.meta.NumberOption
+import org.dmg.monsterhub.pages.edit.data.ServiceLocator
+
+object FeatureSpace : Space {
+  override fun support(obj: Any) = obj is Feature && obj !is Creature
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.featureSpace(obj as Feature, update)
+  }
+}
 
 fun HasComponents.featureSpace(obj: Feature, update: (Any, () -> Unit) -> Unit) {
   add(TextArea("Описание").apply {

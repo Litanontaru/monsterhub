@@ -6,6 +6,15 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import org.dmg.monsterhub.data.Trait
+import org.dmg.monsterhub.pages.edit.data.ServiceLocator
+
+object TraitSpace : Space {
+  override fun support(obj: Any) = obj is Trait
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.traitSpace(obj as Trait, update)
+  }
+}
 
 fun HasComponents.traitSpace(obj: Trait, update: (Any, () -> Unit) -> Unit) {
   add(Label("Показатели черты"))

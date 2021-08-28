@@ -13,12 +13,21 @@ import com.vaadin.flow.component.treegrid.TreeGrid
 import com.vaadin.flow.data.provider.DataProvider
 import org.dmg.monsterhub.data.FeatureContainerData
 import org.dmg.monsterhub.data.FeatureData
+import org.dmg.monsterhub.data.Power
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.FeatureContainerVo
 import org.dmg.monsterhub.pages.edit.data.PowerTreeDataProvider
 import org.dmg.monsterhub.pages.edit.form.EditDialog
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
+
+object PowerTreeSpace : Space {
+  override fun support(obj: Any): Boolean = obj is Power
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.powerTreeSpace(obj as FeatureContainerData, locator, update)
+  }
+}
 
 fun HasComponents.powerTreeSpace(obj: FeatureContainerData, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
   val meta = locator.featureContainerServiceLocator.containerMeta(obj)

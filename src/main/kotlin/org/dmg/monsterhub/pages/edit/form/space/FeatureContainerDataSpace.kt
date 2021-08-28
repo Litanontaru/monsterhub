@@ -15,11 +15,20 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.data.provider.DataProvider
 import org.dmg.monsterhub.data.FeatureContainerData
 import org.dmg.monsterhub.data.FeatureData
+import org.dmg.monsterhub.data.Power
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.FeatureDataDataProvider
 import org.dmg.monsterhub.pages.edit.form.EditDialog
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
+
+object FeatureContainerDataSpace: Space {
+  override fun support(obj: Any) = obj is FeatureContainerData && obj !is Power
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.featureContainerDataSpace(obj as FeatureContainerData, locator, update)
+  }
+}
 
 fun HasComponents.featureContainerDataSpace(obj: FeatureContainerData, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
   val meta = locator.featureContainerServiceLocator.containerMeta(obj)

@@ -18,6 +18,14 @@ import org.dmg.monsterhub.data.meta.NumberOption
 import org.dmg.monsterhub.pages.edit.form.EditDialog
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 
+object FeatureDataSpace: Space {
+  override fun support(obj: Any) = obj is FeatureData
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.featureDataSpace(obj as FeatureData, locator, update)
+  }
+}
+
 fun HasComponents.featureDataSpace(obj: FeatureData, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
   add(HorizontalLayout().apply {
     val label = Label(obj.feature.name)

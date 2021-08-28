@@ -16,6 +16,14 @@ import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.CreatureHierarchyDataProvider
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 
+object CreatureSpace : Space {
+  override fun support(obj: Any) = obj is Creature
+
+  override fun use(parent: HasComponents, obj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+    parent.creatureSpace(obj as Creature, locator, update)
+  }
+}
+
 fun HasComponents.creatureSpace(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
   val dataProvider = CreatureHierarchyDataProvider(
       obj,
