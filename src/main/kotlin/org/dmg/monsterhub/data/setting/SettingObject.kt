@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.data.setting
 
 import org.dmg.monsterhub.data.Named
+import org.dmg.monsterhub.service.Decimal
 import javax.persistence.*
 
 @MappedSuperclass
@@ -18,6 +19,8 @@ open class SettingObject : Named {
   @ManyToOne
   @JoinColumn(name = "parent_id", nullable = true)
   open var parent: Folder? = null
+
+  open fun rate() = Decimal.ZERO
 
   override fun toString(): String = "${this.javaClass.simpleName}($name)"
 

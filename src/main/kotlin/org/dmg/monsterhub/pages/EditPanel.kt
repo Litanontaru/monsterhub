@@ -27,7 +27,6 @@ import org.dmg.monsterhub.data.meta.NumberOption
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.FeatureContainerItemRepository
 import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
-import org.dmg.monsterhub.service.CreatureService
 import org.dmg.monsterhub.service.FeatureContainerServiceLocator
 import org.dmg.monsterhub.service.FeatureDataRepository
 import org.dmg.monsterhub.service.FreeFeatureDataProvider
@@ -40,7 +39,6 @@ class EditPanel(
     private val featureContainerItemRepository: FeatureContainerItemRepository,
     private val featureDataDesignationRepository: FeatureDataDesignationRepository,
     private val featureContainerServiceLocator: FeatureContainerServiceLocator,
-    private val creatureService: CreatureService,
     var showStats: Boolean,
     private val onUpdate: (() -> Unit)? = null
 ) : VerticalLayout() {
@@ -53,7 +51,7 @@ class EditPanel(
         scrollDirection = Scroller.ScrollDirection.VERTICAL
         isVisible = !showStats
       }
-      val statsPage = Scroller(CreatureStatsSpace(obj, creatureService)).apply {
+      val statsPage = Scroller(CreatureStatsSpace(obj)).apply {
         setSizeFull()
         scrollDirection = Scroller.ScrollDirection.VERTICAL
         isVisible = showStats
@@ -138,11 +136,21 @@ class EditPanel(
   }
 
   private fun VerticalLayout.settingObjectSpace(obj: SettingObject) {
-    add(TextField("Название").apply {
-      value = obj.name
-      addValueChangeListener {
-        update { obj.name = it.value }
-      }
+    add(HorizontalLayout().apply {
+      add(TextField("Название").apply {
+        value = obj.name
+        addValueChangeListener {
+          update { obj.name = it.value }
+        }
+        width = "100%"
+      })
+
+      add(TextField("Показатель").apply {
+        value = obj.rate().toString()
+        width = "5em"
+        isReadOnly = true
+      })
+
       width = "100%"
     })
   }
@@ -480,7 +488,7 @@ class EditPanel(
     add(HorizontalLayout().apply {
       val label = Label(obj.feature.name)
       val editButton = Button(Icon(VaadinIcon.EDIT)) {
-        EditDialog(obj.feature, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator, creatureService).open()
+        EditDialog(obj.feature, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator).open()
       }.apply {
         addThemeVariants(ButtonVariant.LUMO_SMALL)
       }
@@ -682,7 +690,7 @@ class EditPanel(
                 val label = Label(type.name + ": " + existing.display())
 
                 val editButton = Button(Icon(VaadinIcon.EDIT)) {
-                  EditDialog(existing, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator, creatureService) {
+                  EditDialog(existing, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator) {
                     featureDataRepository.save(existing)
                     label.text = existing.display()
                   }.open()
@@ -738,7 +746,7 @@ class EditPanel(
 
           val grid = Grid<FeatureData>().apply {
             fun edit(item: FeatureData) {
-              EditDialog(item, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator, creatureService) {
+              EditDialog(item, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator) {
                 dataProvider.update(item)
               }.open()
             }
@@ -835,7 +843,7 @@ class EditPanel(
             if (item.canEdit) {
 
               components.add(Button(Icon(VaadinIcon.EDIT)) {
-                EditDialog(item.featureData!!, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator, creatureService) {
+                EditDialog(item.featureData!!, data, fiderData, featureDataRepository, featureContainerItemRepository, featureDataDesignationRepository, featureContainerServiceLocator) {
                   update(obj) {
                     featureDataRepository.save(item.featureData!!)
                     dataProvider.refreshItem(item)

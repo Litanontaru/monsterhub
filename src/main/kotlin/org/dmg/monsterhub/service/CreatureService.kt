@@ -7,7 +7,7 @@ import org.dmg.monsterhub.data.Trait
 import org.springframework.stereotype.Service
 
 @Service
-class CreatureService {
+object CreatureService {
   private val base = listOf(-1, 0, 0, 0, -26, 0, -13, 0, -18, 0, -3)
 
   fun superiority(creature: Creature): Superiority {

@@ -7,12 +7,11 @@ import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.service.CreatureService
 
 class CreatureStatsSpace(
-    private val creature: Creature,
-    private val creatureService: CreatureService
+    private val creature: Creature
 ): VerticalLayout() {
   init {
     add(Accordion().apply {
-      val superiority = creatureService.superiority(creature)
+      val superiority = CreatureService.superiority(creature)
       add("Превосходство: ${superiority.value}", VerticalLayout().apply {
         add(Label("Превосходство: ${superiority.value}"))
         add(Label("Опасность: ${superiority.challengeRating}"))

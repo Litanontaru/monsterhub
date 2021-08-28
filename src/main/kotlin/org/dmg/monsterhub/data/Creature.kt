@@ -1,6 +1,9 @@
 package org.dmg.monsterhub.data
 
 import org.dmg.monsterhub.data.Trait.Companion.TRAIT
+import org.dmg.monsterhub.service.CreatureService
+import org.dmg.monsterhub.service.Decimal
+import org.dmg.monsterhub.service.toDecimal
 import javax.persistence.*
 
 @Entity
@@ -28,4 +31,6 @@ class Creature : ContainerData(), Hierarchical<Creature> {
 
     return left + right.filter { it.feature.name !in names && (it.feature.selectionGroup !in groups) }
   }
+
+  override fun rate(): Decimal = CreatureService.superiority(this).value.toBigDecimal().toDecimal()
 }
