@@ -77,6 +77,7 @@ class FeatureData : FeatureContainerData {
       "Н" -> skillRate(SkillType.OFFENSE)
       "З" -> skillRate(SkillType.DEFENCE)
       "О" -> skillRate(SkillType.COMMON)
+      "R" -> features.map { it.feature.rate().value }.fold(BigDecimal.ZERO, { a, b -> a + b })
       else -> throw IllegalArgumentException()
     }
   }

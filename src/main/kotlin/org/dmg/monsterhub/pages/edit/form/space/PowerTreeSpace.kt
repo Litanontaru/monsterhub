@@ -46,7 +46,7 @@ object PowerTreeSpace : Space {
         addHierarchyColumn { it.name }.apply {
           isAutoWidth = true
         }
-        addColumn { it.rate }.apply {
+        addColumn { it.rate?.takeIf { it.isNotBlank() } }.apply {
           isAutoWidth = true
         }
         addComponentColumn { item ->

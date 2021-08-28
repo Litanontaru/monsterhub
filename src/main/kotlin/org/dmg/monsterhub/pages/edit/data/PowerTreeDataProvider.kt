@@ -11,7 +11,7 @@ class PowerTreeDataProvider(
 ) : AbstractBackEndHierarchicalDataProvider<FeatureContainerVo, Unit>() {
   override fun hasChildren(item: FeatureContainerVo?) = when(item) {
     null -> !containerData.features.isEmpty()
-    else -> item.hasChildren
+    else -> item.children.isNotEmpty()
   }
 
   override fun fetchChildrenFromBackEnd(query: HierarchicalQuery<FeatureContainerVo, Unit>?) = when (query?.parent) {
@@ -22,7 +22,7 @@ class PowerTreeDataProvider(
   fun top() = meta.containFeatureTypes.map { FeatureContainerVo(containerData, it, null) }
 
   override fun getChildCount(query: HierarchicalQuery<FeatureContainerVo, Unit>?) = when (query?.parent) {
-    null -> meta.containFeatureTypes.size
+    null -> top().size
     else -> query.parent.count
   }
 

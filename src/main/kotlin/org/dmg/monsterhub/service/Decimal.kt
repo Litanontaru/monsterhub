@@ -2,17 +2,19 @@ package org.dmg.monsterhub.service
 
 import java.math.BigDecimal
 
-open class Decimal(val value: BigDecimal, val type: DecimalType) {
+open class Decimal(val value: BigDecimal, val type: DecimalType): Comparable<Decimal> {
   open operator fun unaryMinus(): Decimal = Decimal(-value, type)
   open operator fun plus(right: Decimal) = Decimal(value + right.value, type + right.type)
   open operator fun minus(right: Decimal) = Decimal(value - right.value, type + right.type)
   open operator fun times(right: Decimal) = Decimal(value * right.value, type * right.type)
   open operator fun div(right: Decimal) = Decimal(BigDecimal("1.0") * value / right.value, type / right.type)
 
-  open operator fun compareTo(right: Decimal) = when (type) {
-    right.type -> value.compareTo(right.value)
-    else -> throw IllegalStateException("Cannot compare $type and ${right.type}")
+  override operator fun compareTo(other: Decimal) = when (type) {
+    other.type -> value.compareTo(other.value)
+    else -> throw IllegalStateException("Cannot compare $type and ${other.type}")
   }
+
+  fun isNotBlank() = value != BigDecimal.ZERO || type != DecimalType.DIGIT
 
   open infix fun cast(type: DecimalType) = Decimal(value, this.type + type)
 
@@ -42,6 +44,8 @@ class NoneDecimal(type: DecimalType): Decimal(BigDecimal.ZERO, type) {
 }
 
 fun BigDecimal.toDecimal(): Decimal = Decimal(this, DecimalType.DIGIT)
+
+fun Int.toDecimal(): Decimal = this.toBigDecimal().toDecimal()
 
 enum class DecimalType(val value: String, val display: (BigDecimal) -> String) {
   DIGIT("", { it.toInt().toString() }),
