@@ -4,7 +4,8 @@ import com.vaadin.flow.component.orderedlayout.Scroller
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.tabs.Tab
 import com.vaadin.flow.component.tabs.Tabs
-import org.dmg.monsterhub.data.*
+import org.dmg.monsterhub.data.Creature
+import org.dmg.monsterhub.data.FeatureData
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.space.*
@@ -17,9 +18,7 @@ class EditPanel(
 ) : VerticalLayout() {
   init {
     if (obj is Creature) {
-      val configPage = Scroller(
-          VerticalLayout().also { configSpace(obj, this::update) }
-      ).apply {
+      val configPage = Scroller(vertical(SPACES)).apply {
         setSizeFull()
         scrollDirection = Scroller.ScrollDirection.VERTICAL
         isVisible = !showStats
@@ -50,9 +49,7 @@ class EditPanel(
         }
       })
     } else {
-      add(Scroller(
-          VerticalLayout().also { configSpace(obj, this::update) }
-      ).apply {
+      add(Scroller(vertical(SPACES)).apply {
         setSizeFull()
         scrollDirection = Scroller.ScrollDirection.VERTICAL
         isVisible = !showStats
@@ -65,16 +62,18 @@ class EditPanel(
     isSpacing = false
   }
 
-  private fun VerticalLayout.configSpace(obj: Any, update: (Any, () -> Unit) -> Unit) {
-    SPACES.asSequence()
-        .filter { it.support(obj) }
-        .forEach { it.use(this, obj, locator, update) }
+  private fun vertical(spaces: List<Space>) =
+      VerticalLayout().also { vertical ->
+        spaces
+            .asSequence()
+            .filter { it.support(obj) }
+            .forEach { it.use(vertical, obj, locator, this::update) }
 
-    height = "100%"
-    width = "100%"
-    isPadding = false
-    isSpacing = false
-  }
+        height = "100%"
+        width = "100%"
+        isPadding = false
+        isSpacing = false
+      }
 
   private fun update(obj: Any, action: () -> Unit) {
     action()
