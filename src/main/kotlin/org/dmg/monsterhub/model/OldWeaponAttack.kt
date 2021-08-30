@@ -4,7 +4,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "old_weapon_attack")
-class WeaponAttack {
+class OldWeaponAttack {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   var id: Long = 0
@@ -22,7 +22,7 @@ class WeaponAttack {
   @JoinColumn(name = "weapon_attack_id")
   var features: MutableList<WeaponAttackFeature> = mutableListOf()
 
-  fun adjustToSize(sizeProfile: SizeProfile, isNatural: Boolean) = WeaponAttack().also {
+  fun adjustToSize(sizeProfile: SizeProfile, isNatural: Boolean) = OldWeaponAttack().also {
     it.mode = mode
 
     it.damage = damage + sizeProfile.damageModifier

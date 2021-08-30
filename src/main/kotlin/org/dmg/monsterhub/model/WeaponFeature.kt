@@ -10,5 +10,5 @@ import javax.persistence.Table
 class WeaponFeature : AbstractWeaponFeature() {
   @ManyToOne
   @JoinColumn(name = "weapon_id", nullable = true)
-  lateinit var weapon: Weapon
+  lateinit var weapon: OldWeapon
 }

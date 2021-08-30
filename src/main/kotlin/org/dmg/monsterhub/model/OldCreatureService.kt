@@ -94,7 +94,7 @@ class OldCreatureService(
   fun physicalSize(creature: OldCreature): Int = partsSize(creature) +
       creature.getAllTraits("Крупногабаритный", "Крылатый").sumBy { 1 }
 
-  fun weapons(creature: OldCreature): List<Weapon> {
+  fun weapons(creature: OldCreature): List<OldWeapon> {
     val natural = creature.getAllTraits("Руки").map { "Кулаки" } +
         creature.getAllTraits("Естественное оружие").map { it.details } +
         creature.getAllTraits("Оружие").map { it.trait }

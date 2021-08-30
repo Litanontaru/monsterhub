@@ -9,8 +9,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 
 class WeaponAttackSpace(
-    val weapon: Weapon,
-    val weaponAttack: WeaponAttack
+    val weapon: OldWeapon,
+    val weaponAttack: OldWeaponAttack
 ) : VerticalLayout() {
   init {
     val space = this;

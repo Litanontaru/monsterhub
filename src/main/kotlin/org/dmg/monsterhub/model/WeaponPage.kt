@@ -10,7 +10,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 
 class WeaponPage(
-    val weapon: Weapon,
+    val weapon: OldWeapon,
     val weaponService: WeaponService
 ) : Dialog() {
   init {
@@ -128,7 +128,7 @@ class WeaponPage(
     add(HorizontalLayout().apply {
       add(Label("Атаки оружия"))
       add(Button(Icon(VaadinIcon.PLUS)) {
-        val newAttack = WeaponAttack()
+        val newAttack = OldWeaponAttack()
         weapon.attacks.add(newAttack)
         weaponAttacksSpace.add(WeaponAttackSpace(weapon, newAttack))
       })

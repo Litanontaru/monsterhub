@@ -4,7 +4,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "old_weapon")
-class Weapon {
+class OldWeapon {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   var id: Long = 0
@@ -13,19 +13,19 @@ class Weapon {
 
   @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
   @JoinColumn(name = "weapon_id")
-  var attacks: MutableList<WeaponAttack> = mutableListOf()
+  var attacks: MutableList<OldWeaponAttack> = mutableListOf()
 
   @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
   @JoinColumn(name = "weapon_id")
   var features: MutableList<WeaponFeature> = mutableListOf()
 
-  fun adjustToSize(sizeProfile: SizeProfile, isNatural: Boolean) = Weapon().also {
+  fun adjustToSize(sizeProfile: SizeProfile, isNatural: Boolean) = OldWeapon().also {
     it.name = name
     it.attacks = attacks.asSequence().map { it.adjustToSize(sizeProfile, isNatural) }.toMutableList()
     it.features = features.asSequence().toMutableList()
   }
 
-  fun addExternalFeature(creatureTraits: List<CreatureTrait>): Weapon {
+  fun addExternalFeature(creatureTraits: List<CreatureTrait>): OldWeapon {
     val externalFeatures = creatureTraits
         .asSequence()
         .map {
@@ -37,7 +37,7 @@ class Weapon {
           }
         }
 
-    return Weapon().also {
+    return OldWeapon().also {
       it.name = name
       it.attacks = attacks.asSequence().toMutableList()
       it.features = (features.asSequence() + externalFeatures).toMutableList()
