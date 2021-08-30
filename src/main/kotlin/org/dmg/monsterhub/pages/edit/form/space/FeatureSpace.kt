@@ -6,24 +6,17 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.textfield.TextArea
 import com.vaadin.flow.component.textfield.TextField
 import org.dmg.monsterhub.data.Creature
+import org.dmg.monsterhub.data.Weapon
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.meta.NumberOption
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 
 object FeatureSpace : Space {
-  override fun support(obj: Any) = obj is Feature && obj !is Creature
+  override fun support(obj: Any) = obj is Feature && obj !is Creature && obj !is Weapon
 
   override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
     val parent = mutableListOf<Component>()
     val obj = anyObj as Feature
-
-    parent.add(TextArea("Описание").apply {
-      value = obj.description
-      addValueChangeListener {
-        update(obj) { obj.description = it.value }
-      }
-      width = "100%"
-    })
 
     parent.add(HorizontalLayout().apply {
       add(ComboBox<String>("X").apply {

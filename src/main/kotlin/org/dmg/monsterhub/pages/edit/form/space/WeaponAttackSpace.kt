@@ -9,6 +9,7 @@ import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
+import com.vaadin.flow.data.provider.DataProvider
 import org.dmg.monsterhub.data.Weapon
 import org.dmg.monsterhub.data.WeaponAttack
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
@@ -72,6 +73,7 @@ object WeaponAttackSpace : Space {
           })
         }
       }
+      setItems(dataProvider as DataProvider<WeaponAttack, Void>)
 
       width = "100%"
       isHeightByRows = true

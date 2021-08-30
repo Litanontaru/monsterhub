@@ -130,6 +130,7 @@ class EditPanel(
         listOf(SettingObjectSpace, SkillLikeSpace, PowerEffectSpace, RateSpace, EditableRateSpace),
         listOf(PowerTreeSpace),
         listOf(FreeFeatureSpace),
+        listOf(DescriptionSpace),
         listOf(FeatureSpace),
         listOf(FeatureContainerSpace),
         listOf(TraitSpace),

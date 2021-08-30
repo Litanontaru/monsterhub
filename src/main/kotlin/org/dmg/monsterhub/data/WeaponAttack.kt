@@ -28,7 +28,7 @@ class WeaponAttack : FeatureContainerData {
     return (
           sequenceOf(
               mode,
-              "$damage/$desturction",
+              "урон $damage/$desturction",
               "$distance м",
               "скр. $speed"
           ) +

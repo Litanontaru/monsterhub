@@ -21,9 +21,9 @@ class WeaponAttackDataProvider(
   override fun size(query: Query<WeaponAttack, Unit>?): Int = weapon.attacks.size
 
   fun add(obj: WeaponAttack) {
+    update(obj)
     weapon.attacks.add(obj)
     update(weapon)
-    update(obj)
     refreshAll()
   }
 
