@@ -25,6 +25,7 @@ import org.dmg.monsterhub.pages.edit.form.EditPanel
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.repository.FeatureContainerItemRepository
 import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
+import org.dmg.monsterhub.repository.WeaponAttackRepository
 import org.dmg.monsterhub.service.FeatureContainerServiceLocator
 import org.dmg.monsterhub.service.FeatureDataRepository
 import org.dmg.monsterhub.service.SettingService
@@ -38,6 +39,7 @@ class SettingView(
     private val featureDataRepository: FeatureDataRepository,
     private val featureContainerItemRepository: FeatureContainerItemRepository,
     private val featureDataDesignationRepository: FeatureDataDesignationRepository,
+    private val weaponAttackRepository: WeaponAttackRepository,
     private val featureContainerServiceLocator: FeatureContainerServiceLocator
 ) : Div(), BeforeEnterObserver, HasDynamicTitle {
   lateinit var setting: Setting
@@ -77,6 +79,7 @@ class SettingView(
                 featureDataRepository,
                 featureContainerItemRepository,
                 featureDataDesignationRepository,
+                weaponAttackRepository,
                 featureContainerServiceLocator
             ),
             showStats

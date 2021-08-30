@@ -83,7 +83,10 @@ class FreeFeatureDataProvider(
         "AREA_LINE",
         "AREA_CONE",
 
-        "COLLISION"
+        "COLLISION",
+
+        "WEAPON_FEATURE",
+        "WEAPON_ATTACK_FEATURE"
     )
   }
 }

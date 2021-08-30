@@ -1,13 +1,9 @@
 package org.dmg.monsterhub.data
 
-import org.dmg.monsterhub.data.setting.SettingObject
-import javax.persistence.JoinColumn
-import javax.persistence.MappedSuperclass
-import javax.persistence.OneToMany
+import javax.persistence.Entity
+import javax.persistence.Inheritance
+import javax.persistence.InheritanceType
 
-@MappedSuperclass
-class Item : SettingObject(), FeatureContainerData {
-  @OneToMany(orphanRemoval = true)
-  @JoinColumn(name = "feature_container_id")
-  override var features: MutableList<FeatureData> = mutableListOf()
-}
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+open class Item : ContainerData()

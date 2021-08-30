@@ -8,6 +8,7 @@ import com.vaadin.flow.component.tabs.Tab
 import com.vaadin.flow.component.tabs.Tabs
 import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.data.FeatureData
+import org.dmg.monsterhub.data.WeaponAttack
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.space.*
@@ -111,6 +112,13 @@ class EditPanel(
           locator.featureDataRepository.save(obj)
         }
       }
+      is WeaponAttack -> {
+        if (obj.deleteOnly) {
+          locator.weaponAttackRepository.delete(obj)
+        } else {
+          locator.weaponAttackRepository.save(obj)
+        }
+      }
     }
     if (onUpdate != null && obj == this.obj) {
       onUpdate!!()
@@ -127,6 +135,7 @@ class EditPanel(
         listOf(TraitSpace),
         listOf(CreatureSpace),
         listOf(FeatureDataSpace),
+        listOf(WeaponAttackSpace),
         listOf(FeatureContainerDataSpace)
     )
   }
