@@ -127,7 +127,7 @@ class EditPanel(
     )
 
     val STAT_SPACES = listOf(
-        listOf(SuperioritySpace, CreatureSizeSpace)
+        listOf(SuperioritySpace, CreatureSizeSpace, CreatureTraitSpace)
     )
 
     val TABS = mapOf(

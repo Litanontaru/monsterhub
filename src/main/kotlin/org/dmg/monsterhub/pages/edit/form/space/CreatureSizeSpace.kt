@@ -32,5 +32,4 @@ object CreatureSizeSpace : AbstractCreatureSpace {
         close()
       }
   )
-
 }
