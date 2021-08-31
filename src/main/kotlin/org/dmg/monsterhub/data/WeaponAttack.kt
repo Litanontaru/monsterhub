@@ -1,5 +1,6 @@
 package org.dmg.monsterhub.data
 
+import org.dmg.monsterhub.service.SizeProfile
 import javax.persistence.*
 
 @Entity
@@ -49,5 +50,19 @@ class WeaponAttack : FeatureContainerData {
   private fun clipSize() = when {
     allowInBarrel -> "$clipSize+1"
     else -> clipSize.toString()
+  }
+
+  fun adjustToSize(sizeProfile: SizeProfile, isNatural: Boolean) = WeaponAttack().also {
+    it.mode = mode
+
+    it.damage = damage + sizeProfile.damageModifier
+    it.desturction = desturction + sizeProfile.destructionModifier
+    it.distance = if (isNatural) sizeProfile.modifyNaturalWeaponDistance(distance)
+    else sizeProfile.modifyWeaponDistance(distance)
+
+    it.speed = speed
+    it.clipSize = clipSize
+    it.allowInBarrel = allowInBarrel
+    it.features = features
   }
 }

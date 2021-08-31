@@ -66,7 +66,7 @@ object CreatureService {
   fun physicalSize(creature: Creature): Int = partsSize(creature) +
       creature.getAllTraits("Крупногабаритный", "Крылатый").sumBy { 1 }
 
-  private fun partsSize(creature: Creature): Int =
+  fun partsSize(creature: Creature): Int =
       creature.getAllTraits("Тяжёлый")
           .singleOrNull()
           ?.let { size(creature) - 1 }

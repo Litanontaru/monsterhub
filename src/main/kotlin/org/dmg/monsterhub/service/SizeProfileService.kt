@@ -1,12 +1,10 @@
 package org.dmg.monsterhub.service
 
-import org.springframework.stereotype.Service
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 
-@Service
-class SizeProfileService {
+object SizeProfileService {
   val sizeProfiles = csv("/size.csv", 2)
       .asSequence()
       .map { SizeProfile(it) }
