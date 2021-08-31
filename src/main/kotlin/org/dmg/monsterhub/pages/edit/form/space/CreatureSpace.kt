@@ -16,14 +16,12 @@ import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.CreatureHierarchyDataProvider
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 
-object CreatureSpace : Space {
-  override fun support(obj: Any) = obj is Creature
-
-  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+object CreatureSpace : AbstractCreatureSpace {
+  override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
     val parent = mutableListOf<Component>()
 
     val dataProvider = CreatureHierarchyDataProvider(
-        anyObj as Creature,
+        obj,
         { update(it) {} }
     )
 
