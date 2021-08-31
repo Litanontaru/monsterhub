@@ -24,10 +24,14 @@ class WeaponAttack : FeatureContainerData {
   @Transient
   var deleteOnly: Boolean = false
 
-  fun display(): String {
-    return (
+  fun display(): String = displayWithName(mode, features)
+
+  fun display(prefix: String, additionalFeatures: List<FeatureData>): String = displayWithName("$prefix $mode", additionalFeatures + features)
+
+  private fun displayWithName(name: String, features: List<FeatureData>) =
+      (
           sequenceOf(
-              mode,
+              name,
               "урон $damage/$desturction",
               "$distance м",
               "скр. $speed"
@@ -39,9 +43,8 @@ class WeaponAttack : FeatureContainerData {
           } +
 
           features.asSequence().map { it.display() }
-        )
-        .joinToString()
-  }
+      )
+      .joinToString()
 
   private fun clipSize() = when {
     allowInBarrel -> "$clipSize+1"

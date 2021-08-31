@@ -11,4 +11,6 @@ interface WeaponRepository : JpaRepository<Weapon, Long> {
   fun findAllByNameContainingAndSettingIn(name: String, settings: List<Setting>, pageable: Pageable): List<Weapon>
 
   fun countByNameContainingAndSettingIn(name: String, settings: List<Setting>): Int
+
+  fun findAllByNameInAndSettingIn(names: List<String>, settings: List<Setting>): List<Weapon>
 }

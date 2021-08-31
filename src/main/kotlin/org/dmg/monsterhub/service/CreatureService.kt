@@ -1,9 +1,6 @@
 package org.dmg.monsterhub.service
 
-import org.dmg.monsterhub.data.Creature
-import org.dmg.monsterhub.data.PrimaryRate
-import org.dmg.monsterhub.data.Superiority
-import org.dmg.monsterhub.data.Trait
+import org.dmg.monsterhub.data.*
 import org.springframework.stereotype.Service
 
 @Service
@@ -77,4 +74,7 @@ object CreatureService {
               .singleOrNull()
               ?.let { size(creature) - 3 }
               ?: size(creature))
+
+  fun naturalWeapons(creature: Creature): List<String> =
+      creature.getAllTraits("Естественное оружие").map { it.feature.name }.toList()
 }
