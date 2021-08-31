@@ -17,7 +17,6 @@ class EditDialog(
       add(EditPanel(
           obj,
           locator,
-          false,
           onUpdate
       ))
       add(Button(Icon(VaadinIcon.CLOSE)) {

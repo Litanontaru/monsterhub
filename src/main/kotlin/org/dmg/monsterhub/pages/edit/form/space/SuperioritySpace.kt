@@ -1,17 +1,22 @@
 package org.dmg.monsterhub.pages.edit.form.space
 
+import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.accordion.Accordion
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import org.dmg.monsterhub.data.Creature
+import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.service.CreatureService
 
-class CreatureStatsSpace(
-    private val creature: Creature
-) : VerticalLayout() {
-  init {
-    add(Accordion().apply {
+object SuperioritySpace : Space {
+  override fun support(obj: Any) = obj is Creature
+
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+    val creature = anyObj as Creature
+
+    return listOf(Accordion().apply {
       val superiority = CreatureService.superiority(creature)
+
       add("Превосходство: ${superiority.value}", VerticalLayout().apply {
         add(Label("Превосходство: ${superiority.value}"))
         add(Label("Опасность: ${superiority.challengeRating}"))
@@ -25,10 +30,5 @@ class CreatureStatsSpace(
         isSpacing = false
       })
     })
-
-    width = "100%"
-    height = "100%"
-    isPadding = false
-    isSpacing = false
   }
 }

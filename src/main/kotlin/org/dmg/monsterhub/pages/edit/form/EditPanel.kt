@@ -6,7 +6,6 @@ import com.vaadin.flow.component.orderedlayout.Scroller
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.tabs.Tab
 import com.vaadin.flow.component.tabs.Tabs
-import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.data.FeatureData
 import org.dmg.monsterhub.data.WeaponAttack
 import org.dmg.monsterhub.data.setting.SettingObject
@@ -16,43 +15,28 @@ import org.dmg.monsterhub.pages.edit.form.space.*
 class EditPanel(
     private val obj: Any,
     private val locator: ServiceLocator,
-    var showStats: Boolean,
     private val onUpdate: (() -> Unit)? = null
 ) : VerticalLayout() {
   init {
-    if (obj is Creature) {
-      val configPage = dashBoard(SPACES).apply {
-        isVisible = !showStats
-      }
+    val tabs = TABS
+        .mapValues { dashBoard(it.value) }
+        .filter { it.value != null }
+    if (tabs.size == 1) {
+      add(tabs.values.first()!!)
+    } else {
+      val tabPages = tabs.mapKeys { Tab(it.key) }.mapValues { it.value!! }
+      tabPages.values.drop(1).forEach { it.isVisible = false }
 
-      val statsPage = Scroller(CreatureStatsSpace(obj)).apply {
-        setSizeFull()
-        scrollDirection = Scroller.ScrollDirection.VERTICAL
-        isVisible = showStats
-      }
-      val pages = listOf(configPage, statsPage)
-
-      val configTab = Tab("Конфигурация")
-      val statsTab = Tab("Статистика")
-
-      val tabPages = mapOf(configTab to configPage, statsTab to statsPage)
-
-      add(configPage, statsPage)
-      add(Tabs(configTab, statsTab).apply {
+      add(*tabPages.values.toTypedArray())
+      add(Tabs(*tabPages.keys.toTypedArray()).apply {
         selectedTab = tabPages.entries.find { it.value.isVisible }?.key
 
         addSelectedChangeListener {
-          pages.forEach { it.isVisible = false }
+          tabPages.values.forEach { it.isVisible = false }
           val layout = tabPages[it.selectedTab]
 
           layout?.isVisible = true
-
-          showStats = layout == statsPage
         }
-      })
-    } else {
-      add(dashBoard(SPACES).apply {
-        isVisible = !showStats
       })
     }
 
@@ -66,8 +50,9 @@ class EditPanel(
       .map { toComponents(it) }
       .filter { it.isNotEmpty() }
       .map { horizontal(it.map { vertical(it) }) }
-      .let { vertical(it) }
-      .let {
+      .takeIf { it.isNotEmpty() }
+      ?.let { vertical(it) }
+      ?.let {
         Scroller(it).apply {
           setSizeFull()
           scrollDirection = Scroller.ScrollDirection.VERTICAL
@@ -139,6 +124,15 @@ class EditPanel(
         listOf(FeatureDataSpace),
         listOf(WeaponAttackSpace),
         listOf(FeatureContainerDataSpace)
+    )
+
+    val STAT_SPACES = listOf(
+        listOf(SuperioritySpace)
+    )
+
+    val TABS = mapOf(
+        "Конфигурация" to SPACES,
+        "Статистика" to STAT_SPACES
     )
   }
 }

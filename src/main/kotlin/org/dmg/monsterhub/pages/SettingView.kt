@@ -67,7 +67,6 @@ class SettingView(
 
     val leftPanel = VerticalLayout().apply {
       fun click(item: SettingObject) {
-        val showStats = edit?.showStats ?: false
         if (edit != null) {
           rightPanel.remove(edit)
         }
@@ -81,8 +80,7 @@ class SettingView(
                 featureDataDesignationRepository,
                 weaponAttackRepository,
                 featureContainerServiceLocator
-            ),
-            showStats
+            )
         )
 
         rightPanel.add(edit)
