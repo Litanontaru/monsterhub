@@ -59,4 +59,22 @@ object CreatureService {
     value * 3 < max -> PrimaryRate(value, (max / 3.0 - value).toInt())
     else -> PrimaryRate(value, (max / 2.0 - value).toInt())
   }
+
+  fun size(creature: Creature) = creature
+      .getAllTraits("Размер")
+      .singleOrNull()
+      ?.x
+      ?: 0
+
+  fun physicalSize(creature: Creature): Int = partsSize(creature) +
+      creature.getAllTraits("Крупногабаритный", "Крылатый").sumBy { 1 }
+
+  private fun partsSize(creature: Creature): Int =
+      creature.getAllTraits("Тяжёлый")
+          .singleOrNull()
+          ?.let { size(creature) - 1 }
+          ?: (creature.getAllTraits("Очень тяжёлый")
+              .singleOrNull()
+              ?.let { size(creature) - 3 }
+              ?: size(creature))
 }

@@ -32,5 +32,9 @@ class Creature : ContainerData(), Hierarchical<Creature> {
     return left + right.filter { it.feature.name !in names && (it.feature.selectionGroup !in groups) }
   }
 
+  fun getAllTraits(category: String, vararg categories: String) = getAllTraits((sequenceOf(category) + categories).toSet())
+
+  fun getAllTraits(categories: Set<String>) = getAllTraits().filter { it.feature.category in categories || it.feature.name in categories }
+
   override fun rate(): Decimal = CreatureService.superiority(this).value.toBigDecimal().toDecimal()
 }

@@ -24,6 +24,8 @@ object SuperioritySpace : AbstractCreatureSpace {
           isPadding = false
           isSpacing = false
         })
+
+        close()
       }
   )
 }
