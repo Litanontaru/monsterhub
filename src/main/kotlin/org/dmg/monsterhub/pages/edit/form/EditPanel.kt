@@ -132,6 +132,7 @@ class EditPanel(
         listOf(FreeFeatureSpace),
         listOf(DescriptionSpace),
         listOf(FeatureSpace),
+        listOf(OneWeaponAttackSpace),
         listOf(FeatureContainerSpace),
         listOf(TraitSpace),
         listOf(CreatureSpace),
