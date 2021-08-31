@@ -51,7 +51,7 @@ object FeatureContainerDataSpace : Space {
                 val label = Label(type.name)
 
                 val addNew = ComboBox<SettingObject>().apply {
-                  setItems(locator.fiderData(type.featureType) as DataProvider<SettingObject, String>)
+                  setItems(locator.finderData(type.featureType) as DataProvider<SettingObject, String>)
                   setItemLabelGenerator { it.name }
                 }
 
@@ -112,7 +112,7 @@ object FeatureContainerDataSpace : Space {
             val label = Label(type.name)
 
             val addNew = ComboBox<SettingObject>().apply {
-              setItems(locator.fiderData(type.featureType) as DataProvider<SettingObject, String>)
+              setItems(locator.finderData(type.featureType) as DataProvider<SettingObject, String>)
               setItemLabelGenerator { it.name }
             }
 

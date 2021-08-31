@@ -29,7 +29,7 @@ object CreatureSpace : AbstractCreatureSpace {
       val label = Label("Основа")
 
       val addNew = ComboBox<SettingObject>().apply {
-        setItems(locator.fiderData("CREATURE") as DataProvider<SettingObject, String>)
+        setItems(locator.finderData("CREATURE") as DataProvider<SettingObject, String>)
         setItemLabelGenerator { it.name }
       }
 

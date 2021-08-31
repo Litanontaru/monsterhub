@@ -13,21 +13,23 @@ import java.util.stream.Stream
 class ObjectFinderDataProviderService(
     private val dataProviders: List<SettingObjectDataProvider>
 ) {
-  operator fun invoke(setting: Setting) = ObjectFinderDataProviderForSetting(dataProviders, setting)
+  operator fun invoke(settings: List<Setting>) = ObjectFinderDataProviderForSetting(dataProviders, settings)
+
+  companion object {
+    fun getRecursive(setting: Setting): Sequence<Setting> =
+        sequenceOf(setting) + setting.base.asSequence().flatMap { getRecursive(it) }
+  }
 }
 
 class ObjectFinderDataProviderForSetting(
     private val dataProviders: List<SettingObjectDataProvider>,
-    private val setting: Setting
+    val settings: List<Setting>
 ) {
-  private fun getRecursive(setting: Setting): Sequence<Setting> =
-      sequenceOf(setting) + setting.base.asSequence().flatMap { getRecursive(it) }
-
   operator fun invoke(type: String): ObjectFinderDataProvider =
       ObjectFinderDataProvider(
           type,
           dataProviders.find { it.supportType(type) }!!,
-          getRecursive(setting).toList()
+          settings
       )
 }
 

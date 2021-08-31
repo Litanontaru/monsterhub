@@ -59,7 +59,7 @@ object PowerTreeSpace : Space {
 
             if (item.canAdd) {
               val addNew = ComboBox<SettingObject>().apply {
-                setItems(locator.fiderData(item.featureType) as DataProvider<SettingObject, String>)
+                setItems(locator.finderData(item.featureType) as DataProvider<SettingObject, String>)
                 setItemLabelGenerator { it.name }
               }
 

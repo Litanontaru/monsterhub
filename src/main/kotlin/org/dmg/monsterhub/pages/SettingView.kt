@@ -20,12 +20,14 @@ import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderForSetting
 import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderService
+import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderService.Companion.getRecursive
 import org.dmg.monsterhub.pages.edit.form.ChangeDialog
 import org.dmg.monsterhub.pages.edit.form.EditPanel
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.repository.FeatureContainerItemRepository
 import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
 import org.dmg.monsterhub.repository.WeaponAttackRepository
+import org.dmg.monsterhub.repository.WeaponRepository
 import org.dmg.monsterhub.service.FeatureContainerServiceLocator
 import org.dmg.monsterhub.service.FeatureDataRepository
 import org.dmg.monsterhub.service.SettingService
@@ -40,11 +42,12 @@ class SettingView(
     private val featureContainerItemRepository: FeatureContainerItemRepository,
     private val featureDataDesignationRepository: FeatureDataDesignationRepository,
     private val weaponAttackRepository: WeaponAttackRepository,
+    private val weaponRepository: WeaponRepository,
     private val featureContainerServiceLocator: FeatureContainerServiceLocator
 ) : Div(), BeforeEnterObserver, HasDynamicTitle {
   lateinit var setting: Setting
   lateinit var data: ObjectTreeDataProvider
-  lateinit var fiderData: ObjectFinderDataProviderForSetting
+  lateinit var finderData: ObjectFinderDataProviderForSetting
 
   override fun beforeEnter(event: BeforeEnterEvent?) {
     if (event != null) {
@@ -54,8 +57,10 @@ class SettingView(
 
   private fun set(settingId: Long) {
     setting = settingService.get(settingId)
+    val settings = getRecursive(setting).toList()
+
     data = objectDataProviderService(setting)
-    fiderData = objectFinderDataProviderService(setting)
+    finderData = objectFinderDataProviderService(settings)
 
     var edit: EditPanel? = null
     val rightPanel = VerticalLayout().apply {
@@ -73,11 +78,14 @@ class SettingView(
         edit = EditPanel(
             item,
             ServiceLocator(
+                settings,
+
                 data,
-                fiderData,
+                finderData,
                 featureDataRepository,
                 featureContainerItemRepository,
                 featureDataDesignationRepository,
+                weaponRepository,
                 weaponAttackRepository,
                 featureContainerServiceLocator
             )
