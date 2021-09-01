@@ -17,6 +17,7 @@ import org.dmg.monsterhub.data.FeatureDataDesignation
 import org.dmg.monsterhub.data.meta.NumberOption
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.EditDialog
+import java.math.BigDecimal
 
 object FeatureDataSpace : Space {
   override fun support(obj: Any) = obj is FeatureData
@@ -88,10 +89,10 @@ private fun assignDesignation(obj: FeatureData, key: String, newValue: String, l
 private fun addNumber(
     parent: MutableList<Component>,
     label: String,
-    value: Int,
-    valueA: Int,
-    setter: (Int) -> Unit,
-    setterA: (Int) -> Unit,
+    value: BigDecimal,
+    valueA: BigDecimal,
+    setter: (BigDecimal) -> Unit,
+    setterA: (BigDecimal) -> Unit,
     option: NumberOption
 ) {
   when (option) {
@@ -101,19 +102,19 @@ private fun addNumber(
     NumberOption.POSITIVE -> {
       parent.add(TextField(label).apply {
         this.value = value.toString()
-        addValueChangeListener { setter(it.value.toIntOrNull()?.takeIf { it >= 0 } ?: 0) }
+        addValueChangeListener { setter(it.value.toBigDecimalOrNull()?.takeIf { it > BigDecimal.ZERO } ?: BigDecimal.ZERO) }
       })
     }
     NumberOption.POSITIVE_AND_INFINITE -> parent.add(
         HorizontalLayout().apply {
-          val isInfinite = value == Int.MAX_VALUE
+          val isInfinite = value == Int.MAX_VALUE.toBigDecimal()
 
           val field = TextField(label).apply {
             this.value = if (isInfinite) "" else value.toString()
             isEnabled = !isInfinite
 
             addValueChangeListener {
-              setter(it.value.toIntOrNull()?.takeIf { it >= 0 } ?: 0)
+              setter(it.value.toBigDecimalOrNull()?.takeIf { it > BigDecimal.ZERO } ?: BigDecimal.ZERO)
             }
           }
           val inifinite = Checkbox("Бесконечность").apply {
@@ -124,12 +125,12 @@ private fun addNumber(
                 field.value = ""
                 field.isEnabled = false
 
-                setter(Int.MAX_VALUE)
+                setter(Int.MAX_VALUE.toBigDecimal())
               } else {
                 field.value = "0"
                 field.isEnabled = true
 
-                setter(0)
+                setter(BigDecimal.ZERO)
               }
             }
           }
@@ -141,19 +142,23 @@ private fun addNumber(
     NumberOption.FREE -> {
       parent.add(TextField(label).apply {
         this.value = value.toString()
-        addValueChangeListener { setter(it.value.toIntOrNull() ?: 0) }
+        addValueChangeListener { setter(it.value.toBigDecimalOrNull() ?: BigDecimal.ZERO) }
       })
     }
     NumberOption.DAMAGE -> parent.add(
         HorizontalLayout().apply {
           val damage = TextField(label).apply {
             this.value = value.toString()
-            addValueChangeListener { setter(it.value.toIntOrNull()?.takeIf { it >= 1 } ?: 0) }
+            addValueChangeListener {
+              setter(it.value.toBigDecimalOrNull()?.takeIf { it > BigDecimal.ZERO } ?: BigDecimal.ZERO)
+            }
           }
           val slash = Label("/")
           val destruction = TextField().apply {
             this.value = valueA.toString()
-            addValueChangeListener { setterA(it.value.toIntOrNull()?.takeIf { it >= 1 } ?: 0) }
+            addValueChangeListener {
+              setterA(it.value.toBigDecimalOrNull()?.takeIf { it > BigDecimal.ZERO } ?: BigDecimal.ZERO)
+            }
           }
           add(damage, slash, destruction)
           setVerticalComponentAlignment(FlexComponent.Alignment.END, damage, slash, destruction)
@@ -176,8 +181,8 @@ private fun addNumber(
       parent.add(ComboBox<Int>().apply {
         setItems((0..9).toList())
         setItemLabelGenerator { options[it] }
-        this.value = value
-        addValueChangeListener { setter(it.value.takeIf { it >= 0 && it <= 9 } ?: 0) }
+        this.value = value.toInt()
+        addValueChangeListener { setter(it.value.toBigDecimal()) }
 
         width = "100%"
       })

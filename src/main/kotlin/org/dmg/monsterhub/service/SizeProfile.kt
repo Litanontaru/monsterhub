@@ -1,27 +1,31 @@
 package org.dmg.monsterhub.service
 
+import java.math.BigDecimal
+
 data class SizeProfile(
     val size: Int,
     val damageModifier: Int,
     val destructionModifier: Int,
-    val partSizeModifier: Double,
-    val weaponSizeModifier: Double,
-    val speedModifier: Double
+    val partSizeModifier: BigDecimal,
+    val weaponSizeModifier: BigDecimal,
+    val speedModifier: BigDecimal
 ) {
-  fun modifyWeaponDistance(distance: Double) =
-      if (distance < 0.6) distance * partSizeModifier
-      else 0.6 * partSizeModifier + (distance - 0.6) * weaponSizeModifier
+  fun modifyWeaponDistance(distance: BigDecimal) =
+      if (distance < ARMS) distance * partSizeModifier
+      else ARMS * partSizeModifier + (distance - ARMS) * weaponSizeModifier
 
-  fun modifyNaturalWeaponDistance(distance: Double) = distance * partSizeModifier
+  fun modifyNaturalWeaponDistance(distance: BigDecimal) = distance * partSizeModifier
 
   companion object {
+    private val ARMS = BigDecimal("0.6")
+
     operator fun invoke(row: List<String>) = SizeProfile(
         row[0].toInt(),
         row[1].toInt(),
         row[2].toInt(),
-        row[3].toDouble(),
-        row[3].toDouble(),
-        row[4].toDouble()
+        row[3].toBigDecimal(),
+        row[3].toBigDecimal(),
+        row[4].toBigDecimal()
     )
   }
 }

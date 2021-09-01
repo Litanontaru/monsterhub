@@ -8,6 +8,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.textfield.TextField
 import org.dmg.monsterhub.data.WeaponAttack
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
+import java.math.BigDecimal
 
 object OneWeaponAttackSpace : Space {
   override fun support(obj: Any) = obj is WeaponAttack
@@ -42,7 +43,7 @@ object OneWeaponAttackSpace : Space {
         TextField("Дистанция").apply {
           this.value = obj.distance.toString()
           addValueChangeListener {
-            update(obj) { obj.distance = it.value.toDoubleOrNull()?.takeIf { it >= 0.0 } ?: 0.0 }
+            update(obj) { obj.distance = it.value.toBigDecimalOrNull()?.takeIf { it >= BigDecimal.ZERO } ?: BigDecimal.ZERO }
           }
         },
         TextField("Скорость").apply {

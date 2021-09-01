@@ -16,12 +16,12 @@ class FeatureData : FeatureContainerData {
   @JoinColumn(name = "feature_id", nullable = true)
   lateinit var feature: Feature
 
-  var x: Int = 0
-  var xa: Int = 0
-  var y: Int = 0
-  var ya: Int = 0
-  var z: Int = 0
-  var za: Int = 0
+  var x: BigDecimal = BigDecimal.ZERO
+  var xa: BigDecimal = BigDecimal.ZERO
+  var y: BigDecimal = BigDecimal.ZERO
+  var ya: BigDecimal = BigDecimal.ZERO
+  var z: BigDecimal = BigDecimal.ZERO
+  var za: BigDecimal = BigDecimal.ZERO
 
   @OneToMany(orphanRemoval = true)
   @JoinColumn(name = "feature_data_id")
@@ -59,24 +59,24 @@ class FeatureData : FeatureContainerData {
         .joinToString()
   }
 
-  private fun combo(x: Int, xa: Int) =
-      if (x == 0) {
-        if (xa == 0) emptySequence() else sequenceOf("0/$xa")
+  private fun combo(x: BigDecimal, xa: BigDecimal) =
+      if (x == BigDecimal.ZERO) {
+        if (xa == BigDecimal.ZERO) emptySequence() else sequenceOf("0/$xa")
       } else {
-        if (xa == 0) sequenceOf(f(x)) else sequenceOf("$x/$xa")
+        if (xa == BigDecimal.ZERO) sequenceOf(f(x)) else sequenceOf("$x/$xa")
       }
 
-  private fun f(x: Int) = when (x) {
-    Int.MAX_VALUE -> "Бесконечность"
+  private fun f(x: BigDecimal) = when (x) {
+    Int.MAX_VALUE.toBigDecimal() -> "Бесконечность"
     else -> x.toString()
   }
 
   @Transient
   val context: (String) -> BigDecimal = {
     when (it) {
-      "X" -> (x + xa).toBigDecimal()
-      "Y" -> (y + ya).toBigDecimal()
-      "Z" -> (z + za).toBigDecimal()
+      "X" -> (x + xa)
+      "Y" -> (y + ya)
+      "Z" -> (z + za)
       "Н" -> skillRate(SkillType.OFFENSE)
       "З" -> skillRate(SkillType.DEFENCE)
       "О" -> skillRate(SkillType.COMMON)

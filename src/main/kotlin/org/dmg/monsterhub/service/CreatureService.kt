@@ -61,6 +61,7 @@ object CreatureService {
       .getAllTraits("Размер")
       .singleOrNull()
       ?.x
+      ?.toInt()
       ?: 0
 
   fun physicalSize(creature: Creature): Int = partsSize(creature) +

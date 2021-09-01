@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.data
 
 import org.dmg.monsterhub.service.SizeProfile
+import java.math.BigDecimal
 import javax.persistence.*
 
 @Entity
@@ -13,7 +14,7 @@ class WeaponAttack : FeatureContainerData {
 
   var damage: Int = 0
   var desturction: Int = 0
-  var distance: Double = 0.0
+  var distance: BigDecimal = BigDecimal.ZERO
   var speed: Int = 0
   var clipSize: Int = 0
   var allowInBarrel: Boolean = false
