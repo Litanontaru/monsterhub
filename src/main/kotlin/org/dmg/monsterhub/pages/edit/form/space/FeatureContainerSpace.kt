@@ -11,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.provider.DataProvider
+import org.dmg.monsterhub.data.ContainerData
 import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.data.meta.FeatureContainer
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
@@ -19,7 +20,7 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.FeatureContaiterItemEditDialog
 
 object FeatureContainerSpace : Space {
-  override fun support(obj: Any) = obj is FeatureContainer && obj !is Creature
+  override fun support(obj: Any) = obj is FeatureContainer && obj !is ContainerData
 
   override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
     val parent = mutableListOf<Component>()
