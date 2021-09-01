@@ -27,7 +27,7 @@ class WeaponAttack : FeatureContainerData {
 
   fun display(): String = displayWithName(mode, features)
 
-  fun display(prefix: String, additionalFeatures: List<FeatureData>): String = displayWithName("$prefix $mode", additionalFeatures + features)
+  fun display(prefix: String, additionalFeatures: List<FeatureData>): String = displayWithName("$prefix $mode".trim(), additionalFeatures + features)
 
   private fun displayWithName(name: String, features: List<FeatureData>) =
       (
@@ -45,6 +45,7 @@ class WeaponAttack : FeatureContainerData {
 
           features.asSequence().map { it.display() }
       )
+      .filter { it.isNotBlank() }
       .joinToString()
 
   private fun clipSize() = when {
