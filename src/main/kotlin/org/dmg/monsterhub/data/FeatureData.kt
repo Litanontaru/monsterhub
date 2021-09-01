@@ -37,9 +37,9 @@ class FeatureData : FeatureContainerData {
   fun display(): String {
     return (sequenceOf(feature.name) +
 
-        combo(x, xa) +
-        combo(y, ya) +
-        combo(z, za) +
+        combo(x.stripTrailingZeros(), xa.stripTrailingZeros()) +
+        combo(y.stripTrailingZeros(), ya.stripTrailingZeros()) +
+        combo(z.stripTrailingZeros(), za.stripTrailingZeros()) +
 
         feature.designations.asSequence()
             .mapNotNull { key ->
@@ -60,10 +60,10 @@ class FeatureData : FeatureContainerData {
   }
 
   private fun combo(x: BigDecimal, xa: BigDecimal) =
-      if (x == BigDecimal.ZERO) {
-        if (xa == BigDecimal.ZERO) emptySequence() else sequenceOf("0/$xa")
+      if (x.compareTo(BigDecimal.ZERO) == 0) {
+        if (xa.compareTo(BigDecimal.ZERO) == 0) emptySequence() else sequenceOf("0/$xa")
       } else {
-        if (xa == BigDecimal.ZERO) sequenceOf(f(x)) else sequenceOf("$x/$xa")
+        if (xa.compareTo(BigDecimal.ZERO) == 0) sequenceOf(f(x)) else sequenceOf("$x/$xa")
       }
 
   private fun f(x: BigDecimal) = when (x) {

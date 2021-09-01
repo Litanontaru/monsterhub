@@ -14,7 +14,7 @@ open class Decimal(val value: BigDecimal, val type: DecimalType): Comparable<Dec
     else -> throw IllegalStateException("Cannot compare $type and ${other.type}")
   }
 
-  fun isNotBlank() = value != BigDecimal.ZERO || type != DecimalType.DIGIT
+  fun isNotBlank() = value.compareTo(BigDecimal.ZERO) == 0 || type != DecimalType.DIGIT
 
   open infix fun cast(type: DecimalType) = Decimal(value, this.type + type)
 
