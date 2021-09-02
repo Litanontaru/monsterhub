@@ -10,19 +10,19 @@ object CreatureSkillSpace : AbstractCreatureSpace {
   override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) = listOf(
       Accordion().apply {
         add("Способности", VerticalLayout().apply {
-          val perks = obj.getAllTraits("Перк").map { it.features[0].feature.name }
+          val perks = obj.getAllTraits("Перк").mapNotNull { it.features.singleOrNull()?.feature?.name }
           if (perks.toList().isNotEmpty()) {
             add(Label("Перки: ${perks.joinToString()}"))
           }
-          val advanced = obj.getAllTraits("Продвинутая проверка").map { it.features[0].feature.name }
+          val advanced = obj.getAllTraits("Продвинутая проверка").mapNotNull { it.features.singleOrNull()?.feature?.name }
           if (advanced.toList().isNotEmpty()) {
             add(Label("Продвинутая проверка: ${advanced.joinToString()}"))
           }
-          val weak = obj.getAllTraits("Слабая проверка").map { it.features[0].feature.name }
+          val weak = obj.getAllTraits("Слабая проверка").mapNotNull { it.features.singleOrNull()?.feature?.name }
           if (weak.toList().isNotEmpty()) {
             add(Label("Слабая проверка: ${weak.joinToString()}"))
           }
-          val failed = obj.getAllTraits("Провальная проверка").map { it.features[0].feature.name }
+          val failed = obj.getAllTraits("Провальная проверка").mapNotNull { it.features.singleOrNull()?.feature?.name }
           if (failed.toList().isNotEmpty()) {
             add(Label("Провальная проверка: ${failed.joinToString()}"))
           }

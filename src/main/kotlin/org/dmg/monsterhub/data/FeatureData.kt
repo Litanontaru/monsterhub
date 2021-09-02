@@ -91,7 +91,8 @@ class FeatureData : FeatureContainerData {
       ?: features
           .asSequence()
           .mapNotNull { it.getSkillType() }
-          .first()
+          .take(1)
+          .singleOrNull()
 
   private fun getOwnSkillType() = feature
       .takeIf { feature is SkillLike }

@@ -13,7 +13,11 @@ enum class PowerRateCalculator(val display: String, val calculator: (Power) -> D
 
 private fun Power.standardRate() = (effect() * multiplier() - compensation()).toDecimal()
 
-private fun Power.acquisitionRate() = (6.toBigDecimal() + minorRates().single().value - (compensation() / multiplier())).toDecimal()
+private fun Power.acquisitionRate() = (
+    6.toBigDecimal() +
+        (minorRates().singleOrNull()?.value ?: BigDecimal.ZERO) -
+        (compensation() / multiplier())
+    ).toDecimal()
 
 private fun Power.compositionRate(): Decimal {
   val compensation = compensation()
