@@ -24,13 +24,16 @@ object CreatureSpeedService {
       "Эфирный" to CreatureSpeed("Эфирный", BigDecimal("0.25"))
   )
 
-  fun speed(creature: Creature) = creature
-      .getAllTraits("Движение")
-      .map { MODIFIERS[it.feature.name]!! }
-      .groupBy { it.mode }
-      .mapValues { it.value.reduce { a, b -> a * b } }
-      .values
-      .toList()
+  fun speed(creature: Creature): List<CreatureSpeed> {
+    val size = CreatureService.sizeProfile(creature)
+    return creature
+        .getAllTraits("Движение")
+        .map { MODIFIERS[it.feature.name]!! }
+        .groupBy { it.mode }
+        .mapValues { it.value.reduce { a, b -> a * b } }
+        .values
+        .map { it * size }
+  }
 
   data class CreatureSpeed(
       val mode: String,
@@ -43,6 +46,12 @@ object CreatureSpeedService {
         mode,
         step * right.step,
         features + right.features
+    )
+
+    operator fun times(size: SizeProfile) = CreatureSpeed(
+        mode,
+        step * size.speedModifier,
+        features
     )
   }
 }

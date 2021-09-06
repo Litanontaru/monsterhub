@@ -17,7 +17,7 @@ object CreatureAttackSpace : AbstractCreatureSpace {
           val attackFeatures = obj.getAllTraits("Свойство атаки")
               .groupBy { it.designations.find { it.designationKey == "Естественное оружие" }!!.value }
 
-          val sizeProfile = SizeProfileService.get(CreatureService.size(obj), CreatureService.partsSize(obj))
+          val sizeProfile = CreatureService.sizeProfile(obj)
 
           CreatureService.naturalWeapons(obj)
               .let { locator.weaponRepository.findAllByNameInAndSettingIn(it, locator.settigs) }
