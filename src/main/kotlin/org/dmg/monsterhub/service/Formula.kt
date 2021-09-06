@@ -154,7 +154,7 @@ object Formula {
       ?: FNone(DecimalType.DIGIT)
 
 
-  @JvmStatic
+  /*@JvmStatic
   fun main(args: Array<String>) {
     val x = BigDecimal("2.0")
 
@@ -176,5 +176,5 @@ object Formula {
         "1 + (x|10)/10"
     )
         .forEach { println(it + " = " + it.toFormula { x }.calculate()) }
-  }
+  }*/
 }
