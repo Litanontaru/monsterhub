@@ -31,7 +31,7 @@ object CreatureSpeedService {
     return creature
         .getAllTraits("Движение")
         .filter { it.feature.name != "Иное движение" }
-        .mapNotNull { MODIFIERS[it.feature.name] ?.plus(it.x.toInt()) }
+        .mapNotNull { MODIFIERS[it.feature.name]?.plus(it.x.toInt()) }
         .groupBy { it.mode }
         .mapValues { it.value.reduce { a, b -> a * b } }
         .values
@@ -67,6 +67,6 @@ object CreatureSpeedService {
         modifierSize
     )
 
-    fun display(): String = "$mode: ${step.stripTrailingZeros()} м, рывок ${dash.stripTrailingZeros()} м ${features.joinToString()}"
+    fun display(): String = "$mode: ${step.stripTrailingZeros().toPlainString()} м, рывок ${dash.stripTrailingZeros().toPlainString()} м ${features.joinToString()}"
   }
 }
