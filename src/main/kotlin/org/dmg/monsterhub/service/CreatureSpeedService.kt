@@ -25,33 +25,48 @@ object CreatureSpeedService {
   )
 
   fun speed(creature: Creature): List<CreatureSpeed> {
-    val size = CreatureService.sizeProfile(creature)
+    val size = CreatureService.size(creature)
+    val partsSize = CreatureService.partsSize(creature)
+
     return creature
         .getAllTraits("Движение")
-        .map { MODIFIERS[it.feature.name]!! }
+        .filter { it.feature.name != "Иное движение" }
+        .mapNotNull { MODIFIERS[it.feature.name] ?.plus(it.x.toInt()) }
         .groupBy { it.mode }
         .mapValues { it.value.reduce { a, b -> a * b } }
         .values
-        .map { it * size }
+        .map { it * SizeProfileService.get(size + it.modifierSize, partsSize + it.modifierSize) }
   }
 
   data class CreatureSpeed(
       val mode: String,
       val step: BigDecimal,
-      val features: List<String> = listOf()
+      val features: List<String> = listOf(),
+      val modifierSize: Int = 0
   ) {
     val dash = step * BigDecimal.valueOf(5)
+
+    operator fun plus(right: Int) = CreatureSpeed(
+        mode,
+        step,
+        features,
+        modifierSize + right
+    )
 
     operator fun times(right: CreatureSpeed) = CreatureSpeed(
         mode,
         step * right.step,
-        features + right.features
+        features + right.features,
+        modifierSize + right.modifierSize
     )
 
     operator fun times(size: SizeProfile) = CreatureSpeed(
         mode,
         step * size.speedModifier,
-        features
+        features,
+        modifierSize
     )
+
+    fun display(): String = "$mode: ${step.stripTrailingZeros()} м, рывок ${dash.stripTrailingZeros()} м ${features.joinToString()}"
   }
 }

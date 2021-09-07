@@ -130,7 +130,8 @@ class EditPanel(
         listOf(SuperioritySpace, CreatureSizeSpace, CreatureTraitSpace),
         listOf(CreatureAttackSpace),
         listOf(CreatureDefence),
-        listOf(CreatureSkillSpace)
+        listOf(CreatureSkillSpace),
+        listOf(CreatureSpeedSpace)
     )
 
     val TABS = mapOf(
