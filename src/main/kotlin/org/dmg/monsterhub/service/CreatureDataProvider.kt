@@ -1,8 +1,10 @@
 package org.dmg.monsterhub.service
 
+import org.dmg.monsterhub.data.Armor.Companion.ARMOR
 import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.data.FeatureContainerData
 import org.dmg.monsterhub.data.Trait.Companion.TRAIT
+import org.dmg.monsterhub.data.Weapon
 import org.dmg.monsterhub.data.meta.FeatureContainer
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.data.setting.Setting
@@ -49,6 +51,16 @@ class CreatureDataProvider(
           name = "Черты"
           featureType = TRAIT
 
+        },
+        FeatureContainerItem().apply {
+          name = "Оружие"
+          featureType = Weapon.WEAPON
+
+        },
+        FeatureContainerItem().apply {
+          name = "Броня"
+          featureType = ARMOR
+          onlyOne = true
         }
     )
   }
