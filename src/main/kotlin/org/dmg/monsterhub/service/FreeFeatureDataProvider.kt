@@ -86,7 +86,9 @@ class FreeFeatureDataProvider(
         "COLLISION",
 
         "WEAPON_FEATURE",
-        "WEAPON_ATTACK_FEATURE"
+        "WEAPON_ATTACK_FEATURE",
+
+        "ARMOR_FEATURE"
     )
   }
 }
