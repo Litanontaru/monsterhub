@@ -39,7 +39,7 @@ object CreatureService {
     val sortedSuper = arrayOf(offence, defence, com).sortedArray()
     val maxSuper = Math.max(Math.max(sortedSuper[0] * 4, sortedSuper[1] * 3), sortedSuper[2] * 2)
 
-    val maxCR = Math.max(Math.min(offence, defence) * 4, Math.max(offence, defence) * 3)
+    val maxCR = Math.max(Math.min(offence, defence) * 3, Math.max(offence, defence) * 2)
 
     return Superiority(
         Math.ceil(0.2 * maxSuper).toInt(),
