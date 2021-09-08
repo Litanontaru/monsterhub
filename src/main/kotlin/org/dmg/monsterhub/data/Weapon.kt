@@ -17,4 +17,8 @@ class Weapon: Item() {
     it.features = features.asSequence().toMutableList()
     it.features = (features + externalFeatures).toMutableList()
   }
+
+  companion object {
+    val WEAPON = "WEAPON"
+  }
 }
