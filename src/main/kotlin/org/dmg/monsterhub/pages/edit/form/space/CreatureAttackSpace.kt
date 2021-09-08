@@ -6,7 +6,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.service.CreatureService
-import org.dmg.monsterhub.service.SizeProfileService
 
 object CreatureAttackSpace : AbstractCreatureSpace {
   override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) = listOf(
