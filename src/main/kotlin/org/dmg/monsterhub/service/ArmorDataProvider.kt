@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.service
 
 import org.dmg.monsterhub.data.Armor
+import org.dmg.monsterhub.data.Armor.Companion.ARMOR
 import org.dmg.monsterhub.data.FeatureContainerData
 import org.dmg.monsterhub.data.meta.FeatureContainer
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
@@ -16,7 +17,7 @@ class ArmorDataProvider(
 ) : SimpleSettingObjectDataProvider(), FeatureContainerService {
   override val objectClass: Class<*> = Armor::class.java
 
-  override val type: String = "ARMOR"
+  override val type: String = ARMOR
 
   override val name: String = "Броня"
 
@@ -38,7 +39,7 @@ class ArmorDataProvider(
     repository.delete(one as Armor)
   }
 
-  override fun create(): SettingObject = Armor().apply { featureType = type }
+  override fun create(): SettingObject = Armor().apply { featureType = ARMOR }
 
   override fun containerMeta(obj: FeatureContainerData): FeatureContainer = Meta
 
