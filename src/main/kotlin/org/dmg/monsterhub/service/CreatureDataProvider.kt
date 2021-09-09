@@ -3,8 +3,10 @@ package org.dmg.monsterhub.service
 import org.dmg.monsterhub.data.Armor.Companion.ARMOR
 import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.data.FeatureContainerData
+import org.dmg.monsterhub.data.Perk.Companion.PERK
+import org.dmg.monsterhub.data.Skill.Companion.SKILL
 import org.dmg.monsterhub.data.Trait.Companion.TRAIT
-import org.dmg.monsterhub.data.Weapon
+import org.dmg.monsterhub.data.Weapon.Companion.WEAPON
 import org.dmg.monsterhub.data.meta.FeatureContainer
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.data.setting.Setting
@@ -54,13 +56,21 @@ class CreatureDataProvider(
         },
         FeatureContainerItem().apply {
           name = "Оружие"
-          featureType = Weapon.WEAPON
+          featureType = WEAPON
 
         },
         FeatureContainerItem().apply {
           name = "Броня"
           featureType = ARMOR
           onlyOne = true
+        },
+        FeatureContainerItem().apply {
+          name = "Способности"
+          featureType = SKILL
+        },
+        FeatureContainerItem().apply {
+          name = "Перки"
+          featureType = PERK
         }
     )
   }

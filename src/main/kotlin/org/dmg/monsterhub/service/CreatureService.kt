@@ -1,8 +1,9 @@
 package org.dmg.monsterhub.service
 
-import org.dmg.monsterhub.data.*
-import org.dmg.monsterhub.data.Armor.Companion.ARMOR
-import org.dmg.monsterhub.service.Damage.Companion.ZERO_DAMAGE
+import org.dmg.monsterhub.data.Creature
+import org.dmg.monsterhub.data.PrimaryRate
+import org.dmg.monsterhub.data.Superiority
+import org.dmg.monsterhub.data.Trait
 import org.springframework.stereotype.Service
 
 @Service

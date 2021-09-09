@@ -6,4 +6,8 @@ import javax.persistence.Entity
 @Entity
 class Perk: Feature(), SkillLike {
   override var skillType: SkillType = SkillType.OFFENSE
+
+  companion object {
+    val PERK = "PERK"
+  }
 }

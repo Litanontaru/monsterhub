@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.service
 
 import org.dmg.monsterhub.data.Skill
+import org.dmg.monsterhub.data.Skill.Companion.SKILL
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.SkillRepository
@@ -13,7 +14,7 @@ class SkillDataProvider(
 ) : SimpleSettingObjectDataProvider() {
   override val objectClass: Class<*> = Skill::class.java
 
-  override val type: String = "SKILL"
+  override val type: String = SKILL
 
   override val name: String = "Способность"
 
@@ -35,5 +36,5 @@ class SkillDataProvider(
     repository.delete(one as Skill)
   }
 
-  override fun create(): SettingObject = Skill().apply { featureType = type }
+  override fun create(): SettingObject = Skill().apply { featureType = SKILL }
 }

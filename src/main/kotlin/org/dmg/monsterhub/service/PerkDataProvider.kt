@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.service
 
 import org.dmg.monsterhub.data.Perk
+import org.dmg.monsterhub.data.Perk.Companion.PERK
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.PerkRepository
@@ -13,7 +14,7 @@ class PerkDataProvider(
 ) : SimpleSettingObjectDataProvider() {
   override val objectClass: Class<*> = Perk::class.java
 
-  override val type: String = "PERK"
+  override val type: String = PERK
 
   override val name: String = "Перк"
 
@@ -35,5 +36,5 @@ class PerkDataProvider(
     repository.delete(one as Perk)
   }
 
-  override fun create(): SettingObject = Perk().apply { featureType = type }
+  override fun create(): SettingObject = Perk().apply { featureType = PERK }
 }
