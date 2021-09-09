@@ -16,14 +16,16 @@ class Creature : ContainerData(), Hierarchical<Creature> {
   )
   override var base: MutableList<Creature> = mutableListOf()
 
-  fun getAllTraits(): Sequence<FeatureData> = base
-      .distinct()
-      .map { it.getAllTraits() }
-      .fold(myTraits(), ::combine)
+  fun getAll(type: String): Sequence<FeatureData> {
+    return base
+        .distinct()
+        .map { it.getAll(type) }
+        .fold(my(type), ::combine)
+  }
 
-  fun myTraits(): Sequence<FeatureData> = features
+  private fun my(type: String): Sequence<FeatureData> = features
       .asSequence()
-      .filter { it.feature.featureType == TRAIT }
+      .filter { it.feature.featureType == type }
 
   private fun combine(left: Sequence<FeatureData>, right: Sequence<FeatureData>): Sequence<FeatureData> {
     val names = left.map { it.feature.name }.toSet()
@@ -31,6 +33,8 @@ class Creature : ContainerData(), Hierarchical<Creature> {
 
     return left + right.filter { it.feature.name !in names && (it.feature.selectionGroup !in groups) }
   }
+
+  fun getAllTraits(): Sequence<FeatureData> = getAll(TRAIT)
 
   fun getAllTraits(category: String, vararg categories: String) = getAllTraits((sequenceOf(category) + categories).toSet())
 
