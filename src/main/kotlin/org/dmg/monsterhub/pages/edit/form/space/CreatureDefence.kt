@@ -12,7 +12,7 @@ import com.vaadin.flow.component.textfield.TextField
 import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.service.AttackEffectiveness
-import org.dmg.monsterhub.service.CreatureService
+import org.dmg.monsterhub.service.DamageService
 import org.dmg.monsterhub.service.WeaponType
 
 object CreatureDefence : AbstractCreatureSpace {
@@ -51,7 +51,7 @@ object CreatureDefence : AbstractCreatureSpace {
             value = WeaponType.OTHER
           }
 
-          val defenceProfile = CreatureService.defenceProfile(obj)
+          val defenceProfile = DamageService.defenceProfile(obj)
 
           val resultDamage = Label()
 
