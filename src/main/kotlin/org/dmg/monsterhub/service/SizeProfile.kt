@@ -9,7 +9,7 @@ data class SizeProfile(
     val partSizeModifier: BigDecimal,
     val weaponSizeModifier: BigDecimal,
     val speedModifier: BigDecimal,
-    val powerUpModifier: BigDecimal
+    val powerUpModifier: Int
 ) {
   fun modifyWeaponDistance(distance: BigDecimal) =
       if (distance < ARMS) distance * partSizeModifier
@@ -27,7 +27,7 @@ data class SizeProfile(
         row[3].toBigDecimal(),
         row[3].toBigDecimal(),
         row[4].toBigDecimal(),
-        row[5].toBigDecimal()
+        row[5].toInt()
     )
   }
 }

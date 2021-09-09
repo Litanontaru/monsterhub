@@ -21,7 +21,8 @@ object SizeProfileService {
         bySize.destructionModifier,
         byParts.partSizeModifier,
         bySize.weaponSizeModifier,
-        byParts.speedModifier
+        byParts.speedModifier,
+        bySize.powerUpModifier
     )
   }
 }

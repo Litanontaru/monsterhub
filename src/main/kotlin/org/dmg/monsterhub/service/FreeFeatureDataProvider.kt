@@ -87,6 +87,7 @@ class FreeFeatureDataProvider(
 
         "WEAPON_FEATURE",
         "WEAPON_ATTACK_FEATURE",
+        "POWER_UP_TYPE",
 
         "ARMOR_FEATURE"
     )
