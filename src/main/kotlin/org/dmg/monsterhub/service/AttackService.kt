@@ -10,6 +10,7 @@ import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.repository.WeaponRepository
 import java.math.BigDecimal
 import java.math.MathContext
+import java.util.*
 
 object AttackService {
   fun actions(creature: Creature, weaponRepository: WeaponRepository, settings: List<Setting>): List<Action> {
@@ -28,38 +29,39 @@ object AttackService {
 
     val manipulatorCount = creature.getAllTraits("Манипуляторы").map { it.x.toInt() }.sum()
     val baseAttackCount: Int = if (manipulatorCount <= 6) 1 else (manipulatorCount - 3) / 2
-    val modifierComboDifferent: Int = when {
-      manipulatorCount <= 4 -> -5
-      manipulatorCount % 2 == 1 -> -4
-      else -> -2
-    }
 
     val sizeProfile = CreatureService.sizeProfile(creature)
     val attackFeatures = creature.getAllTraits("Свойство атаки")
         .groupBy { it.designations.find { it.designationKey == "Естественное оружие" }!!.value }
 
-    val weapons =
-        CreatureService
-            .naturalWeapons(creature)
-            .let {
-              weaponRepository
-                  .findAllByNameInAndSettingIn(it, settings)
-                  .map { it.adjust(sizeProfile, true, attackFeatures.getOrDefault(it.name, emptyList())) }
-            } +
+    val naturalWeapons = CreatureService
+        .naturalWeapons(creature)
+        .let {
+          val count = it.associateBy({ it.first }, { it.second })
 
-            creature
-                .getAll(WEAPON)
-                .map { it.feature as Weapon }
-                .toList()
+          weaponRepository
+              .findAllByNameInAndSettingIn(it.map { it.first }, settings)
+              .map { it.adjust(sizeProfile, true, attackFeatures.getOrDefault(it.name, emptyList())) }
+              .flatMap { weapon -> (1..count[weapon.name]!!).map { weapon } }
+        }
+
+    val weapons = naturalWeapons +
+        creature
+            .getAll(WEAPON)
+            .map { it.feature as Weapon }
+            .toList()
 
     val baseAttacks = weapons
         .asSequence()
-        .flatMap { weapon -> weapon.attacks.asSequence().map { weapon to it } }
-        .flatMap { (weapon, weaponAttack) -> splitAttack(weapon, weaponAttack, hasPowerAction, hasFinesseAction, groupSize) }
+        .flatMap { weapon ->
+          val weaponId = UUID.randomUUID().toString()
+          weapon.attacks.asSequence().map { weaponId to it }
+        }
+        .flatMap { (weaponId, weaponAttack) -> splitAttack(weaponId, weaponAttack, hasPowerAction, hasFinesseAction, groupSize) }
         .toList()
 
-    return generateSequence(listOf(Action(listOf()))) { generateNext(it, baseAttacks, baseAttackCount, modifierComboDifferent, hasSpeedAction, hasComboAction) }
-        .map { it.filter { it.speed >= -3 } }
+    return generateSequence(listOf(Action(listOf()))) { generateNext(it, baseAttacks, baseAttackCount, hasSpeedAction, hasComboAction) }
+        .map { it.filter { it.speed >= -5 } }
         .takeWhile { it.isNotEmpty() }
         .flatMap { it.asSequence() }
         .filter { it.attacks.isNotEmpty() }
@@ -70,16 +72,7 @@ object AttackService {
 
   }
 
-  private fun generateNext(bases: List<Action>, baseAttacks: List<BaseAttack>, baseAttackCount: Int, modifierComboDifferent: Int, hasSpeedAction: Int, hasComboAction: Int) = bases
-      .flatMap { base ->
-        baseAttacks.mapNotNull { baseAttack ->
-          (base + baseAttack)
-              .also { it.speed(baseAttackCount, modifierComboDifferent, hasComboAction, hasSpeedAction) }
-              .takeIf { it.attacks.size == 1|| it.simple }
-        }
-      }
-
-  private fun splitAttack(weapon: Weapon, weaponAttack: WeaponAttack, hasPowerAction: Int, hasFinesseAction: Int, groupSize: Int): Sequence<BaseAttack> {
+  private fun splitAttack(weaponId: String, weaponAttack: WeaponAttack, hasPowerAction: Int, hasFinesseAction: Int, groupSize: Int): Sequence<BaseAttack> {
     val result = mutableListOf<BaseAttack>()
 
     val power = weaponAttack.features.find { it.feature.name == "Мощное" }
@@ -93,7 +86,7 @@ object AttackService {
 
       val (bonusDamage, bonusDestruction) = powerType.calculator(powerRate)
 
-      result += BaseAttack(weaponAttack.damage + bonusDamage, weaponAttack.desturction + groupSize + bonusDestruction, weaponAttack.distance, weaponAttack.speed, 0, weapon.id, 1, false)
+      result += BaseAttack(weaponAttack.damage + bonusDamage, weaponAttack.desturction + groupSize + bonusDestruction, weaponAttack.distance, weaponAttack.speed, 0, weaponId, false)
     }
 
     val finesse = ((weaponAttack.features.find { it.feature.name == "Точное" }?.let { 1 } ?: 0) +
@@ -101,12 +94,21 @@ object AttackService {
         .let { if (it < 0) 0 else it }
 
     if (finesse > 0) {
-      result += BaseAttack(weaponAttack.damage, weaponAttack.desturction + groupSize, weaponAttack.distance, weaponAttack.speed, finesse, weapon.id, 1, false)
+      result += BaseAttack(weaponAttack.damage, weaponAttack.desturction + groupSize, weaponAttack.distance, weaponAttack.speed, finesse, weaponId, false)
     }
-    result += BaseAttack(weaponAttack.damage, weaponAttack.desturction + groupSize, weaponAttack.distance, weaponAttack.speed, 0, weapon.id, 1, true)
+    result += BaseAttack(weaponAttack.damage, weaponAttack.desturction + groupSize, weaponAttack.distance, weaponAttack.speed, 0, weaponId, true)
 
     return result.asSequence()
   }
+
+  private fun generateNext(bases: List<Action>, baseAttacks: List<BaseAttack>, baseAttackCount: Int, hasSpeedAction: Int, hasComboAction: Int) = bases
+      .flatMap { base ->
+        baseAttacks.mapNotNull { baseAttack ->
+          (base + baseAttack)
+              .takeIf { it.attacks.size == 1 || it.simple }
+              ?.also { it.speed(baseAttackCount, hasComboAction, hasSpeedAction) }
+        }
+      }
 }
 
 enum class PowerUpType(val key: String, val calculator: (Int) -> Pair<Int, Int>) {
@@ -134,7 +136,7 @@ data class Action(
 
   operator fun plus(baseAttack: BaseAttack): Action = Action((attacks + baseAttack).sortedBy { it.weaponId })
 
-  fun speed(baseAttackCount: Int, modifierComboDifferent: Int, hasComboAction: Int, hasSpeedAction: Int) = attacks
+  fun speed(baseAttackCount: Int, hasComboAction: Int, hasSpeedAction: Int) = attacks
       .map { it.weaponId }
       .distinct()
       .size
@@ -143,7 +145,7 @@ data class Action(
         val repetition = (-5 + hasComboAction) * (attacks.size - combo)
         val difCombo = when {
           combo <= baseAttackCount -> 0
-          combo == baseAttackCount + 1 -> modifierComboDifferent + hasComboAction
+          combo == baseAttackCount + 1 -> -4 + hasComboAction
           else -> -100
         }
 
@@ -213,8 +215,7 @@ data class BaseAttack(
     val speed: Int,
     val finesse: Int,
 
-    val weaponId: Long,
-    val actionLimit: Int,
+    val weaponId: String,
     val simple: Boolean
 ) {
   fun display(): String = "$damage/$destruction +${finesse}К, ${distance.round(MathContext(2)).stripTrailingZeros().toPlainString()} м"

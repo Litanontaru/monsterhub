@@ -29,7 +29,7 @@ object CreatureAttackSpace : AbstractCreatureSpace {
           val sizeProfile = CreatureService.sizeProfile(obj)
 
           CreatureService.naturalWeapons(obj)
-              .let { locator.weaponRepository.findAllByNameInAndSettingIn(it, locator.settigs) }
+              .let { locator.weaponRepository.findAllByNameInAndSettingIn(it.map { it.first }, locator.settigs) }
               .asSequence()
               .map { it.adjust(sizeProfile, true, attackFeatures.getOrDefault(it.name, emptyList())) }
               .flatMap { weapon -> weapon.attacks.asSequence().map { weapon to it } }

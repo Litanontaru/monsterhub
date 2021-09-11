@@ -81,6 +81,7 @@ object CreatureService {
               ?.let { size(creature) - 3 }
               ?: size(creature))
 
-  fun naturalWeapons(creature: Creature): List<String> =
-      creature.getAllTraits("Естественное оружие").map { it.feature.name }.toList()
+  fun naturalWeapons(creature: Creature) =
+      creature.getAllTraits("Естественное оружие")
+          .map { it.feature.name to it.x.toInt() }.toList()
 }
