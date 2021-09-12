@@ -19,7 +19,7 @@ interface SettingObjectDataProvider {
 
   fun refresh(one: SettingObject): SettingObject
 
-  fun save(one: SettingObject)
+  fun save(one: SettingObject, callback: (SettingObject) -> Unit = {})
 
   fun create(): SettingObject
 }

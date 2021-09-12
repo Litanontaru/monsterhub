@@ -77,13 +77,12 @@ private fun assignDesignation(obj: FeatureData, key: String, newValue: String, l
       .find { it.designationKey == key }
       ?.run { update(obj) { this.value = newValue } }
       ?: update(obj) {
-        val featureDataDesignation = locator.featureDataDesignationRepository.update(
-            FeatureDataDesignation().apply {
-              this.designationKey = key
-              this.value = newValue
-            }
-        )
-        obj.designations.add(featureDataDesignation)
+        FeatureDataDesignation().apply {
+          this.designationKey = key
+          this.value = newValue
+
+          locator.featureDataDesignationRepository.update(this) { obj.designations.add(it) }
+        }
       }
 }
 
@@ -103,7 +102,9 @@ private fun addNumber(
     NumberOption.POSITIVE -> {
       parent.add(TextField(label).apply {
         this.value = value.toString()
-        addValueChangeListener { setter(it.value.toBigDecimalOrNull()?.takeIf { it > BigDecimal.ZERO } ?: BigDecimal.ZERO) }
+        addValueChangeListener {
+          setter(it.value.toBigDecimalOrNull()?.takeIf { it > BigDecimal.ZERO } ?: BigDecimal.ZERO)
+        }
       })
     }
     NumberOption.POSITIVE_AND_INFINITE -> parent.add(

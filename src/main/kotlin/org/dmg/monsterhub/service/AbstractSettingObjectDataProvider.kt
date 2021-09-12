@@ -20,7 +20,7 @@ abstract class AbstractSettingObjectDataProvider<T : SettingObject>(
 
   override fun refresh(one: SettingObject) = repository.getById(one.id)
 
-  override fun save(one: SettingObject) {
-    repository.update(one)
+  override fun save(one: SettingObject, callback: (SettingObject) -> Unit) {
+    repository.update(one, callback)
   }
 }

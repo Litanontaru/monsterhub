@@ -57,26 +57,25 @@ class ObjectTreeDataProvider(
   fun add(newSettingObject: SettingObject) {
     action(newSettingObject) {
       newSettingObject.setting = setting
-      it.save(newSettingObject)
-      val savedSettingObject = it.refresh(newSettingObject)
-      children.getOrPut(savedSettingObject.parent) { mutableListOf() } += savedSettingObject
+      it.save(newSettingObject) { savedObject ->
+        val savedSettingObject = it.refresh(savedObject)
+        children.getOrPut(savedSettingObject.parent) { mutableListOf() } += savedSettingObject
 
-      if (newSettingObject.parent != null) {
-        refreshItem(newSettingObject.parent, true)
-        if (onAdd != null) {
-          onAdd!!(savedSettingObject)
+        if (savedObject.parent != null) {
+          refreshItem(savedObject.parent, true)
+          if (onAdd != null) {
+            onAdd!!(savedSettingObject)
+          }
+        } else {
+          refreshAll()
         }
-      } else {
-        refreshAll()
       }
     }
   }
 
   fun update(settingObject: SettingObject) {
     action(settingObject) {
-      it.save(settingObject)
-
-      refreshItem(settingObject)
+      it.save(settingObject) { refreshItem(it) }
     }
   }
 
@@ -86,26 +85,27 @@ class ObjectTreeDataProvider(
         it -= settingObject
       }
       settingObject.parent = new
-      it.save(settingObject)
-
       children.getOrPut(settingObject.parent) { mutableListOf() } += settingObject
-      refreshAll()
+
+      it.save(settingObject) {
+        refreshAll()
+      }
     }
   }
 
   fun delete(settingObject: SettingObject) {
     action(settingObject) {
-      settingObject.deleteOnly = true
-      it.save(settingObject)
-
       children[settingObject.parent]?.also {
         it -= settingObject
       }
 
-      if (settingObject.parent != null) {
-        refreshItem(settingObject.parent, true)
-      } else {
-        refreshAll()
+      settingObject.deleteOnly = true
+      it.save(settingObject) {
+        if (settingObject.parent != null) {
+          refreshItem(settingObject.parent, true)
+        } else {
+          refreshAll()
+        }
       }
     }
   }
