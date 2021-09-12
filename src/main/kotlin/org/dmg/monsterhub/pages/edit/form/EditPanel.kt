@@ -91,7 +91,6 @@ class EditPanel(
       is SettingObject -> locator.data.update(obj)
       is FeatureData -> {
         if (obj.deleteOnly) {
-          obj.features.forEach { update(it) { it.deleteOnly = true } }
           locator.featureDataRepository.delete(obj)
         } else {
           locator.featureDataRepository.save(obj)
