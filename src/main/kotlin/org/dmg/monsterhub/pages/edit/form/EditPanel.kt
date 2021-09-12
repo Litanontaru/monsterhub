@@ -11,6 +11,7 @@ import org.dmg.monsterhub.data.WeaponAttack
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.space.*
+import org.dmg.monsterhub.repository.update
 
 class EditPanel(
     private val obj: Any,

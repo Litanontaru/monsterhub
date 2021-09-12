@@ -17,6 +17,7 @@ import org.dmg.monsterhub.data.FeatureDataDesignation
 import org.dmg.monsterhub.data.meta.NumberOption
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.EditDialog
+import org.dmg.monsterhub.repository.update
 import java.math.BigDecimal
 
 object FeatureDataSpace : Space {

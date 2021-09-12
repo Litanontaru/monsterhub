@@ -3,6 +3,7 @@ package org.dmg.monsterhub.service
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.SettingObjectRepository
+import org.dmg.monsterhub.repository.update
 import org.springframework.data.domain.Pageable
 
 abstract class AbstractSettingObjectDataProvider<T : SettingObject>(
