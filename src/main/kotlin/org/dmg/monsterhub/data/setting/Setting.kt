@@ -1,14 +1,11 @@
 package org.dmg.monsterhub.data.setting
 
+import org.dmg.monsterhub.data.DBObject
 import org.dmg.monsterhub.data.Named
 import javax.persistence.*
 
 @Entity
-class Setting : Named {
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  var id: Long = 0
-
+class Setting : DBObject(), Named {
   override var name: String = ""
 
   @ManyToMany

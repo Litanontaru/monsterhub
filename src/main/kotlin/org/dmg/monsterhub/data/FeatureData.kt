@@ -7,11 +7,7 @@ import java.math.BigDecimal
 import javax.persistence.*
 
 @Entity
-class FeatureData : FeatureContainerData {
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  var id: Long = 0
-
+class FeatureData : DBObject(), FeatureContainerData {
   @ManyToOne
   @JoinColumn(name = "feature_id", nullable = true)
   lateinit var feature: Feature
@@ -23,16 +19,13 @@ class FeatureData : FeatureContainerData {
   var z: BigDecimal = BigDecimal.ZERO
   var za: BigDecimal = BigDecimal.ZERO
 
-  @OneToMany(orphanRemoval = true)
+  @OneToMany(orphanRemoval = true, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
   @JoinColumn(name = "feature_data_id")
   var designations: MutableList<FeatureDataDesignation> = mutableListOf()
 
-  @OneToMany(orphanRemoval = true)
+  @OneToMany(orphanRemoval = true, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
   @JoinColumn(name = "main_feature_id")
   override var features: MutableList<FeatureData> = mutableListOf()
-
-  @Transient
-  var deleteOnly: Boolean = false
 
   fun display(): String {
     return (sequenceOf(feature.name) +

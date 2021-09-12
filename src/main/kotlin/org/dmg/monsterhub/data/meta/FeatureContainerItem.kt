@@ -1,16 +1,10 @@
 package org.dmg.monsterhub.data.meta
 
+import org.dmg.monsterhub.data.DBObject
 import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
 
 @Entity
-class FeatureContainerItem {
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  var id: Long = 0
-
+class FeatureContainerItem : DBObject() {
   lateinit var featureType: String
 
   var name: String = ""

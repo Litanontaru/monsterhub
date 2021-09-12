@@ -26,7 +26,7 @@ open class Feature : SettingObject(), FeatureContainer {
   open var selectionGroup: String? = null
   open var category: String = ""
 
-  @OneToMany(orphanRemoval = true)
+  @OneToMany(orphanRemoval = true, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
   @JoinColumn(name = "feature_id")
   override val containFeatureTypes: MutableList<FeatureContainerItem> = mutableListOf()
 }

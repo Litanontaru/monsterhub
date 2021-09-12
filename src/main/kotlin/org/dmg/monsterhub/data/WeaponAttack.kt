@@ -5,11 +5,7 @@ import java.math.BigDecimal
 import javax.persistence.*
 
 @Entity
-class WeaponAttack : FeatureContainerData {
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  var id: Long = 0
-
+class WeaponAttack : DBObject(), FeatureContainerData {
   var mode: String = ""
 
   var damage: Int = 0
@@ -19,12 +15,9 @@ class WeaponAttack : FeatureContainerData {
   var clipSize: Int = 0
   var allowInBarrel: Boolean = false
 
-  @OneToMany(orphanRemoval = true)
+  @OneToMany(orphanRemoval = true, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
   @JoinColumn(name = "weapon_attack_id")
   override var features: MutableList<FeatureData> = mutableListOf()
-
-  @Transient
-  var deleteOnly: Boolean = false
 
   fun display(): String = displayWithName(mode, features)
 
