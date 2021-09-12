@@ -1,52 +1,34 @@
 package org.dmg.monsterhub.service
 
 import org.dmg.monsterhub.data.FreeFeature
-import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.FreeFeatureRepository
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
 class FreeFeatureDataProvider(
     override val repository: FreeFeatureRepository
-) : AbstractSettingObjectDataProvider<FreeFeature>(repository) {
-
-  override val objectClass: Class<*> = FreeFeature::class.java
+) : AbstractSettingObjectDataProvider<FreeFeature>(FreeFeature::class.java, repository) {
 
   override fun supportType(type: String) = MY_TYPES.contains(type)
 
   override val name: String = "Свободный аспект"
 
-  override fun getAllBySetting(setting: Setting): List<SettingObject> = repository.findAllBySetting(setting)
-
-  override fun getAlikeBySettings(type: String, name: String, settings: List<Setting>, pageable: Pageable) =
-      repository.findAllByFeatureTypeAndNameContainingAndSettingIn(type, name, settings, pageable)
-
-  override fun countAlikeBySettings(type: String, name: String, settings: List<Setting>) =
-      repository.countByFeatureTypeAndNameContainingAndSettingIn(type, name, settings)
-
-  override fun refresh(one: SettingObject) = repository.getById(one.id)
-
-  override fun save(one: SettingObject) {
-    repository.save(one as FreeFeature)
-  }
-
   override fun create(): SettingObject = FreeFeature().apply { featureType = "NONE" }
 
   companion object {
-    val EFFECT_DURATION = "EFFECT_DURATION"
-    val EFFECT_DISTANCE = "EFFECT_DISTANCE"
-    val AREA_OF_EFFECT = "AREA_OF_EFFECT"
-    val EFFECT_TARGET_TYPE = "EFFECT_TARGET_TYPE"
-    val EFFECT_THREAT = "EFFECT_THREAT"
+    const val EFFECT_DURATION = "EFFECT_DURATION"
+    const val EFFECT_DISTANCE = "EFFECT_DISTANCE"
+    const val AREA_OF_EFFECT = "AREA_OF_EFFECT"
+    const val EFFECT_TARGET_TYPE = "EFFECT_TARGET_TYPE"
+    const val EFFECT_THREAT = "EFFECT_THREAT"
 
-    val ACTIVATION_ROLL = "ACTIVATION_ROLL"
-    val ACTIVATION_EVENT = "ACTIVATION_EVENT"
-    val ACTIVATION_DURATION = "ACTIVATION_DURATION"
-    val ACTIVATION_PAYMENT = "ACTIVATION_PAYMENT"
-    val POWER_CONDITION = "POWER_CONDITION"
-    val POWER_RESERVE = "POWER_RESERVE"
+    const val ACTIVATION_ROLL = "ACTIVATION_ROLL"
+    const val ACTIVATION_EVENT = "ACTIVATION_EVENT"
+    const val ACTIVATION_DURATION = "ACTIVATION_DURATION"
+    const val ACTIVATION_PAYMENT = "ACTIVATION_PAYMENT"
+    const val POWER_CONDITION = "POWER_CONDITION"
+    const val POWER_RESERVE = "POWER_RESERVE"
 
 
     val MY_TYPES = setOf(
