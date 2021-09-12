@@ -45,7 +45,11 @@ class ObjectFinderDataProvider(
           ?.let {
             query.page
             query.pageSize
-            dataProvider.countAlikeBySettings(type, it, settings)
+            if (it.length > 2) {
+              dataProvider.countAlikeBySettings(type, it, settings)
+            } else {
+              0
+            }
           }
           ?: 0
 
@@ -54,9 +58,13 @@ class ObjectFinderDataProvider(
           ?.filter
           ?.orElse(null)
           ?.let {
-            dataProvider
-                .getAlikeBySettings(type, it, settings, PageRequest.of(query.page, query.pageSize))
-                .stream()
+            if (it.length > 2) {
+              dataProvider
+                  .getAlikeBySettings(type, it, settings, PageRequest.of(query.page, query.pageSize))
+                  .stream()
+            } else {
+              Stream.empty()
+            }
           }
           ?: Stream.empty<SettingObject>()
 }
