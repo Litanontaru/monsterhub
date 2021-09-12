@@ -5,35 +5,19 @@ import org.dmg.monsterhub.data.Armor.Companion.ARMOR
 import org.dmg.monsterhub.data.FeatureContainerData
 import org.dmg.monsterhub.data.meta.FeatureContainer
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
-import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.ArmorRepository
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
 class ArmorDataProvider(
-    val repository: ArmorRepository
-) : SimpleSettingObjectDataProvider(), FeatureContainerService {
+    repository: ArmorRepository
+) : SimpleSettingObjectDataProvider<Armor>(repository), FeatureContainerService {
   override val objectClass: Class<*> = Armor::class.java
 
   override val type: String = ARMOR
 
   override val name: String = "Броня"
-
-  override fun getAllBySetting(setting: Setting): List<SettingObject> = repository.findAllBySetting(setting)
-
-  override fun getAlikeBySettings(type: String, name: String, settings: List<Setting>, pageable: Pageable) =
-      repository.findAllByNameContainingAndSettingIn(name, settings, pageable)
-
-  override fun countAlikeBySettings(type: String, name: String, settings: List<Setting>) =
-      repository.countByNameContainingAndSettingIn(name, settings)
-
-  override fun refresh(one: SettingObject) = repository.getById(one.id)
-
-  override fun save(one: SettingObject) {
-    repository.save(one as Armor)
-  }
 
   override fun delete(one: SettingObject) {
     repository.delete(one as Armor)

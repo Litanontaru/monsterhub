@@ -4,7 +4,6 @@ import org.dmg.monsterhub.data.FeatureContainerData
 import org.dmg.monsterhub.data.Power
 import org.dmg.monsterhub.data.meta.FeatureContainer
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
-import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.PowerRepository
 import org.dmg.monsterhub.service.FreeFeatureDataProvider.Companion.ACTIVATION_DURATION
@@ -19,32 +18,17 @@ import org.dmg.monsterhub.service.FreeFeatureDataProvider.Companion.EFFECT_THREA
 import org.dmg.monsterhub.service.FreeFeatureDataProvider.Companion.POWER_CONDITION
 import org.dmg.monsterhub.service.FreeFeatureDataProvider.Companion.POWER_RESERVE
 import org.dmg.monsterhub.service.PowerEffectDataProvider.Companion.POWER_EFFECT
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
 class PowerDataProvider(
-    val repository: PowerRepository
-) : SimpleSettingObjectDataProvider(), FeatureContainerService {
+    repository: PowerRepository
+) : SimpleSettingObjectDataProvider<Power>(repository), FeatureContainerService {
   override val objectClass: Class<*> = Power::class.java
 
   override val type: String = "POWER"
 
   override val name: String = "Сила"
-
-  override fun getAllBySetting(setting: Setting): List<SettingObject> = repository.findAllBySetting(setting)
-
-  override fun getAlikeBySettings(type: String, name: String, settings: List<Setting>, pageable: Pageable) =
-      repository.findAllByNameContainingAndSettingIn(name, settings, pageable)
-
-  override fun countAlikeBySettings(type: String, name: String, settings: List<Setting>) =
-      repository.countByNameContainingAndSettingIn(name, settings)
-
-  override fun refresh(one: SettingObject) = repository.getById(one.id)
-
-  override fun save(one: SettingObject) {
-    repository.save(one as Power)
-  }
 
   override fun delete(one: SettingObject) {
     repository.delete(one as Power)

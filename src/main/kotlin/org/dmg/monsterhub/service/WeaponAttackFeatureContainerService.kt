@@ -7,12 +7,12 @@ import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.springframework.stereotype.Service
 
 @Service
-class WeaponAttackFeatureContainerService: FeatureContainerService {
+class WeaponAttackFeatureContainerService : FeatureContainerService {
   override val objectClass: Class<*> = WeaponAttack::class.java
 
   override fun containerMeta(obj: FeatureContainerData): FeatureContainer = Meta
 
-  private object Meta: FeatureContainer {
+  private object Meta : FeatureContainer {
     override val containFeatureTypes: MutableList<FeatureContainerItem> = mutableListOf(
         FeatureContainerItem().apply {
           name = "Свойства"

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class FreeFeatureDataProvider(
-    val repository: FreeFeatureRepository
-) : SettingObjectDataProvider {
+    override val repository: FreeFeatureRepository
+) : AbstractSettingObjectDataProvider<FreeFeature>(repository) {
 
   override val objectClass: Class<*> = FreeFeature::class.java
 

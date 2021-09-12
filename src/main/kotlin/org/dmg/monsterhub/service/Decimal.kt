@@ -2,7 +2,7 @@ package org.dmg.monsterhub.service
 
 import java.math.BigDecimal
 
-open class Decimal(val value: BigDecimal, val type: DecimalType): Comparable<Decimal> {
+open class Decimal(val value: BigDecimal, val type: DecimalType) : Comparable<Decimal> {
   open operator fun unaryMinus(): Decimal = Decimal(-value, type)
   open operator fun plus(right: Decimal) = Decimal(value + right.value, type + right.type)
   open operator fun minus(right: Decimal) = Decimal(value - right.value, type + right.type)
@@ -29,7 +29,7 @@ open class Decimal(val value: BigDecimal, val type: DecimalType): Comparable<Dec
   }
 }
 
-class NoneDecimal(type: DecimalType): Decimal(BigDecimal.ZERO, type) {
+class NoneDecimal(type: DecimalType) : Decimal(BigDecimal.ZERO, type) {
   override fun unaryMinus() = this
 
   override fun plus(right: Decimal) = right
