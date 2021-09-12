@@ -9,12 +9,6 @@ import org.springframework.stereotype.Service
 @Service
 class TraitDataProvider(
     repository: TraitRepository
-) : SimpleSettingObjectDataProvider<Trait>(repository) {
-  override val objectClass: Class<*> = Trait::class.java
-
-  override val type: String = TRAIT
-
-  override val name: String = "Черта"
-
+) : SimpleSettingObjectDataProvider<Trait>(Trait::class.java, TRAIT, "Черта", repository) {
   override fun create(): SettingObject = Trait().apply { featureType = type }
 }

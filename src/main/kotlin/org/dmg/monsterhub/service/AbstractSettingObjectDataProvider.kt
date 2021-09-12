@@ -6,6 +6,7 @@ import org.dmg.monsterhub.repository.SettingObjectRepository
 import org.springframework.data.domain.Pageable
 
 abstract class AbstractSettingObjectDataProvider<T : SettingObject>(
+    override val objectClass: Class<*>,
     open val repository: SettingObjectRepository<T>
 ) : SettingObjectDataProvider {
   override fun getAllBySetting(setting: Setting): List<SettingObject> = repository.findAllBySetting(setting)

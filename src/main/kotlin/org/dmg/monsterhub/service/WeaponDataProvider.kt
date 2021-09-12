@@ -12,13 +12,7 @@ import org.springframework.stereotype.Service
 @Service
 class WeaponDataProvider(
     repository: WeaponRepository
-) : SimpleSettingObjectDataProvider<Weapon>(repository), FeatureContainerService {
-  override val objectClass: Class<*> = Weapon::class.java
-
-  override val type: String = WEAPON
-
-  override val name: String = "Оружие"
-
+) : SimpleSettingObjectDataProvider<Weapon>(Weapon::class.java, WEAPON, "Оружие", repository), FeatureContainerService {
   override fun create(): SettingObject = Weapon().apply { featureType = WEAPON }
 
   override fun containerMeta(obj: FeatureContainerData): FeatureContainer = Meta

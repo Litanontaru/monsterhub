@@ -8,13 +8,7 @@ import org.springframework.stereotype.Service
 @Service
 class PowerEffectDataProvider(
     repository: PowerEffectRepository
-) : SimpleSettingObjectDataProvider<PowerEffect>(repository) {
-  override val objectClass: Class<*> = PowerEffect::class.java
-
-  override val type: String = POWER_EFFECT
-
-  override val name: String = "Эффект Силы"
-
+) : SimpleSettingObjectDataProvider<PowerEffect>(PowerEffect::class.java, POWER_EFFECT, "Эффект Силы", repository) {
   override fun create(): SettingObject = PowerEffect().apply { featureType = POWER_EFFECT }
 
   companion object {

@@ -23,13 +23,7 @@ import org.springframework.stereotype.Service
 @Service
 class PowerDataProvider(
     repository: PowerRepository
-) : SimpleSettingObjectDataProvider<Power>(repository), FeatureContainerService {
-  override val objectClass: Class<*> = Power::class.java
-
-  override val type: String = "POWER"
-
-  override val name: String = "Сила"
-
+) : SimpleSettingObjectDataProvider<Power>(Power::class.java, "POWER", "Сила", repository), FeatureContainerService {
   override fun create(): SettingObject = Power().apply { featureType = type }
 
   override fun containerMeta(obj: FeatureContainerData): FeatureContainer = Meta

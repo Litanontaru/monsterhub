@@ -16,13 +16,7 @@ import org.springframework.stereotype.Service
 @Service
 class CreatureDataProvider(
     repository: CreatureRepository
-) : SimpleSettingObjectDataProvider<Creature>(repository), FeatureContainerService {
-  override val objectClass: Class<*> = Creature::class.java
-
-  override val type: String = "CREATURE"
-
-  override val name: String = "Существо"
-
+) : SimpleSettingObjectDataProvider<Creature>(Creature::class.java, "CREATURE", "Существо", repository), FeatureContainerService {
   override fun create(): SettingObject = Creature().apply { featureType = type }
 
   override fun containerMeta(obj: FeatureContainerData): FeatureContainer = CreatureMeta
