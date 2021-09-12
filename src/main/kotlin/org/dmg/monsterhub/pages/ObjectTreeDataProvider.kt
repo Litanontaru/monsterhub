@@ -30,7 +30,7 @@ class ObjectTreeDataProvider(
     dataProviders
         .flatMap { it.getAllBySetting(setting) }
         .groupBy { it.parent }
-        .mapValues { it.value.asSequence().sortedBy { it.name }.toMutableList() }
+        .mapValues { it.value.asSequence().sortedWith(compareBy({ it !is Folder }, { it.name })).toMutableList() }
         .also { children.putAll(it) }
   }
 
