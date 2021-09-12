@@ -95,7 +95,8 @@ class ObjectTreeDataProvider(
 
   fun delete(settingObject: SettingObject) {
     action(settingObject) {
-      it.delete(settingObject)
+      settingObject.deleteOnly = true
+      it.save(settingObject)
 
       children[settingObject.parent]?.also {
         it -= settingObject

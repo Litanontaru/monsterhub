@@ -23,10 +23,6 @@ class CreatureDataProvider(
 
   override val name: String = "Существо"
 
-  override fun delete(one: SettingObject) {
-    repository.delete(one as Creature)
-  }
-
   override fun create(): SettingObject = Creature().apply { featureType = type }
 
   override fun containerMeta(obj: FeatureContainerData): FeatureContainer = CreatureMeta

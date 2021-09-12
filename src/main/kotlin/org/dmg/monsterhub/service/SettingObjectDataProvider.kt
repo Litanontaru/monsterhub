@@ -21,7 +21,5 @@ interface SettingObjectDataProvider {
 
   fun save(one: SettingObject)
 
-  fun delete(one: SettingObject)
-
   fun create(): SettingObject
 }

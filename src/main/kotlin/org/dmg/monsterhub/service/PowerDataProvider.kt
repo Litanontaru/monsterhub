@@ -30,10 +30,6 @@ class PowerDataProvider(
 
   override val name: String = "Сила"
 
-  override fun delete(one: SettingObject) {
-    repository.delete(one as Power)
-  }
-
   override fun create(): SettingObject = Power().apply { featureType = type }
 
   override fun containerMeta(obj: FeatureContainerData): FeatureContainer = Meta

@@ -15,10 +15,6 @@ class PowerEffectDataProvider(
 
   override val name: String = "Эффект Силы"
 
-  override fun delete(one: SettingObject) {
-    repository.delete(one as PowerEffect)
-  }
-
   override fun create(): SettingObject = PowerEffect().apply { featureType = POWER_EFFECT }
 
   companion object {

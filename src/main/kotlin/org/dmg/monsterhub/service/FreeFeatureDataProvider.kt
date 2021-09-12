@@ -32,10 +32,6 @@ class FreeFeatureDataProvider(
     repository.save(one as FreeFeature)
   }
 
-  override fun delete(one: SettingObject) {
-    repository.delete(one as FreeFeature)
-  }
-
   override fun create(): SettingObject = FreeFeature().apply { featureType = "NONE" }
 
   companion object {

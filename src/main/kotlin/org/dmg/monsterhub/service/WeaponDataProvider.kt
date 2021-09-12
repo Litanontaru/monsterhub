@@ -19,10 +19,6 @@ class WeaponDataProvider(
 
   override val name: String = "Оружие"
 
-  override fun delete(one: SettingObject) {
-    repository.delete(one as Weapon)
-  }
-
   override fun create(): SettingObject = Weapon().apply { featureType = WEAPON }
 
   override fun containerMeta(obj: FeatureContainerData): FeatureContainer = Meta

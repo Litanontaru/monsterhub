@@ -16,9 +16,5 @@ class PerkDataProvider(
 
   override val name: String = "Перк"
 
-  override fun delete(one: SettingObject) {
-    repository.delete(one as Perk)
-  }
-
   override fun create(): SettingObject = Perk().apply { featureType = PERK }
 }

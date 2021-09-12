@@ -16,9 +16,5 @@ class SkillDataProvider(
 
   override val name: String = "Способность"
 
-  override fun delete(one: SettingObject) {
-    repository.delete(one as Skill)
-  }
-
   override fun create(): SettingObject = Skill().apply { featureType = SKILL }
 }

@@ -19,10 +19,6 @@ class ArmorDataProvider(
 
   override val name: String = "Броня"
 
-  override fun delete(one: SettingObject) {
-    repository.delete(one as Armor)
-  }
-
   override fun create(): SettingObject = Armor().apply { featureType = ARMOR }
 
   override fun containerMeta(obj: FeatureContainerData): FeatureContainer = Meta

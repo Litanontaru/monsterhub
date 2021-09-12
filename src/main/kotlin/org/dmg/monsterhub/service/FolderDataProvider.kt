@@ -15,9 +15,5 @@ class FolderDataProvider(
 
   override val name: String = "Папка"
 
-  override fun delete(one: SettingObject) {
-    repository.delete(one as Folder)
-  }
-
   override fun create(): SettingObject = Folder()
 }

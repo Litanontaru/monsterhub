@@ -16,9 +16,5 @@ class TraitDataProvider(
 
   override val name: String = "Черта"
 
-  override fun delete(one: SettingObject) {
-    repository.delete(one as Trait)
-  }
-
   override fun create(): SettingObject = Trait().apply { featureType = type }
 }
