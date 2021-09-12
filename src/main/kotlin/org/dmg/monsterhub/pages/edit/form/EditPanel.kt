@@ -120,7 +120,8 @@ class EditPanel(
     )
 
     val STAT_SPACES = listOf(
-        listOf(SuperioritySpace, CreatureSizeSpace, CreatureTraitSpace),
+        listOf(SuperioritySpace, CreatureSizeSpace),
+        listOf(CreatureTraitSpace),
         listOf(CreatureAttackSpace),
         listOf(CreatureDefence),
         listOf(CreatureSkillSpace),
