@@ -76,7 +76,7 @@ private fun assignDesignation(obj: FeatureData, key: String, newValue: String, l
       .find { it.designationKey == key }
       ?.run { update(obj) { this.value = newValue } }
       ?: update(obj) {
-        val featureDataDesignation = locator.featureDataDesignationRepository.save(
+        val featureDataDesignation = locator.featureDataDesignationRepository.update(
             FeatureDataDesignation().apply {
               this.designationKey = key
               this.value = newValue

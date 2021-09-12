@@ -37,7 +37,7 @@ object FeatureContainerSpace : Space {
       val addButton = Button(Icon(VaadinIcon.PLUS)) {
         addNew.optionalValue.ifPresent {
           val newFeatureContainerItem = FeatureContainerItem().apply { featureType = addNew.value }
-          locator.featureContainerItemRepository.save(newFeatureContainerItem)
+          locator.featureContainerItemRepository.update(newFeatureContainerItem)
           dataProvider.add(newFeatureContainerItem)
           addNew.value = ""
         }
@@ -52,7 +52,7 @@ object FeatureContainerSpace : Space {
     val grid = Grid<FeatureContainerItem>().apply {
       fun edit(containerItem: FeatureContainerItem) {
         FeatureContaiterItemEditDialog(containerItem) {
-          locator.featureContainerItemRepository.save(it)
+          locator.featureContainerItemRepository.update(it)
           dataProvider.refreshItem(it)
         }.open()
       }
@@ -73,6 +73,8 @@ object FeatureContainerSpace : Space {
 
           add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
             dataProvider.delete(containerItem)
+            containerItem.deleteOnly = true
+            locator.featureContainerItemRepository.update(containerItem)
           }.apply {
             addThemeVariants(ButtonVariant.LUMO_SMALL)
           })

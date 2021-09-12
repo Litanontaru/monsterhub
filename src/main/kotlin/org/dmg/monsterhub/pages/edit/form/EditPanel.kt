@@ -90,18 +90,10 @@ class EditPanel(
     when (obj) {
       is SettingObject -> locator.data.update(obj)
       is FeatureData -> {
-        if (obj.deleteOnly) {
-          locator.featureDataRepository.delete(obj)
-        } else {
-          locator.featureDataRepository.save(obj)
-        }
+        locator.featureDataRepository.update(obj)
       }
       is WeaponAttack -> {
-        if (obj.deleteOnly) {
-          locator.weaponAttackRepository.delete(obj)
-        } else {
-          locator.weaponAttackRepository.save(obj)
-        }
+        locator.weaponAttackRepository.update(obj)
       }
     }
     if (onUpdate != null && obj == this.obj) {

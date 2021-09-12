@@ -11,6 +11,6 @@ class SettingService(
   fun get(id: Long) = repository.getById(id)
 
   fun save(setting: Setting) {
-    repository.save(setting)
+    repository.update(setting)
   }
 }

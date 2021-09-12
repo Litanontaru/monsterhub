@@ -20,10 +20,6 @@ abstract class AbstractSettingObjectDataProvider<T : SettingObject>(
   override fun refresh(one: SettingObject) = repository.getById(one.id)
 
   override fun save(one: SettingObject) {
-    if (one.deleteOnly) {
-      repository.delete(one as T)
-    } else {
-      repository.save(one as T)
-    }
+    repository.update(one)
   }
 }

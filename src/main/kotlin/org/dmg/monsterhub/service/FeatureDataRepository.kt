@@ -1,6 +1,6 @@
 package org.dmg.monsterhub.service
 
 import org.dmg.monsterhub.data.FeatureData
-import org.springframework.data.jpa.repository.JpaRepository
+import org.dmg.monsterhub.repository.DBObjectRepository
 
-interface FeatureDataRepository : JpaRepository<FeatureData, Long>
+interface FeatureDataRepository : DBObjectRepository<FeatureData>
