@@ -1,14 +1,22 @@
 package org.dmg.monsterhub.service
 
 import org.dmg.monsterhub.data.FreeFeature
+import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.FreeFeatureRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
 class FreeFeatureDataProvider(
     override val repository: FreeFeatureRepository
 ) : AbstractSettingObjectDataProvider<FreeFeature>(FreeFeature::class.java, repository) {
+
+  override fun getAlikeBySettings(type: String, name: String, settings: List<Setting>, pageable: Pageable) =
+      repository.findAllByFeatureTypeAndNameContainingAndSettingIn(type, name, settings, pageable)
+
+  override fun countAlikeBySettings(type: String, name: String, settings: List<Setting>) =
+      repository.countByFeatureTypeAndNameContainingAndSettingIn(type, name, settings)
 
   override fun supportType(type: String) = MY_TYPES.contains(type)
 
