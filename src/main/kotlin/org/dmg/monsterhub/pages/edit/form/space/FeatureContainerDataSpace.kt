@@ -32,90 +32,107 @@ object FeatureContainerDataSpace : Space {
 
     val meta = locator.featureContainerServiceLocator.containerMeta(obj)
     if (meta != null) {
+      val componentsByType = mutableMapOf<String, List<Component>>()
+      fun updateActionComponents(selectedType: String?) {
+        componentsByType.forEach { featureType, components ->
+          components.forEach { it.isVisible = featureType == selectedType }
+        }
+      }
+
       meta.containFeatureTypes.forEach { type ->
         if (type.onlyOne) {
-          val place = VerticalLayout().apply {
+          fun findExisting() = obj.features.find { it.feature.featureType == type.featureType }
+
+          val existingLabel = Label()
+
+          val addSpace = HorizontalLayout()
+          val editSpace = HorizontalLayout()
+
+          fun updateExistingData() {
+            val existing = findExisting()
+            if (existing == null) {
+              addSpace.isVisible = true
+              editSpace.isVisible = false
+            } else {
+              addSpace.isVisible = false
+              editSpace.isVisible = true
+
+              existingLabel.text = type.name + ": " + existing.display()
+            }
+          }
+
+          val addNew = ComboBox<SettingObject>().apply {
+            setItems(locator.finderData(type.featureType) as DataProvider<SettingObject, String>)
+            setItemLabelGenerator { it.name }
+          }
+
+          val addButton = Button(Icon(VaadinIcon.PLUS)) {
+            addNew.optionalValue.ifPresent {
+              update(obj) {
+                val newFeatureData = FeatureData().apply { feature = it as Feature }
+                update(newFeatureData) {}
+                obj.features.add(newFeatureData)
+              }
+
+              updateExistingData()
+            }
+          }.apply {
+            addThemeVariants(ButtonVariant.LUMO_SMALL)
+          }
+
+          val editButton = Button(Icon(VaadinIcon.EDIT)) {
+            val existing = findExisting()!!
+            EditDialog(existing, locator) {
+              update(existing) {}
+              existingLabel.text = existing.display()
+            }.open()
+          }.apply {
+            addThemeVariants(ButtonVariant.LUMO_SMALL)
+          }
+
+          val closeButton = Button(Icon(VaadinIcon.CLOSE_SMALL)) {
+            val existing = findExisting()!!
+            update(obj) { obj.features.remove(existing) }
+            update(existing) { existing.deleteOnly = true }
+
+            updateExistingData()
+          }.apply {
+            addThemeVariants(ButtonVariant.LUMO_SMALL)
+          }
+
+          componentsByType.put(type.featureType, listOf(addNew, addButton, editButton, closeButton))
+
+          addSpace.apply {
+            val label = Label(type.name)
+
+            add(label, addNew, addButton)
+            setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, addNew, addButton)
+
+            addClickListener { updateActionComponents(type.featureType) }
+          }
+
+          editSpace.apply {
+            add(existingLabel, editButton, closeButton)
+            setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, existingLabel, editButton, closeButton)
+
+            addClickListener { updateActionComponents(type.featureType) }
+          }
+
+          updateExistingData()
+
+
+          parent.add(VerticalLayout().apply {
+            add(addSpace, editSpace)
+
             width = "100%"
             isPadding = false
             isSpacing = false
-          }
-          parent.add(place)
-
-          var featurePanel: Component? = null
-          fun updateOneFeaturePanel() {
-            if (featurePanel != null) {
-              place.remove(featurePanel)
-            }
-
-            val existing = obj.features.find { it.feature.featureType == type.featureType }
-            featurePanel = if (existing == null) {
-              HorizontalLayout().apply {
-                val label = Label(type.name)
-
-                val addNew = ComboBox<SettingObject>().apply {
-                  setItems(locator.finderData(type.featureType) as DataProvider<SettingObject, String>)
-                  setItemLabelGenerator { it.name }
-                  isVisible = false
-                }
-
-                val addButton = Button(Icon(VaadinIcon.PLUS)) {
-                  addNew.optionalValue.ifPresent {
-                    update(obj) {
-                      val newFeatureData = FeatureData().apply { feature = it as Feature }
-                      update(newFeatureData) {}
-                      obj.features.add(newFeatureData)
-                    }
-
-                    updateOneFeaturePanel()
-                  }
-                }.apply {
-                  addThemeVariants(ButtonVariant.LUMO_SMALL)
-                  isVisible = false
-                }
-
-                add(label, addNew, addButton)
-                setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, addNew, addButton)
-
-                addClickListener {
-                  addNew.isVisible = !addNew.isVisible
-                  addButton.isVisible = !addButton.isVisible
-                }
-              }
-            } else {
-              HorizontalLayout().apply {
-                val label = Label(type.name + ": " + existing.display())
-
-                val editButton = Button(Icon(VaadinIcon.EDIT)) {
-                  EditDialog(existing, locator) {
-                    update(existing) {}
-                    label.text = existing.display()
-                  }.open()
-                }.apply {
-                  addThemeVariants(ButtonVariant.LUMO_SMALL)
-                }
-                val closeButton = Button(Icon(VaadinIcon.CLOSE_SMALL)) {
-                  update(obj) { obj.features.remove(existing) }
-                  update(existing) { existing.deleteOnly = true }
-
-                  updateOneFeaturePanel()
-                }.apply {
-                  addThemeVariants(ButtonVariant.LUMO_SMALL)
-                }
-
-                add(label, editButton, closeButton)
-                setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, editButton, closeButton)
-              }
-            }
-            place.add(featurePanel)
-          }
-
-          updateOneFeaturePanel()
+          })
         } else {
           val dataProvider = FeatureDataDataProvider(
               type.featureType,
-              obj,
-              { update(it) {} }
-          )
+              obj
+          ) { update(it) {} }
 
           parent.add(HorizontalLayout().apply {
             val label = Label(type.name)
@@ -123,7 +140,6 @@ object FeatureContainerDataSpace : Space {
             val addNew = ComboBox<SettingObject>().apply {
               setItems(locator.finderData(type.featureType) as DataProvider<SettingObject, String>)
               setItemLabelGenerator { it.name }
-              isVisible = false
             }
 
             val addButton = Button(Icon(VaadinIcon.PLUS)) {
@@ -136,16 +152,14 @@ object FeatureContainerDataSpace : Space {
               }
             }.apply {
               addThemeVariants(ButtonVariant.LUMO_SMALL)
-              isVisible = false
             }
+
+            componentsByType.put(type.featureType, listOf(addNew, addButton))
 
             add(label, addNew, addButton)
             setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, addNew, addButton)
 
-            addClickListener {
-              addNew.isVisible = !addNew.isVisible
-              addButton.isVisible = !addButton.isVisible
-            }
+            addClickListener { updateActionComponents(type.featureType) }
           })
 
           val grid = Grid<FeatureData>().apply {
@@ -189,6 +203,8 @@ object FeatureContainerDataSpace : Space {
           parent.add(grid)
         }
       }
+
+      updateActionComponents(null)
     }
 
     return parent
