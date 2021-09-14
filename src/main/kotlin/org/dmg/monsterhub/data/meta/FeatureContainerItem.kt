@@ -10,4 +10,6 @@ class FeatureContainerItem : DBObject() {
   var name: String = ""
 
   var onlyOne: Boolean = false
+
+  var allowHidden: Boolean = false
 }
