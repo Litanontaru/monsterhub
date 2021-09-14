@@ -46,7 +46,7 @@ class ObjectTreeDataProvider(
   override fun getChildCount(query: HierarchicalQuery<SettingObject, Unit>?) =
       children(query?.parent)?.size ?: 0
 
-  private fun children(parent: SettingObject?): List<SettingObject>? = when (parent) {
+  fun children(parent: SettingObject?): List<SettingObject>? = when (parent) {
     null -> children[null]
     is Folder -> children[parent]
     else -> emptyList()
@@ -81,7 +81,8 @@ class ObjectTreeDataProvider(
 
   fun move(settingObject: SettingObject, new: Folder?) {
     action(settingObject) {
-      children[settingObject.parent]?.also {
+      val old = settingObject.parent
+      children[old]?.also {
         it -= settingObject
       }
       settingObject.parent = new
@@ -89,8 +90,9 @@ class ObjectTreeDataProvider(
       list += settingObject
       list.sortWith(COMPARATOR)
 
-      it.saveAsync(settingObject).thenAccept {
-        refreshAll()
+      it.save(settingObject).also {
+        refreshItem(old, true)
+        refreshItem(new, true)
       }
     }
   }

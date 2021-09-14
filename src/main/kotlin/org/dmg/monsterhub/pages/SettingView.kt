@@ -176,6 +176,34 @@ class SettingView(
         it.addItem("Удалить") {
           data.delete(obj)
         }
+
+        it.addItem("Переместить") {
+          val initial = generateSequence(obj.parent) { it.parent }
+              .map { it.name }
+              .toList()
+              .reversed()
+              .joinToString(".")
+
+          ChangeDialog("Переместить в", initial) { changedFolder ->
+            val folders = changedFolder.split("\\.".toRegex())
+            if (folders.isEmpty()) {
+              data.move(obj, null)
+            } else {
+              var parent: SettingObject? = null
+              for (folder in folders) {
+                val next = data.children(parent)
+                    ?.find { it.name == folder && it is Folder }
+                parent = next
+                if (parent == null) {
+                  break
+                }
+              }
+              if (parent != null) {
+                data.move(obj, parent as Folder)
+              }
+            }
+          }.open()
+        }
       }
 
       it.target = this
