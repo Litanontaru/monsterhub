@@ -17,7 +17,7 @@ import org.dmg.monsterhub.data.FeatureDataDesignation
 import org.dmg.monsterhub.data.meta.NumberOption
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.EditDialog
-import org.dmg.monsterhub.repository.update
+import org.dmg.monsterhub.repository.updateAsunc
 import java.math.BigDecimal
 
 object FeatureDataSpace : Space {
@@ -81,7 +81,7 @@ private fun assignDesignation(obj: FeatureData, key: String, newValue: String, l
           this.designationKey = key
           this.value = newValue
 
-          locator.featureDataDesignationRepository.update(this) { obj.designations.add(it) }
+          locator.featureDataDesignationRepository.updateAsunc(this).thenAccept { obj.designations.add(it) }
         }
       }
 }

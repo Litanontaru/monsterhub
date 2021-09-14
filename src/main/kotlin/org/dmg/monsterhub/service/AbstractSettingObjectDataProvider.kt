@@ -4,6 +4,7 @@ import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.SettingObjectRepository
 import org.dmg.monsterhub.repository.update
+import org.dmg.monsterhub.repository.updateAsunc
 import org.springframework.data.domain.Pageable
 
 abstract class AbstractSettingObjectDataProvider<T : SettingObject>(
@@ -20,7 +21,7 @@ abstract class AbstractSettingObjectDataProvider<T : SettingObject>(
 
   override fun refresh(one: SettingObject) = repository.getById(one.id)
 
-  override fun save(one: SettingObject, callback: (SettingObject) -> Unit) {
-    repository.update(one, callback)
-  }
+  override fun saveAsync(one: SettingObject) = repository.updateAsunc(one).thenApply { it as SettingObject }
+
+  override fun save(one: SettingObject) = repository.update(one) as SettingObject
 }

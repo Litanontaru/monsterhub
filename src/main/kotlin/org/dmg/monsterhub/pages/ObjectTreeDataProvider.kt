@@ -30,7 +30,7 @@ class ObjectTreeDataProvider(
     dataProviders
         .flatMap { it.getAllBySetting(setting) }
         .groupBy { it.parent }
-        .mapValues { it.value.asSequence().sortedWith(compareBy({ it !is Folder }, { it.name })).toMutableList() }
+        .mapValues { it.value.asSequence().sortedWith(COMPARATOR).toMutableList() }
         .also { children.putAll(it) }
   }
 
@@ -57,25 +57,25 @@ class ObjectTreeDataProvider(
   fun add(newSettingObject: SettingObject) {
     action(newSettingObject) {
       newSettingObject.setting = setting
-      it.save(newSettingObject) { savedObject ->
-        val savedSettingObject = it.refresh(savedObject)
-        children.getOrPut(savedSettingObject.parent) { mutableListOf() } += savedSettingObject
+      val savedObject = it.refresh(it.save(newSettingObject))
+      val list = children.getOrPut(savedObject.parent) { mutableListOf() }
+      list += savedObject
+      list.sortWith(COMPARATOR)
 
-        if (savedObject.parent != null) {
-          refreshItem(savedObject.parent, true)
-          if (onAdd != null) {
-            onAdd!!(savedSettingObject)
-          }
-        } else {
-          refreshAll()
+      if (savedObject.parent != null) {
+        refreshItem(savedObject.parent, true)
+        if (onAdd != null) {
+          onAdd!!(savedObject)
         }
+      } else {
+        refreshAll()
       }
     }
   }
 
   fun update(settingObject: SettingObject) {
     action(settingObject) {
-      it.save(settingObject) { refreshItem(it) }
+      it.saveAsync(settingObject).thenAccept { refreshItem(it) }
     }
   }
 
@@ -85,9 +85,11 @@ class ObjectTreeDataProvider(
         it -= settingObject
       }
       settingObject.parent = new
-      children.getOrPut(settingObject.parent) { mutableListOf() } += settingObject
+      val list = children.getOrPut(settingObject.parent) { mutableListOf() }
+      list += settingObject
+      list.sortWith(COMPARATOR)
 
-      it.save(settingObject) {
+      it.saveAsync(settingObject).thenAccept {
         refreshAll()
       }
     }
@@ -100,9 +102,9 @@ class ObjectTreeDataProvider(
       }
 
       settingObject.deleteOnly = true
-      it.save(settingObject) {
-        if (settingObject.parent != null) {
-          refreshItem(settingObject.parent, true)
+      it.save(settingObject).also {
+        if (it.parent != null) {
+          refreshItem(it.parent, true)
         } else {
           refreshAll()
         }
@@ -117,4 +119,8 @@ class ObjectTreeDataProvider(
   }
 
   fun dataProviders(): Sequence<SettingObjectDataProvider> = dataProviders.asSequence()
+
+  companion object {
+    private val COMPARATOR = compareBy<SettingObject>({ it !is Folder }, { it.name })
+  }
 }

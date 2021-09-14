@@ -3,6 +3,7 @@ package org.dmg.monsterhub.service
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.springframework.data.domain.Pageable
+import java.util.concurrent.CompletableFuture
 
 interface SettingObjectDataProvider {
   val objectClass: Class<*>
@@ -19,7 +20,9 @@ interface SettingObjectDataProvider {
 
   fun refresh(one: SettingObject): SettingObject
 
-  fun save(one: SettingObject, callback: (SettingObject) -> Unit = {})
+  fun saveAsync(one: SettingObject): CompletableFuture<SettingObject>
+
+  fun save(one: SettingObject): SettingObject
 
   fun create(): SettingObject
 }
