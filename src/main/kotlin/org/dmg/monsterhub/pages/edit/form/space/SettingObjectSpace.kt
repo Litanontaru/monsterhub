@@ -1,7 +1,6 @@
 package org.dmg.monsterhub.pages.edit.form.space
 
 import com.vaadin.flow.component.Component
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.textfield.TextField
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator

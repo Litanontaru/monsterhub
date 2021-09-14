@@ -70,6 +70,11 @@ object CreatureDefence : AbstractCreatureSpace {
           isPadding = false
           isSpacing = false
         })
+
+        isOpened = locator.config.spaces.getOrDefault(CreatureDefence, false) as Boolean
+        this.addOpenedChangeListener {
+          locator.config.spaces[CreatureDefence] = it.isOpened
+        }
       }
   )
 }

@@ -1,6 +1,6 @@
 package org.dmg.monsterhub.pages.edit.form.space
 
-import com.vaadin.flow.component.accordion.Accordion
+import com.vaadin.flow.component.details.Details
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import org.dmg.monsterhub.data.Creature
@@ -9,10 +9,12 @@ import org.dmg.monsterhub.service.CreatureService
 
 object CreatureSizeSpace : AbstractCreatureSpace {
   override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) = listOf(
-      Accordion().apply {
+      Details().apply {
         val size = CreatureService.size(obj)
         val physicalSize = CreatureService.physicalSize(obj)
-        add("Размер $size ($physicalSize)", VerticalLayout().apply {
+
+        summaryText = "Размер $size ($physicalSize)"
+        addContent(VerticalLayout().apply {
           add(Label("Размер $size"))
           add(Label("Физический размер $physicalSize"))
           val sizeTraits = obj
@@ -29,7 +31,11 @@ object CreatureSizeSpace : AbstractCreatureSpace {
           isPadding = false
           isSpacing = false
         })
-        close()
+
+        isOpened = locator.config.spaces.getOrDefault(CreatureSizeSpace, false) as Boolean
+        this.addOpenedChangeListener {
+          locator.config.spaces[CreatureSizeSpace] = it.isOpened
+        }
       }
   )
 }

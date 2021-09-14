@@ -7,7 +7,6 @@ import com.vaadin.flow.component.textfield.TextArea
 import com.vaadin.flow.component.textfield.TextField
 import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.data.Item
-import org.dmg.monsterhub.data.Weapon
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.meta.NumberOption
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator

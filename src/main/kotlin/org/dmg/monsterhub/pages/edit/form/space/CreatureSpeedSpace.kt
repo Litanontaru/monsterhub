@@ -14,6 +14,11 @@ object CreatureSpeedSpace : AbstractCreatureSpace {
             .speed(obj)
             .map { ListItem(it.display()) }
             .forEach { addContent(it) }
+
+        isOpened = locator.config.spaces.getOrDefault(CreatureSpeedSpace, false) as Boolean
+        this.addOpenedChangeListener {
+          locator.config.spaces[CreatureSpeedSpace] = it.isOpened
+        }
       }
   )
 }

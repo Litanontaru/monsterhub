@@ -1,6 +1,6 @@
 package org.dmg.monsterhub.pages.edit.form.space
 
-import com.vaadin.flow.component.accordion.Accordion
+import com.vaadin.flow.component.details.Details
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.html.ListItem
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -11,8 +11,10 @@ import org.dmg.monsterhub.service.CreatureService
 
 object CreatureAttackSpace : AbstractCreatureSpace {
   override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) = listOf(
-      Accordion().apply {
-        add("Атака", VerticalLayout().apply {
+      Details().apply {
+        summaryText = "Атака"
+
+        addContent(VerticalLayout().apply {
           val actions = AttackService.actions(obj, locator.weaponRepository, locator.settigs)
           actions
               .sortedWith(compareBy({ -it.speed }, { -it.distance }, { -it.finesseSum }, { -it.damageSum }))
@@ -41,7 +43,10 @@ object CreatureAttackSpace : AbstractCreatureSpace {
           isSpacing = false
         })
 
-        close()
+        isOpened = locator.config.spaces.getOrDefault(CreatureAttackSpace, false) as Boolean
+        this.addOpenedChangeListener {
+          locator.config.spaces[CreatureAttackSpace] = it.isOpened
+        }
       }
   )
 }

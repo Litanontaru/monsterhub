@@ -43,7 +43,9 @@ object OneWeaponAttackSpace : Space {
         TextField("Дистанция").apply {
           this.value = obj.distance.toString()
           addValueChangeListener {
-            update(obj) { obj.distance = it.value.toBigDecimalOrNull()?.takeIf { it >= BigDecimal.ZERO } ?: BigDecimal.ZERO }
+            update(obj) {
+              obj.distance = it.value.toBigDecimalOrNull()?.takeIf { it >= BigDecimal.ZERO } ?: BigDecimal.ZERO
+            }
           }
         },
         TextField("Скорость").apply {
