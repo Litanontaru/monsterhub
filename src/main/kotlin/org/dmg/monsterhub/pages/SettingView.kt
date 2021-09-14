@@ -29,6 +29,7 @@ import org.dmg.monsterhub.repository.WeaponRepository
 import org.dmg.monsterhub.service.FeatureContainerServiceLocator
 import org.dmg.monsterhub.service.FeatureDataRepository
 import org.dmg.monsterhub.service.SettingService
+import java.util.concurrent.CompletableFuture
 
 
 @Route("setting/:settingId/edit/:objId")
@@ -172,17 +173,19 @@ class SettingView(
   }
 
   private fun select(objId: Long) {
-    data
-        .find(objId)
-        ?.also { obj ->
-          generateSequence(obj.parent) { it.parent }
-              .toList()
-              .reversed()
-              .forEach { tree.expand(it) }
+    CompletableFuture.runAsync {
+      data
+          .find(objId)
+          ?.also { obj ->
+            generateSequence(obj.parent) { it.parent }
+                .toList()
+                .reversed()
+                .forEach { tree.expand(it) }
 
-          tree.select(obj)
-          click(obj)
-        }
+            tree.select(obj)
+            click(obj)
+          }
+    }
   }
 
   private fun Component.contextMenu(obj: SettingObject?) {
