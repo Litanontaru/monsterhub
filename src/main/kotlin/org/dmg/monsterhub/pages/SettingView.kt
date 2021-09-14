@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.pages
 
 import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.contextmenu.ContextMenu
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.GridVariant
@@ -11,10 +12,7 @@ import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.treegrid.TreeGrid
-import com.vaadin.flow.router.BeforeEnterEvent
-import com.vaadin.flow.router.BeforeEnterObserver
-import com.vaadin.flow.router.HasDynamicTitle
-import com.vaadin.flow.router.Route
+import com.vaadin.flow.router.*
 import org.dmg.monsterhub.data.setting.Folder
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
@@ -33,7 +31,7 @@ import org.dmg.monsterhub.service.FeatureDataRepository
 import org.dmg.monsterhub.service.SettingService
 
 
-@Route("setting/:settingId/edit")
+@Route("setting/:settingId/edit/:objId")
 class SettingView(
     private val settingService: SettingService,
     private val objectDataProviderService: ObjectTreeDataProviderService,
@@ -45,104 +43,146 @@ class SettingView(
     private val weaponRepository: WeaponRepository,
     private val featureContainerServiceLocator: FeatureContainerServiceLocator
 ) : Div(), BeforeEnterObserver, HasDynamicTitle {
-  lateinit var setting: Setting
-  lateinit var data: ObjectTreeDataProvider
-  lateinit var finderData: ObjectFinderDataProviderForSetting
+
+  private var initialized = false
+  private lateinit var setting: Setting
+  private lateinit var data: ObjectTreeDataProvider
+  private lateinit var finderData: ObjectFinderDataProviderForSetting
+
+  private lateinit var tree: TreeGrid<SettingObject>
+  private lateinit var rightPanel: VerticalLayout
+
+  private lateinit var settings: List<Setting>
 
   override fun beforeEnter(event: BeforeEnterEvent?) {
     if (event != null) {
       set(event.routeParameters["settingId"].get().toLong())
+      event.routeParameters["objId"].ifPresent { select(it.toLong()) }
     }
   }
 
   private fun set(settingId: Long) {
-    setting = settingService.get(settingId)
-    val settings = getRecursive(setting).toList()
+    if (!initialized || settingId != setting.id) {
+      initialized = true
 
-    data = objectDataProviderService(setting)
-    finderData = objectFinderDataProviderService(settings)
+      setting = settingService.get(settingId)
+      settings = getRecursive(setting).toList()
 
-    var edit: EditPanel? = null
-    val rightPanel = VerticalLayout().apply {
-      height = "100%"
-      width = "100%"
-      isPadding = false
-      isSpacing = false
-    }
+      data = objectDataProviderService(setting)
+      finderData = objectFinderDataProviderService(settings)
 
-    val leftPanel = VerticalLayout().apply {
-      fun click(item: SettingObject) {
-        if (edit != null) {
-          rightPanel.remove(edit)
-        }
-        edit = EditPanel(
-            item,
-            ServiceLocator(
-                settings,
-
-                data,
-                finderData,
-                featureDataRepository,
-                featureContainerItemRepository,
-                featureDataDesignationRepository,
-                weaponRepository,
-                weaponAttackRepository,
-                featureContainerServiceLocator
-            )
-        )
-
-        rightPanel.add(edit)
+      rightPanel = VerticalLayout().apply {
+        height = "100%"
+        width = "100%"
+        isPadding = false
+        isSpacing = false
       }
 
-      val tree = TreeGrid<SettingObject>().also { tree ->
-        tree.addComponentHierarchyColumn { obj ->
-          val item: Component = when (obj) {
-            is Folder -> HorizontalLayout().apply {
-              add(Icon(VaadinIcon.FOLDER_O))
-              add(Label(obj.name))
+      val leftPanel = VerticalLayout().apply {
+        tree = TreeGrid<SettingObject>().also { tree ->
+          tree.addComponentHierarchyColumn { obj ->
+            val item: Component = when (obj) {
+              is Folder -> HorizontalLayout().apply {
+                add(Icon(VaadinIcon.FOLDER_O))
+                add(Label(obj.name))
 
-              width = "100%"
-              isPadding = false
+                width = "100%"
+                isPadding = false
+              }
+              else -> Label(obj.name)
             }
-            else -> Label(obj.name)
+
+            item.apply { contextMenu(obj) }
+          }
+          tree.contextMenu(null)
+
+          tree.setSelectionMode(Grid.SelectionMode.SINGLE);
+
+          tree.addItemClickListener {
+            it.item?.let {
+              clickAndHistory(it)
+              Unit
+            }
           }
 
-          item.apply { contextMenu(obj) }
-        }
-        tree.contextMenu(null)
+          tree.setDataProvider(data)
+          data.onAdd = {
+            tree.select(it)
+            clickAndHistory(it)
+          }
 
-        tree.setSelectionMode(Grid.SelectionMode.SINGLE);
-
-        tree.addItemClickListener { it.item?.let { click(it) } }
-
-        tree.setDataProvider(data)
-        data.onAdd = {
-          tree.select(it)
-          click(it)
+          tree.addThemeVariants(GridVariant.LUMO_COMPACT)
         }
 
-        tree.addThemeVariants(GridVariant.LUMO_COMPACT)
+
+        add(tree)
+
+        height = "100%"
+        width = "30%"
+        isPadding = false
+        isSpacing = false
       }
 
+      removeAll()
+      add(HorizontalLayout().apply {
+        add(leftPanel, rightPanel)
 
-      add(tree)
+        setSizeFull()
+        isPadding = true
+      })
 
       height = "100%"
-      width = "30%"
-      isPadding = false
-      isSpacing = false
+      width = "100%"
     }
+  }
 
-    val apply = HorizontalLayout().apply {
-      add(leftPanel, rightPanel)
+  private fun clickAndHistory(it: SettingObject) {
+    click(it)
+    history(it)
+  }
 
-      setSizeFull()
-      isPadding = true
-    }
-    add(apply)
+  private fun click(item: SettingObject) {
+    rightPanel.removeAll()
 
-    height = "100%"
-    width = "100%"
+    rightPanel.add(EditPanel(
+        item,
+        ServiceLocator(
+            settings,
+
+            data,
+            finderData,
+            featureDataRepository,
+            featureContainerItemRepository,
+            featureDataDesignationRepository,
+            weaponRepository,
+            weaponAttackRepository,
+            featureContainerServiceLocator
+        )
+    ))
+  }
+
+  private fun history(item: SettingObject) {
+    val routeConfiguration = RouteConfiguration.forSessionScope()
+    val parameters = RouteParameters(mutableMapOf(
+        "settingId" to setting.id.toString(),
+        "objId" to item.id.toString()
+    ))
+    val url = routeConfiguration.getUrl(SettingView::class.java, parameters)
+    UI.getCurrent().page.history.pushState(null, url)
+  }
+
+  private fun select(objId: Long) {
+    data
+        .find(objId)
+        ?.also { obj ->
+          generateSequence(obj.parent) { it.parent }
+              .toList()
+              .reversed()
+              .forEach { tree.expand(it) }
+
+          tree.select(obj)
+          click(obj)
+        }
   }
 
   private fun Component.contextMenu(obj: SettingObject?) {

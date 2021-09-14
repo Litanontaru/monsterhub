@@ -122,6 +122,9 @@ class ObjectTreeDataProvider(
 
   fun dataProviders(): Sequence<SettingObjectDataProvider> = dataProviders.asSequence()
 
+  fun find(objId: Long): SettingObject? =
+      children.values.asSequence().flatMap { it.asSequence() }.find { it.id == objId }
+
   companion object {
     private val COMPARATOR = compareBy<SettingObject>({ it !is Folder }, { it.name })
   }
