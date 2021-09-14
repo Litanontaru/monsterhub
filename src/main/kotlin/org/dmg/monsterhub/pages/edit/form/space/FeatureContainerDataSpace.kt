@@ -5,6 +5,7 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -27,6 +28,7 @@ object FeatureContainerDataSpace : Space {
   override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
     val parent = mutableListOf<Component>()
     val obj = anyObj as FeatureContainerData
+
 
     val meta = locator.featureContainerServiceLocator.containerMeta(obj)
     if (meta != null) {
@@ -53,6 +55,7 @@ object FeatureContainerDataSpace : Space {
                 val addNew = ComboBox<SettingObject>().apply {
                   setItems(locator.finderData(type.featureType) as DataProvider<SettingObject, String>)
                   setItemLabelGenerator { it.name }
+                  isVisible = false
                 }
 
                 val addButton = Button(Icon(VaadinIcon.PLUS)) {
@@ -67,10 +70,16 @@ object FeatureContainerDataSpace : Space {
                   }
                 }.apply {
                   addThemeVariants(ButtonVariant.LUMO_SMALL)
+                  isVisible = false
                 }
 
                 add(label, addNew, addButton)
                 setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, addNew, addButton)
+
+                addClickListener {
+                  addNew.isVisible = !addNew.isVisible
+                  addButton.isVisible = !addButton.isVisible
+                }
               }
             } else {
               HorizontalLayout().apply {
@@ -114,6 +123,7 @@ object FeatureContainerDataSpace : Space {
             val addNew = ComboBox<SettingObject>().apply {
               setItems(locator.finderData(type.featureType) as DataProvider<SettingObject, String>)
               setItemLabelGenerator { it.name }
+              isVisible = false
             }
 
             val addButton = Button(Icon(VaadinIcon.PLUS)) {
@@ -126,10 +136,16 @@ object FeatureContainerDataSpace : Space {
               }
             }.apply {
               addThemeVariants(ButtonVariant.LUMO_SMALL)
+              isVisible = false
             }
 
             add(label, addNew, addButton)
             setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, label, addNew, addButton)
+
+            addClickListener {
+              addNew.isVisible = !addNew.isVisible
+              addButton.isVisible = !addButton.isVisible
+            }
           })
 
           val grid = Grid<FeatureData>().apply {
@@ -167,6 +183,7 @@ object FeatureContainerDataSpace : Space {
 
             width = "100%"
             isHeightByRows = true
+            addThemeVariants(GridVariant.LUMO_NO_BORDER)
           }
 
           parent.add(grid)
