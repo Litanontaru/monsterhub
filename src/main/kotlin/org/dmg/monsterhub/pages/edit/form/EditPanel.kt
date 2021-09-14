@@ -26,7 +26,7 @@ class EditPanel(
       add(tabs.values.first()!!)
     } else {
       val tabPages = tabs.mapKeys { Tab(it.key) }.mapValues { it.value!! }
-      tabPages.values.drop(1).forEach { it.isVisible = false }
+      tabPages.forEach { (tab, panel) -> panel.isVisible = tab.label == locator.config.selectedTab }
 
       add(*tabPages.values.toTypedArray())
       add(Tabs(*tabPages.keys.toTypedArray()).apply {
@@ -34,9 +34,10 @@ class EditPanel(
 
         addSelectedChangeListener {
           tabPages.values.forEach { it.isVisible = false }
-          val layout = tabPages[it.selectedTab]
 
-          layout?.isVisible = true
+          tabPages[it.selectedTab]
+              ?.isVisible = true
+          locator.config.selectedTab = it.selectedTab.label
         }
       })
     }

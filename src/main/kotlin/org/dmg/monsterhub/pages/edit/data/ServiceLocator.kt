@@ -2,6 +2,7 @@ package org.dmg.monsterhub.pages.edit.data
 
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.pages.ObjectTreeDataProvider
+import org.dmg.monsterhub.pages.edit.form.EditPanelConfig
 import org.dmg.monsterhub.repository.FeatureContainerItemRepository
 import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
 import org.dmg.monsterhub.repository.WeaponAttackRepository
@@ -19,5 +20,7 @@ data class ServiceLocator(
     val featureDataDesignationRepository: FeatureDataDesignationRepository,
     val weaponRepository: WeaponRepository,
     val weaponAttackRepository: WeaponAttackRepository,
-    val featureContainerServiceLocator: FeatureContainerServiceLocator) {
-}
+    val featureContainerServiceLocator: FeatureContainerServiceLocator,
+
+    val config: EditPanelConfig
+)

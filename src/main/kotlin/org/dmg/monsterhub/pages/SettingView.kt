@@ -22,6 +22,7 @@ import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderService.Compan
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.ChangeDialog
 import org.dmg.monsterhub.pages.edit.form.EditPanel
+import org.dmg.monsterhub.pages.edit.form.EditPanelConfig
 import org.dmg.monsterhub.repository.FeatureContainerItemRepository
 import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
 import org.dmg.monsterhub.repository.WeaponAttackRepository
@@ -44,6 +45,7 @@ class SettingView(
     private val weaponRepository: WeaponRepository,
     private val featureContainerServiceLocator: FeatureContainerServiceLocator
 ) : Div(), BeforeEnterObserver, HasDynamicTitle {
+  private val config: EditPanelConfig = EditPanelConfig("Конфигурация")
 
   private var initialized = false
   private lateinit var setting: Setting
@@ -157,7 +159,9 @@ class SettingView(
             featureDataDesignationRepository,
             weaponRepository,
             weaponAttackRepository,
-            featureContainerServiceLocator
+            featureContainerServiceLocator,
+
+            config
         )
     ))
   }
