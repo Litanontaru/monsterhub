@@ -97,7 +97,7 @@ class SettingView(
           }
           tree.contextMenu(null)
 
-          tree.setSelectionMode(Grid.SelectionMode.SINGLE);
+          tree.setSelectionMode(Grid.SelectionMode.SINGLE)
 
           tree.addItemClickListener {
             it.item?.let {
