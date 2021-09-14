@@ -17,6 +17,8 @@ open class SettingObject : DBObject(), Named {
   @JoinColumn(name = "parent_id", nullable = true)
   open var parent: Folder? = null
 
+  open var hidden: Boolean = false
+
   open fun rate() = Decimal.ZERO
 
   override fun toString(): String = "${this.javaClass.simpleName}($name)"

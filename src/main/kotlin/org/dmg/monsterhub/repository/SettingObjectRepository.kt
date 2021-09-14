@@ -7,7 +7,7 @@ import org.springframework.data.repository.NoRepositoryBean
 
 @NoRepositoryBean
 interface SettingObjectRepository<T : SettingObject> : DBObjectRepository<T> {
-  fun findAllBySetting(setting: Setting): List<T>
+  fun findAllBySettingAndHiddenFalse(setting: Setting): List<T>
 
   fun findAllByNameContainingAndSettingIn(name: String, settings: List<Setting>, pageable: Pageable): List<T>
 

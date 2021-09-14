@@ -11,7 +11,7 @@ abstract class AbstractSettingObjectDataProvider<T : SettingObject>(
     override val objectClass: Class<*>,
     open val repository: SettingObjectRepository<T>
 ) : SettingObjectDataProvider {
-  override fun getAllBySetting(setting: Setting): List<SettingObject> = repository.findAllBySetting(setting)
+  override fun getAllBySetting(setting: Setting): List<SettingObject> = repository.findAllBySettingAndHiddenFalse(setting)
 
   override fun getAlikeBySettings(type: String, name: String, settings: List<Setting>, pageable: Pageable) =
       repository.findAllByNameContainingAndSettingIn(name, settings, pageable)
