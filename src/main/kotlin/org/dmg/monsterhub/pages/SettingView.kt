@@ -21,9 +21,9 @@ import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderForSetting
 import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderService
 import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderService.Companion.getRecursive
+import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.ChangeDialog
 import org.dmg.monsterhub.pages.edit.form.EditPanel
-import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.repository.FeatureContainerItemRepository
 import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
 import org.dmg.monsterhub.repository.WeaponAttackRepository
@@ -149,16 +149,18 @@ class SettingView(
     ContextMenu().also {
       if (obj == null || obj is Folder) {
         val toAdd = it.addItem("Добавить")
-        data.dataProviders().forEach { dataProvider ->
-          toAdd.subMenu.addItem(dataProvider.name) {
-            ChangeDialog("Создать", "") {
-              data.add(dataProvider.create().apply {
-                name = it
-                if (obj is Folder) parent = obj
-              })
-            }.open()
-          }
-        }
+        data.dataProviders()
+            .sortedBy { it.name }
+            .forEach { dataProvider ->
+              toAdd.subMenu.addItem(dataProvider.name) {
+                ChangeDialog("Создать", "") {
+                  data.add(dataProvider.create().apply {
+                    name = it
+                    if (obj is Folder) parent = obj
+                  })
+                }.open()
+              }
+            }
       }
 
       if (obj != null) {
