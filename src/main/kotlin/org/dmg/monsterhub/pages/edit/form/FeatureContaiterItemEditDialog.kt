@@ -32,6 +32,13 @@ class FeatureContaiterItemEditDialog(
             save(obj)
           }
         },
+        Checkbox("Можно встраивать").apply {
+          value = obj.allowHidden
+          addValueChangeListener {
+            obj.allowHidden = it.value
+            save(obj)
+          }
+        },
         Button(Icon(VaadinIcon.CLOSE)) {
           close()
         }

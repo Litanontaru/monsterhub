@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.data
 
 import org.dmg.monsterhub.data.meta.Feature
+import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import javax.persistence.*
 
 @Entity
@@ -9,4 +10,6 @@ open class ContainerData : Feature(), FeatureContainerData {
   @OneToMany(orphanRemoval = true, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
   @JoinColumn(name = "feature_container_id")
   override var features: MutableList<FeatureData> = mutableListOf()
+
+  override fun meta(): List<FeatureContainerItem> = containFeatureTypes
 }

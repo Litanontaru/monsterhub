@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.data
 
 import org.dmg.monsterhub.data.meta.Feature
+import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.service.Decimal
 import org.dmg.monsterhub.service.Formula.toFormula
 import java.math.BigDecimal
@@ -26,6 +27,8 @@ class FeatureData : DBObject(), FeatureContainerData {
   @OneToMany(orphanRemoval = true, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
   @JoinColumn(name = "main_feature_id")
   override var features: MutableList<FeatureData> = mutableListOf()
+
+  override fun meta(): List<FeatureContainerItem> = feature.containFeatureTypes
 
   fun display(): String {
     return (sequenceOf(feature.name) +

@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.data
 
 import org.dmg.monsterhub.data.Trait.Companion.TRAIT
+import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.service.CreatureService
 import org.dmg.monsterhub.service.Decimal
 import org.dmg.monsterhub.service.toDecimal
@@ -15,6 +16,8 @@ class Creature : ContainerData(), Hierarchical<Creature> {
       inverseJoinColumns = [JoinColumn(name = "base_id")]
   )
   override var base: MutableList<Creature> = mutableListOf()
+
+  override fun meta(): List<FeatureContainerItem> = META
 
   fun getAll(type: String): Sequence<FeatureData> {
     return base
@@ -41,4 +44,32 @@ class Creature : ContainerData(), Hierarchical<Creature> {
   fun getAllTraits(categories: Set<String>) = getAllTraits().filter { it.feature.category in categories || it.feature.name in categories }
 
   override fun rate(): Decimal = CreatureService.superiority(this).value.toBigDecimal().toDecimal()
+
+  companion object {
+    val META = listOf(
+        FeatureContainerItem().apply {
+          name = "Черты"
+          featureType = TRAIT
+
+        },
+        FeatureContainerItem().apply {
+          name = "Оружие"
+          featureType = Weapon.WEAPON
+
+        },
+        FeatureContainerItem().apply {
+          name = "Броня"
+          featureType = Armor.ARMOR
+          onlyOne = true
+        },
+        FeatureContainerItem().apply {
+          name = "Способности"
+          featureType = Skill.SKILL
+        },
+        FeatureContainerItem().apply {
+          name = "Перки"
+          featureType = Perk.PERK
+        }
+    )
+  }
 }

@@ -1,8 +1,12 @@
 package org.dmg.monsterhub.data
 
+import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.service.SizeProfile
 import java.math.BigDecimal
-import javax.persistence.*
+import javax.persistence.CascadeType
+import javax.persistence.Entity
+import javax.persistence.JoinColumn
+import javax.persistence.OneToMany
 
 @Entity
 class WeaponAttack : DBObject(), FeatureContainerData {
@@ -19,6 +23,8 @@ class WeaponAttack : DBObject(), FeatureContainerData {
   @JoinColumn(name = "weapon_attack_id")
   override var features: MutableList<FeatureData> = mutableListOf()
 
+  override fun meta(): List<FeatureContainerItem> = META
+
   fun display(): String = displayWithName(mode, features)
 
   fun display(prefix: String, additionalFeatures: List<FeatureData>): String = displayWithName("$prefix $mode".trim(), additionalFeatures + features)
@@ -32,15 +38,15 @@ class WeaponAttack : DBObject(), FeatureContainerData {
               "скр. $speed"
           ) +
 
-          when {
-            clipSize > 0 -> sequenceOf("Магазин ${clipSize()}")
-            else -> emptySequence()
-          } +
+              when {
+                clipSize > 0 -> sequenceOf("Магазин ${clipSize()}")
+                else -> emptySequence()
+              } +
 
-          features.asSequence().map { it.display() }
-      )
-      .filter { it.isNotBlank() }
-      .joinToString()
+              features.asSequence().map { it.display() }
+          )
+          .filter { it.isNotBlank() }
+          .joinToString()
 
   private fun clipSize() = when {
     allowInBarrel -> "$clipSize+1"
@@ -59,5 +65,14 @@ class WeaponAttack : DBObject(), FeatureContainerData {
     it.clipSize = clipSize
     it.allowInBarrel = allowInBarrel
     it.features = features
+  }
+
+  companion object {
+    val META = listOf(
+        FeatureContainerItem().apply {
+          name = "Свойства"
+          featureType = "WEAPON_ATTACK_FEATURE"
+        }
+    )
   }
 }

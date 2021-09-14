@@ -7,7 +7,6 @@ import org.dmg.monsterhub.repository.FeatureContainerItemRepository
 import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
 import org.dmg.monsterhub.repository.WeaponAttackRepository
 import org.dmg.monsterhub.repository.WeaponRepository
-import org.dmg.monsterhub.service.FeatureContainerServiceLocator
 import org.dmg.monsterhub.service.FeatureDataRepository
 
 data class ServiceLocator(
@@ -20,7 +19,6 @@ data class ServiceLocator(
     val featureDataDesignationRepository: FeatureDataDesignationRepository,
     val weaponRepository: WeaponRepository,
     val weaponAttackRepository: WeaponAttackRepository,
-    val featureContainerServiceLocator: FeatureContainerServiceLocator,
 
     val config: EditPanelConfig
 )

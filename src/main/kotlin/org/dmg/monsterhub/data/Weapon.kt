@@ -1,5 +1,6 @@
 package org.dmg.monsterhub.data
 
+import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.service.SizeProfile
 import javax.persistence.CascadeType
 import javax.persistence.Entity
@@ -12,6 +13,8 @@ class Weapon: Item() {
   @JoinColumn(name = "weapon_id")
   var attacks: MutableList<WeaponAttack> = mutableListOf()
 
+  override fun meta(): List<FeatureContainerItem> = META
+
   fun adjust(sizeProfile: SizeProfile, isNatural: Boolean, externalFeatures: List<FeatureData>) = Weapon().also {
     it.name = name
     it.attacks = attacks.asSequence().map { it.adjustToSize(sizeProfile, isNatural) }.toMutableList()
@@ -21,5 +24,12 @@ class Weapon: Item() {
 
   companion object {
     val WEAPON = "WEAPON"
+
+    val META = listOf(
+        FeatureContainerItem().apply {
+          name = "Свойства"
+          featureType = "WEAPON_FEATURE"
+        }
+    )
   }
 }

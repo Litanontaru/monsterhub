@@ -27,7 +27,6 @@ import org.dmg.monsterhub.repository.FeatureContainerItemRepository
 import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
 import org.dmg.monsterhub.repository.WeaponAttackRepository
 import org.dmg.monsterhub.repository.WeaponRepository
-import org.dmg.monsterhub.service.FeatureContainerServiceLocator
 import org.dmg.monsterhub.service.FeatureDataRepository
 import org.dmg.monsterhub.service.SettingService
 import java.util.concurrent.CompletableFuture
@@ -42,8 +41,7 @@ class SettingView(
     private val featureContainerItemRepository: FeatureContainerItemRepository,
     private val featureDataDesignationRepository: FeatureDataDesignationRepository,
     private val weaponAttackRepository: WeaponAttackRepository,
-    private val weaponRepository: WeaponRepository,
-    private val featureContainerServiceLocator: FeatureContainerServiceLocator
+    private val weaponRepository: WeaponRepository
 ) : Div(), BeforeEnterObserver, HasDynamicTitle {
   private val config: EditPanelConfig = EditPanelConfig("Конфигурация")
 
@@ -159,7 +157,6 @@ class SettingView(
             featureDataDesignationRepository,
             weaponRepository,
             weaponAttackRepository,
-            featureContainerServiceLocator,
 
             config
         )

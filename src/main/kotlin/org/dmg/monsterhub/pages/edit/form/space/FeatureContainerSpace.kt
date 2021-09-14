@@ -61,6 +61,7 @@ object FeatureContainerSpace : Space {
       addColumn { it.featureType }
       addColumn { it.name }
       addColumn { it.onlyOne }
+      addColumn { it.allowHidden }
 
       addComponentColumn { containerItem ->
         HorizontalLayout().apply {
