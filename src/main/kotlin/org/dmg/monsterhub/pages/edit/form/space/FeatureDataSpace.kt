@@ -17,13 +17,13 @@ import org.dmg.monsterhub.data.FeatureDataDesignation
 import org.dmg.monsterhub.data.meta.NumberOption
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.EditDialog
-import org.dmg.monsterhub.repository.updateAsunc
+import org.dmg.monsterhub.repository.updateAsync
 import java.math.BigDecimal
 
 object FeatureDataSpace : Space {
   override fun support(obj: Any) = obj is FeatureData
 
-  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Any): List<Component> {
     val parent = mutableListOf<Component>()
     val obj = anyObj as FeatureData
 
@@ -72,7 +72,7 @@ object FeatureDataSpace : Space {
   }
 }
 
-private fun assignDesignation(obj: FeatureData, key: String, newValue: String, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) {
+private fun assignDesignation(obj: FeatureData, key: String, newValue: String, locator: ServiceLocator, update: (Any, () -> Unit) -> Any) {
   obj.designations
       .find { it.designationKey == key }
       ?.run { update(obj) { this.value = newValue } }
@@ -81,7 +81,7 @@ private fun assignDesignation(obj: FeatureData, key: String, newValue: String, l
           this.designationKey = key
           this.value = newValue
 
-          locator.featureDataDesignationRepository.updateAsunc(this).thenAccept { obj.designations.add(it) }
+          locator.featureDataDesignationRepository.updateAsync(this).thenAccept { obj.designations.add(it) }
         }
       }
 }

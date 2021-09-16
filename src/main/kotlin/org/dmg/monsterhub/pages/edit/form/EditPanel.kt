@@ -11,7 +11,7 @@ import org.dmg.monsterhub.data.WeaponAttack
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.space.*
-import org.dmg.monsterhub.repository.updateAsunc
+import org.dmg.monsterhub.repository.update
 
 class EditPanel(
     private val obj: Any,
@@ -87,26 +87,31 @@ class EditPanel(
     }
   }
 
-  private fun update(obj: Any, action: () -> Unit) {
-    action()
-    when (obj) {
-      is SettingObject -> locator.data.update(obj)
-      is FeatureData -> {
-        locator.featureDataRepository.updateAsunc(obj)
+  private fun update(obj: Any, action: () -> Unit): Any =
+      locator.transactionService {
+        action()
+        when (obj) {
+          is SettingObject -> {
+            val result = locator.data.update(obj)
+            if (onUpdate != null && obj == this.obj) {
+              onUpdate!!()
+            }
+            result
+          }
+          is FeatureData -> {
+            locator.featureDataRepository.update(obj)
+          }
+          is WeaponAttack -> {
+            locator.weaponAttackRepository.update(obj)
+          }
+          else -> throw UnsupportedOperationException()
+        }
       }
-      is WeaponAttack -> {
-        locator.weaponAttackRepository.updateAsunc(obj)
-      }
-    }
-    if (onUpdate != null && obj == this.obj) {
-      onUpdate!!()
-    }
-  }
 
   companion object {
     val SPACES = listOf(
         listOf(SettingObjectSpace, SkillLikeSpace, PowerEffectSpace, RateSpace, EditableRateSpace),
-        listOf(PowerTreeSpace),
+        listOf(PowerTreeSpace2),
         listOf(FreeFeatureSpace),
         listOf(DescriptionSpace),
         listOf(FeatureSpace),

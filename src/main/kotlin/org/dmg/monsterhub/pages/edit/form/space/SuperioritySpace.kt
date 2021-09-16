@@ -8,7 +8,7 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.service.CreatureService
 
 object SuperioritySpace : AbstractCreatureSpace {
-  override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) = listOf(
+  override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Any) = listOf(
       Details().apply {
         val superiority = CreatureService.superiority(obj)
         summaryText = "Превосходство: ${superiority.value}"

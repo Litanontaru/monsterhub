@@ -13,7 +13,7 @@ import java.math.BigDecimal
 object OneWeaponAttackSpace : Space {
   override fun support(obj: Any) = obj is WeaponAttack
 
-  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Any): List<Component> {
     val obj = anyObj as WeaponAttack
 
     return listOf(

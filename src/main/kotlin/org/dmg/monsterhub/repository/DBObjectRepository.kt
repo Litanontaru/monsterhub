@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture
 @NoRepositoryBean
 interface DBObjectRepository<T : DBObject> : JpaRepository<T, Long>
 
-fun <T : DBObject> DBObjectRepository<T>.updateAsunc(dbObject: DBObject): CompletableFuture<T> {
+fun <T : DBObject> DBObjectRepository<T>.updateAsync(dbObject: DBObject): CompletableFuture<T> {
   return CompletableFuture.supplyAsync {
     update(dbObject)
   }

@@ -19,7 +19,7 @@ import org.dmg.monsterhub.pages.edit.form.EditDialog
 object WeaponAttackSpace : Space {
   override fun support(obj: Any) = obj is Weapon
 
-  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Any): List<Component> {
     val parent = mutableListOf<Component>()
 
     val obj = anyObj as Weapon

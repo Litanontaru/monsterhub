@@ -11,7 +11,7 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object TraitSpace : Space {
   override fun support(obj: Any) = obj is Trait
 
-  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Any): List<Component> {
     val parent = mutableListOf<Component>()
     val obj = anyObj as Trait
 

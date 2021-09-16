@@ -7,7 +7,7 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object ArmorSpace : Space {
   override fun support(obj: Any) = obj is Armor
 
-  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<TextField> {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Any): List<TextField> {
     val obj = anyObj as Armor
     return listOf(
         TextField("Сильная броня").apply {

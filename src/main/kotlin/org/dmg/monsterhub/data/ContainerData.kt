@@ -7,7 +7,8 @@ import javax.persistence.*
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 open class ContainerData : Feature(), FeatureContainerData {
-  @OneToMany(orphanRemoval = true, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+
+  @OneToMany(orphanRemoval = true)
   @JoinColumn(name = "feature_container_id")
   override var features: MutableList<FeatureData> = mutableListOf()
 

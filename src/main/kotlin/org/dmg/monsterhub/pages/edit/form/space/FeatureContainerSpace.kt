@@ -17,12 +17,12 @@ import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.pages.edit.data.FeatureContainerItemDataProvider
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.FeatureContaiterItemEditDialog
-import org.dmg.monsterhub.repository.updateAsunc
+import org.dmg.monsterhub.repository.updateAsync
 
 object FeatureContainerSpace : Space {
   override fun support(obj: Any) = obj is FeatureContainer && obj !is ContainerData
 
-  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Any): List<Component> {
     val parent = mutableListOf<Component>()
 
     val dataProvider = FeatureContainerItemDataProvider(
@@ -38,7 +38,7 @@ object FeatureContainerSpace : Space {
         addNew.optionalValue.ifPresent {
           FeatureContainerItem()
               .apply { featureType = addNew.value }
-              .also { locator.featureContainerItemRepository.updateAsunc(it).thenAccept { dataProvider.add(it) } }
+              .also { locator.featureContainerItemRepository.updateAsync(it).thenAccept { dataProvider.add(it) } }
           addNew.value = ""
         }
       }.apply {
@@ -52,7 +52,7 @@ object FeatureContainerSpace : Space {
     val grid = Grid<FeatureContainerItem>().apply {
       fun edit(containerItem: FeatureContainerItem) {
         FeatureContaiterItemEditDialog(containerItem) {
-          locator.featureContainerItemRepository.updateAsunc(it).thenAccept { dataProvider.refreshItem(it) }
+          locator.featureContainerItemRepository.updateAsync(it).thenAccept { dataProvider.refreshItem(it) }
         }.open()
       }
 
@@ -74,7 +74,7 @@ object FeatureContainerSpace : Space {
           add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
             dataProvider.delete(containerItem)
             containerItem.deleteOnly = true
-            locator.featureContainerItemRepository.updateAsunc(containerItem)
+            locator.featureContainerItemRepository.updateAsync(containerItem)
           }.apply {
             addThemeVariants(ButtonVariant.LUMO_SMALL)
           })

@@ -10,7 +10,7 @@ import org.dmg.monsterhub.service.AttackService
 import org.dmg.monsterhub.service.CreatureService
 
 object CreatureAttackSpace : AbstractCreatureSpace {
-  override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) = listOf(
+  override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Any) = listOf(
       Details().apply {
         summaryText = "Атака"
 

@@ -9,7 +9,7 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object SkillLikeSpace : Space {
   override fun support(obj: Any) = obj is SkillLike
 
-  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Any): List<Component> {
     val obj = anyObj as SkillLike
 
     return listOf(ComboBox<SkillType>("Тип навыка").apply {

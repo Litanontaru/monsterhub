@@ -9,7 +9,7 @@ import org.dmg.monsterhub.service.FreeFeatureDataProvider
 object FreeFeatureSpace : Space {
   override fun support(obj: Any) = obj is FreeFeature
 
-  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Any): List<Component> {
     val obj = anyObj as FreeFeature
 
     return listOf(ComboBox<String>("Тип").apply {

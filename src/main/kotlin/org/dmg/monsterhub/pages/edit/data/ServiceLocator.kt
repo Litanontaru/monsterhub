@@ -8,6 +8,7 @@ import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
 import org.dmg.monsterhub.repository.WeaponAttackRepository
 import org.dmg.monsterhub.repository.WeaponRepository
 import org.dmg.monsterhub.service.FeatureDataRepository
+import org.dmg.monsterhub.service.TransactionService
 
 data class ServiceLocator(
     val settigs: List<Setting>,
@@ -19,6 +20,8 @@ data class ServiceLocator(
     val featureDataDesignationRepository: FeatureDataDesignationRepository,
     val weaponRepository: WeaponRepository,
     val weaponAttackRepository: WeaponAttackRepository,
+
+    val transactionService: TransactionService,
 
     val config: EditPanelConfig
 )

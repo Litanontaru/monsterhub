@@ -16,7 +16,7 @@ import org.dmg.monsterhub.service.DamageService
 import org.dmg.monsterhub.service.WeaponType
 
 object CreatureDefence : AbstractCreatureSpace {
-  override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) = listOf(
+  override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Any) = listOf(
       Details().apply {
         summaryText = "Защита"
 

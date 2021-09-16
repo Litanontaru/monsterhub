@@ -3,7 +3,6 @@ package org.dmg.monsterhub.data
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.service.SizeProfile
 import java.math.BigDecimal
-import javax.persistence.CascadeType
 import javax.persistence.Entity
 import javax.persistence.JoinColumn
 import javax.persistence.OneToMany
@@ -19,7 +18,7 @@ class WeaponAttack : DBObject(), FeatureContainerData {
   var clipSize: Int = 0
   var allowInBarrel: Boolean = false
 
-  @OneToMany(orphanRemoval = true, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+  @OneToMany(orphanRemoval = true)
   @JoinColumn(name = "weapon_attack_id")
   override var features: MutableList<FeatureData> = mutableListOf()
 

@@ -70,14 +70,16 @@ class ObjectTreeDataProvider(
       } else {
         refreshAll()
       }
+
+      savedObject
     }
   }
 
-  fun update(settingObject: SettingObject) {
-    action(settingObject) {
-      it.saveAsync(settingObject).thenAccept { refreshItem(it) }
-    }
-  }
+  fun update(settingObject: SettingObject): SettingObject =
+      action(settingObject) {
+        it.save(settingObject)
+            .also { refreshItem(it) }
+      }
 
   fun move(settingObject: SettingObject, new: Folder?) {
     action(settingObject) {
@@ -114,11 +116,10 @@ class ObjectTreeDataProvider(
     }
   }
 
-  private fun action(settingObject: SettingObject, block: (SettingObjectDataProvider) -> Unit) {
-    dataProviders
-        .first { settingObject::class.java.isAssignableFrom(it.objectClass) }
-        .also(block)
-  }
+  private fun action(settingObject: SettingObject, block: (SettingObjectDataProvider) -> SettingObject) =
+      dataProviders
+          .first { settingObject::class.java.isAssignableFrom(it.objectClass) }
+          .let(block)
 
   fun dataProviders(): Sequence<SettingObjectDataProvider> = dataProviders.asSequence()
 

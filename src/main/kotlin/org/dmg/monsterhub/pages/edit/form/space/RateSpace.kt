@@ -10,7 +10,7 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object RateSpace : Space {
   override fun support(obj: Any) = obj is SettingObject && !(obj is FreeFeature || obj is PowerEffect)
 
-  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Any): List<Component> {
     val obj = anyObj as SettingObject
 
     return listOf(TextField("Показатель").apply {

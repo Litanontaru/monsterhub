@@ -7,7 +7,7 @@ import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 
 object CreatureTraitSpace : AbstractCreatureSpace {
-  override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit) = listOf(
+  override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Any) = listOf(
       Details().apply {
         summaryText = "Черты"
 

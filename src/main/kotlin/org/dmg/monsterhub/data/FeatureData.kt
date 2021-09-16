@@ -20,11 +20,11 @@ class FeatureData : DBObject(), FeatureContainerData {
   var z: BigDecimal = BigDecimal.ZERO
   var za: BigDecimal = BigDecimal.ZERO
 
-  @OneToMany(orphanRemoval = true, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+  @OneToMany(orphanRemoval = true)
   @JoinColumn(name = "feature_data_id")
   var designations: MutableList<FeatureDataDesignation> = mutableListOf()
 
-  @OneToMany(orphanRemoval = true, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+  @OneToMany(orphanRemoval = true)
   @JoinColumn(name = "main_feature_id")
   override var features: MutableList<FeatureData> = mutableListOf()
 

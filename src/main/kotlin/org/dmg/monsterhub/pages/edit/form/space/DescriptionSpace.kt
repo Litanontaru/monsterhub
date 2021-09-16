@@ -9,7 +9,7 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 object DescriptionSpace : Space {
   override fun support(obj: Any) = obj is Feature && obj !is Creature
 
-  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Unit): List<Component> {
+  override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Any): List<Component> {
     val obj = anyObj as Feature
 
     return listOf(TextArea("Описание").apply {
