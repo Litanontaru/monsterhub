@@ -2,18 +2,18 @@ package org.dmg.monsterhub.pages.edit.data
 
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery
+import org.dmg.monsterhub.data.ContainerData
 import org.dmg.monsterhub.data.FeatureContainerData
 import org.dmg.monsterhub.data.FeatureData
-import org.dmg.monsterhub.data.Power
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.service.Decimal
 import java.util.stream.Stream
 
-abstract class PowerTreeNode(
-    var parent: PowerTreeNode?
+abstract class AtomicTreeNode(
+    var parent: AtomicTreeNode?
 ) {
-  lateinit var children: MutableList<PowerTreeNode>
+  lateinit var children: MutableList<AtomicTreeNode>
 
   abstract val isStopper: Boolean
 
@@ -25,13 +25,13 @@ abstract class PowerTreeNode(
   abstract fun canRemove(): Boolean
 
   abstract fun addableType(): String?
-  abstract fun add(obj: Any, update: (Any) -> Any): PowerTreeNode
+  abstract fun add(obj: Any, update: (Any) -> Any): AtomicTreeNode
   abstract fun editableObject(): Any
   abstract fun remove(update: (Any) -> Any)
 
   fun compact(parent: CompactNode?): CompactNode {
     var take = this
-    val values = mutableListOf<PowerTreeNode>()
+    val values = mutableListOf<AtomicTreeNode>()
     do {
       values += take
       if (take.isStopper) break
@@ -45,10 +45,10 @@ abstract class PowerTreeNode(
 }
 
 class AttributeTreeNode(
-    parent: PowerTreeNode?,
+    parent: AtomicTreeNode?,
     var data: FeatureContainerData,
     val attribute: FeatureContainerItem
-) : PowerTreeNode(parent) {
+) : AtomicTreeNode(parent) {
   override val isStopper = !attribute.onlyOne
 
   override fun name(): String? = attribute.name
@@ -74,7 +74,7 @@ class AttributeTreeNode(
     else -> throw UnsupportedOperationException("Unknown type of data $obj")
   }
 
-  fun remove(obj: ValueTreeNode, update: (Any) -> Any): PowerTreeNode {
+  fun remove(obj: ValueTreeNode, update: (Any) -> Any): AtomicTreeNode {
     data.features.remove(obj.value)
     data = update(data) as FeatureContainerData
     children.remove(obj)
@@ -91,9 +91,9 @@ class AttributeTreeNode(
 }
 
 class ValueTreeNode(
-    parent: PowerTreeNode?,
+    parent: AtomicTreeNode?,
     val value: FeatureData
-) : PowerTreeNode(parent) {
+) : AtomicTreeNode(parent) {
   override val isStopper: Boolean
     get() = children.singleOrNull()?.let { it !is NestedValueTreeNode } ?: true
 
@@ -109,7 +109,7 @@ class ValueTreeNode(
 
   override fun addableType(): String? = null
 
-  override fun add(obj: Any, update: (Any) -> Any): PowerTreeNode {
+  override fun add(obj: Any, update: (Any) -> Any): AtomicTreeNode {
     throw UnsupportedOperationException()
   }
 
@@ -121,9 +121,9 @@ class ValueTreeNode(
 }
 
 class NestedValueTreeNode(
-    parent: PowerTreeNode?,
+    parent: AtomicTreeNode?,
     val feature: Feature
-) : PowerTreeNode(parent) {
+) : AtomicTreeNode(parent) {
   override val isStopper = true
 
   override fun name(): String? = feature.name
@@ -138,7 +138,7 @@ class NestedValueTreeNode(
 
   override fun addableType(): String? = null
 
-  override fun add(obj: Any, update: (Any) -> Any): PowerTreeNode {
+  override fun add(obj: Any, update: (Any) -> Any): AtomicTreeNode {
     throw UnsupportedOperationException()
   }
 
@@ -149,7 +149,7 @@ class NestedValueTreeNode(
   }
 }
 
-fun Power.toTree(parent: PowerTreeNode?): PowerTreeNode =
+fun ContainerData.toTree(parent: AtomicTreeNode?): AtomicTreeNode =
     NestedValueTreeNode(parent, this).also { node ->
       node.children = meta()
           .asSequence()
@@ -157,7 +157,7 @@ fun Power.toTree(parent: PowerTreeNode?): PowerTreeNode =
           .toMutableList()
     }
 
-fun FeatureContainerItem.toTree(parent: PowerTreeNode?, container: FeatureContainerData): PowerTreeNode =
+fun FeatureContainerItem.toTree(parent: AtomicTreeNode?, container: FeatureContainerData): AtomicTreeNode =
     AttributeTreeNode(parent, container, this).also { node ->
       node.children = container
           .features
@@ -167,7 +167,7 @@ fun FeatureContainerItem.toTree(parent: PowerTreeNode?, container: FeatureContai
           .toMutableList()
     }
 
-fun FeatureData.toTree(parent: PowerTreeNode?): PowerTreeNode =
+fun FeatureData.toTree(parent: AtomicTreeNode?): AtomicTreeNode =
     ValueTreeNode(parent, this).also { node ->
       node.children = meta()
           .asSequence()
@@ -175,12 +175,12 @@ fun FeatureData.toTree(parent: PowerTreeNode?): PowerTreeNode =
           .toMutableList()
 
       when (val theFeature = feature) {
-        is Power -> node.children.add(theFeature.toTree(node))
+        is ContainerData -> node.children.add(theFeature.toTree(node))
       }
     }
 
 class CompactNode(
-    val data: MutableList<PowerTreeNode>,
+    val data: MutableList<AtomicTreeNode>,
     val parent: CompactNode?
 ) {
   lateinit var children: MutableList<CompactNode>

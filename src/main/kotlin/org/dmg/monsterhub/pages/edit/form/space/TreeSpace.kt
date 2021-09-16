@@ -21,7 +21,7 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.data.toTree
 import org.dmg.monsterhub.pages.edit.form.EditDialog
 
-object PowerTreeSpace2 : Space {
+object TreeSpace : Space {
   override fun support(obj: Any): Boolean = obj is Power
 
   override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Any): List<Component> {
