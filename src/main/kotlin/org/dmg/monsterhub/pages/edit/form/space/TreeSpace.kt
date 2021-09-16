@@ -10,13 +10,12 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.treegrid.TreeGrid
 import com.vaadin.flow.data.provider.DataProvider
-import org.dmg.monsterhub.data.DBObject
 import org.dmg.monsterhub.data.FeatureData
 import org.dmg.monsterhub.data.Power
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.setting.SettingObject
-import org.dmg.monsterhub.pages.edit.data.CompactNode
-import org.dmg.monsterhub.pages.edit.data.CompactNodeDataProvider
+import org.dmg.monsterhub.pages.edit.data.AtomicTreeNode
+import org.dmg.monsterhub.pages.edit.data.AtomicTreeNodeDataProvider
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.data.toTree
 import org.dmg.monsterhub.pages.edit.form.EditDialog
@@ -28,11 +27,11 @@ object TreeSpace : Space {
     val parent = mutableListOf<Component>()
     val obj = anyObj as Power
 
-    val dataProvider = CompactNodeDataProvider(obj.toTree(null).compact(null))
+    val dataProvider = AtomicTreeNodeDataProvider(obj.toTree(null))
 
 
-    parent.add(TreeGrid<CompactNode>().apply {
-      var selectedItem: CompactNode? = null
+    parent.add(TreeGrid<AtomicTreeNode>().apply {
+      var selectedItem: AtomicTreeNode? = null
       addSelectionListener {
         val oldSelected = selectedItem
         selectedItem = it.firstSelectedItem.orElse(null)
@@ -44,10 +43,10 @@ object TreeSpace : Space {
         }
       }
 
-      addHierarchyColumn { it.name() }.also {
+      addHierarchyColumn { it.compactedName() }.also {
         it.isAutoWidth = true
       }
-      addColumn { it.rate()?.takeIf { it.isNotBlank() } }.also {
+      addColumn { it.last().rate()?.takeIf { it.isNotBlank() } }.also {
         it.width = "6em"
         it.flexGrow = 0
       }
@@ -58,9 +57,10 @@ object TreeSpace : Space {
 
           val components = mutableListOf<Component>()
 
-          if (item.canAdd()) {
+          val last = item.last()
+          if (last.canAdd()) {
             val addNew = ComboBox<SettingObject>().apply {
-              setItems(locator.finderData(item.addableType()!!) as DataProvider<SettingObject, String>)
+              setItems(locator.finderData(last.addableType()!!) as DataProvider<SettingObject, String>)
               setItemLabelGenerator { it.name }
             }
 
@@ -68,11 +68,9 @@ object TreeSpace : Space {
             components.add(Button(Icon(VaadinIcon.PLUS)) {
               addNew.optionalValue.ifPresent {
                 val new = FeatureData().apply { feature = it as Feature }
-                update(new) { }
-                item.add(new) { update(it) { } }
+                last.add(new) { update(it) { } }
 
                 dataProvider.refreshItem(item, true)
-                item.parent?.let { dataProvider.refreshItem(it) }
 
                 addNew.value = null
               }
@@ -80,11 +78,11 @@ object TreeSpace : Space {
               addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
             })
           }
-          if (item.canEdit()) {
 
+          if (last.canEdit()) {
             components.add(Button(Icon(VaadinIcon.EDIT)) {
-              EditDialog(item.editableObject(), locator) {
-                update(item.editableObject()) { }
+              EditDialog(last.editableObject(), locator) {
+                update(last.editableObject()) { }
                 dataProvider.refreshItem(item)
                 item.parent?.let { dataProvider.refreshItem(it) }
               }.open()
@@ -92,33 +90,31 @@ object TreeSpace : Space {
               addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
             })
           }
-          if (item.canRemove()) {
+
+          if (last.canRemove()) {
             components.add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
-              val editableObject = item.editableObject()
-              item.remove { update(it) {} }
-              when (editableObject) {
-                is DBObject -> update(editableObject) { editableObject.deleteOnly = true }
-              }
+              last.remove { update(it) {} }
+
               item.parent!!.let { dataProvider.refreshItem(it, true) }
             }.apply {
               addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
             })
           }
-          if (item.canCreate()) {
+
+          if (last.canCreate()) {
             components.add(Button(Icon(VaadinIcon.MAGIC)) {
-              val created = locator
+              val new = locator
                   .data
                   .dataProviders()
-                  .first { it.supportType(item.addableType()!!) }
+                  .first { it.supportType(last.addableType()!!) }
                   .create()
-                  .let { update(it) {} as Feature }
+                  .let { update(it) { it.hidden = true } as Feature }
+                  .let { created -> FeatureData().apply { feature = created } }
 
-              val new = FeatureData().apply { feature = created }
-              update(new) { }
-              item.add(new) { update(it) { } }
+              last.add(new) { update(it) { } }
 
               dataProvider.refreshItem(item, true)
-              item.parent?.let { dataProvider.refreshItem(it) }
+              item.parent?.let { dataProvider.refreshItem(it) } ?: run { dataProvider.refreshAll() }
 
 
             }.apply {
