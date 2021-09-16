@@ -5,14 +5,13 @@ import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.textfield.TextArea
 import com.vaadin.flow.component.textfield.TextField
-import org.dmg.monsterhub.data.Creature
-import org.dmg.monsterhub.data.Item
+import org.dmg.monsterhub.data.ContainerData
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.meta.NumberOption
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 
 object FeatureSpace : Space {
-  override fun support(obj: Any) = obj is Feature && obj !is Creature && obj !is Item
+  override fun support(obj: Any) = obj is Feature && obj !is ContainerData
 
   override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Any): List<Component> {
     val parent = mutableListOf<Component>()
