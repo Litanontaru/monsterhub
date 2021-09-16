@@ -104,6 +104,27 @@ object TreeSpace : Space {
               addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
             })
           }
+          if (item.canCreate()) {
+            components.add(Button(Icon(VaadinIcon.MAGIC)) {
+              val created = locator
+                  .data
+                  .dataProviders()
+                  .first { it.supportType(item.addableType()!!) }
+                  .create()
+                  .let { update(it) {} as Feature }
+
+              val new = FeatureData().apply { feature = created }
+              update(new) { }
+              item.add(new) { update(it) { } }
+
+              dataProvider.refreshItem(item, true)
+              item.parent?.let { dataProvider.refreshItem(it) }
+
+
+            }.apply {
+              addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
+            })
+          }
 
           isPadding = false
           isMargin = false

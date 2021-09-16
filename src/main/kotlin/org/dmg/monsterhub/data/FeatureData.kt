@@ -31,7 +31,19 @@ class FeatureData : DBObject(), FeatureContainerData {
   override fun meta(): List<FeatureContainerItem> = feature.containFeatureTypes
 
   fun display(): String {
-    return (sequenceOf(feature.name) +
+    return (main() +
+        feature.containFeatureTypes.asSequence()
+            .flatMap { key -> features.asSequence().filter { it.feature.featureType == key.featureType } }
+            .map { it.display() }
+
+        )
+        .joinToString()
+  }
+
+  fun shortDisplay() = main().joinToString()
+
+  private fun main(): Sequence<String> {
+    return sequenceOf(feature.name) +
 
         combo(x.stripTrailingZeros(), xa.stripTrailingZeros()) +
         combo(y.stripTrailingZeros(), ya.stripTrailingZeros()) +
@@ -45,14 +57,7 @@ class FeatureData : DBObject(), FeatureContainerData {
             .map { it.value }
             .filter { it.isNotBlank() }
             .map { it.lines()[0] }
-            .filter { it.isNotBlank() } +
-
-        feature.containFeatureTypes.asSequence()
-            .flatMap { key -> features.asSequence().filter { it.feature.featureType == key.featureType } }
-            .map { it.display() }
-
-        )
-        .joinToString()
+            .filter { it.isNotBlank() }
   }
 
   private fun combo(x: BigDecimal, xa: BigDecimal) =

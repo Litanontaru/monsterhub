@@ -23,6 +23,7 @@ abstract class AtomicTreeNode(
   abstract fun canAdd(): Boolean
   abstract fun canEdit(): Boolean
   abstract fun canRemove(): Boolean
+  abstract fun canCreate(): Boolean
 
   abstract fun addableType(): String?
   abstract fun add(obj: Any, update: (Any) -> Any): AtomicTreeNode
@@ -61,6 +62,8 @@ class AttributeTreeNode(
 
   override fun canRemove() = false
 
+  override fun canCreate() = canAdd() && attribute.allowHidden
+
   override fun addableType(): String? = attribute.featureType
 
   override fun add(obj: Any, update: (Any) -> Any) = when (obj) {
@@ -97,7 +100,7 @@ class ValueTreeNode(
   override val isStopper: Boolean
     get() = children.singleOrNull()?.let { it !is NestedValueTreeNode } ?: true
 
-  override fun name(): String? = value.display().takeIf { isStopper }
+  override fun name(): String? = value.shortDisplay().takeIf { isStopper }
 
   override fun rate(): Decimal? = value.rate()
 
@@ -106,6 +109,8 @@ class ValueTreeNode(
   override fun canEdit() = true
 
   override fun canRemove() = true
+
+  override fun canCreate() = false
 
   override fun addableType(): String? = null
 
@@ -135,6 +140,8 @@ class NestedValueTreeNode(
   override fun canEdit() = true
 
   override fun canRemove() = false
+
+  override fun canCreate() = false
 
   override fun addableType(): String? = null
 
@@ -192,6 +199,7 @@ class CompactNode(
   fun canAdd(): Boolean = data.any { it.canAdd() }
   fun canEdit(): Boolean = data.any { it.canEdit() }
   fun canRemove(): Boolean = data.any { it.canRemove() }
+  fun canCreate(): Boolean = data.any { it.canCreate() }
 
   fun addableType(): String? = data.reversed().mapNotNull { it.addableType() }.first()
   fun editableObject(): Any = data.reversed().find { it.canEdit() }?.editableObject()
