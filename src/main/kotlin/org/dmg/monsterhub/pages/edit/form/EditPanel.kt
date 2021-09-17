@@ -92,11 +92,13 @@ class EditPanel(
         action()
         when (obj) {
           is SettingObject -> {
-            val result = locator.data.update(obj)
-            if (onUpdate != null && obj == this.obj) {
-              onUpdate!!()
-            }
-            result
+            locator.data
+                .update(obj)
+                .also {
+                  if (onUpdate != null && obj == this.obj) {
+                    onUpdate!!()
+                  }
+                }
           }
           is FeatureData -> {
             locator.featureDataRepository.update(obj)

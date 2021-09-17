@@ -252,6 +252,10 @@ class SettingView(
             }
           }.open()
         }
+
+        it.addItem("Обновить") {
+          data.reread(obj)
+        }
       }
 
       it.target = this

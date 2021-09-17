@@ -75,11 +75,17 @@ class ObjectTreeDataProvider(
     }
   }
 
-  fun update(settingObject: SettingObject): SettingObject =
-      action(settingObject) {
-        it.save(settingObject)
-            .also { refreshItem(it) }
-      }
+  fun update(settingObject: SettingObject): SettingObject = action(settingObject) {
+    it
+        .save(settingObject)
+        .also {
+          if (!settingObject.hidden) {
+            replaceWithRefreshed(settingObject, it)
+            refreshItem(it)
+          }
+        }
+  }
+
 
   fun move(settingObject: SettingObject, new: Folder?) {
     action(settingObject) {
@@ -113,6 +119,22 @@ class ObjectTreeDataProvider(
           refreshAll()
         }
       }
+    }
+  }
+
+  fun reread(settingObject: SettingObject) {
+    action(settingObject) {
+      it
+          .refresh(settingObject)
+          .also { replaceWithRefreshed(settingObject, it) }
+    }
+  }
+
+  private fun replaceWithRefreshed(settingObject: SettingObject, refreshed: SettingObject) {
+    children[settingObject.parent]?.let { list ->
+      list.remove(settingObject)
+      list.add(refreshed)
+      list.sortWith(COMPARATOR)
     }
   }
 
