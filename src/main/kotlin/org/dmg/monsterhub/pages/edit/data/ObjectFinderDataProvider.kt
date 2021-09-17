@@ -45,7 +45,7 @@ class ObjectFinderDataProvider(
           ?.let {
             query.page
             query.pageSize
-            if (it.length > 2) {
+            if (it.isNotBlank()) {
               dataProvider.countAlikeBySettings(type, it, settings)
             } else {
               0
@@ -58,7 +58,7 @@ class ObjectFinderDataProvider(
           ?.filter
           ?.orElse(null)
           ?.let {
-            if (it.length > 2) {
+            if (it.isNotBlank()) {
               dataProvider
                   .getAlikeBySettings(type, it, settings, PageRequest.of(query.page, query.pageSize))
                   .stream()
