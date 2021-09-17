@@ -1,18 +1,19 @@
 package org.dmg.monsterhub.data.meta
 
+import org.dmg.monsterhub.data.WithDescription
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.hibernate.annotations.Type
 import javax.persistence.*
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-open class Feature : SettingObject(), FeatureContainer {
+open class Feature : SettingObject(), FeatureContainer, WithDescription {
   open lateinit var featureType: String
 
   open var rate: String? = null
 
   @Type(type = "text")
-  open var description: String = ""
+  override var description: String = ""
 
   open var x: NumberOption = NumberOption.NONE
   open var y: NumberOption = NumberOption.NONE

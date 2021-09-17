@@ -1,12 +1,14 @@
 package org.dmg.monsterhub.data.setting
 
 import org.dmg.monsterhub.data.DBObject
-import org.dmg.monsterhub.data.Named
+import org.dmg.monsterhub.data.WithNamed
 import org.dmg.monsterhub.service.Decimal
-import javax.persistence.*
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
+import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
-open class SettingObject : DBObject(), Named {
+open class SettingObject : DBObject(), WithNamed {
   override var name: String = ""
 
   @ManyToOne

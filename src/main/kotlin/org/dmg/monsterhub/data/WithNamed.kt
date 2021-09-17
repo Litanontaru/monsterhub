@@ -1,6 +1,6 @@
 package org.dmg.monsterhub.data
 
 
-interface Named {
+interface WithNamed {
   var name: String
 }
