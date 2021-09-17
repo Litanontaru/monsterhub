@@ -12,8 +12,8 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.data.provider.DataProvider
 import org.dmg.monsterhub.data.setting.Setting
-import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
+import org.dmg.monsterhub.pages.edit.data.SettingBackEndDataProvider
 import org.dmg.monsterhub.pages.edit.data.SettingHierarchyDataProvider
 
 object SettingBaseSpace : Space {
@@ -32,14 +32,14 @@ object SettingBaseSpace : Space {
     parent.add(HorizontalLayout().apply {
       val label = Label("Основа")
 
-      val addNew = ComboBox<SettingObject>().apply {
-        setItems(locator.finderData("CREATURE") as DataProvider<SettingObject, String>)
+      val addNew = ComboBox<Setting>().apply {
+        setItems(SettingBackEndDataProvider(locator.settingRepository))
         setItemLabelGenerator { it.name }
       }
 
       val addButton = Button(Icon(VaadinIcon.PLUS)) {
         addNew.optionalValue.ifPresent {
-          dataProvider.add(it as Setting)
+          dataProvider.add(it)
           addNew.value = null
         }
       }.apply {

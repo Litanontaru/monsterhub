@@ -91,16 +91,18 @@ class SettingView(
 
         val menuBar = MenuBar()
         val menuItem = menuBar.addItem(Icon(VaadinIcon.MENU))
-        menuItem.subMenu.addItem("Выбрать игровой мир") {
-          SettingSelectionDialog(settingRepository) { newSetting ->
-            UI.getCurrent().navigate(
-                SettingView::class.java,
-                RouteParameters(
-                    RouteParam("settingId", newSetting.id.toString()),
-                    RouteParam("objId", newSetting.id.toString())
-                )
-            )
+        menuItem.subMenu.addItem("Создать игровой мир") {
+          ChangeDialog("Название игрового мира", "Мир") { newName ->
+            Setting()
+                .apply { name = newName }
+                .let { settingRepository.save(it) }
+                .also { it.setting = it }
+                .let { settingRepository.save(it) }
+                .let { goToSetting(it) }
           }.open()
+        }
+        menuItem.subMenu.addItem("Выбрать игровой мир") {
+          SettingSelectionDialog(settingRepository) { goToSetting(it) }.open()
         }
         val top = HorizontalLayout(filter, menuBar).apply { width = "100%" }
 
@@ -162,6 +164,16 @@ class SettingView(
     }
   }
 
+  private fun goToSetting(newSetting: Setting) {
+    UI.getCurrent().navigate(
+        SettingView::class.java,
+        RouteParameters(
+            RouteParam("settingId", newSetting.id.toString()),
+            RouteParam("objId", newSetting.id.toString())
+        )
+    )
+  }
+
   private fun clickAndHistory(it: SettingObject) {
     click(it)
     history(it)
@@ -182,6 +194,7 @@ class SettingView(
             featureDataDesignationRepository,
             weaponRepository,
             weaponAttackRepository,
+            settingRepository,
 
             transactionService,
 
