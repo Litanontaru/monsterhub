@@ -31,7 +31,6 @@ import org.dmg.monsterhub.repository.WeaponRepository
 import org.dmg.monsterhub.service.FeatureDataRepository
 import org.dmg.monsterhub.service.SettingService
 import org.dmg.monsterhub.service.TransactionService
-import java.util.concurrent.CompletableFuture
 
 
 @Route("setting/:settingId/edit/:objId")
@@ -188,19 +187,17 @@ class SettingView(
   }
 
   private fun select(objId: Long) {
-    CompletableFuture.runAsync {
-      data
-          .find(objId)
-          ?.also { obj ->
-            generateSequence(obj.parent) { it.parent }
-                .toList()
-                .reversed()
-                .forEach { tree.expand(it) }
+    data
+        .find(objId)
+        ?.also { obj ->
+          generateSequence(obj.parent) { it.parent }
+              .toList()
+              .reversed()
+              .forEach { tree.expand(it) }
 
-            tree.select(obj)
-            click(obj)
-          }
-    }
+          tree.select(obj)
+          click(obj)
+        }
   }
 
   private fun Component.contextMenu(obj: SettingObject?) {
