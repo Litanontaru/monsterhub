@@ -8,19 +8,15 @@ import org.springframework.data.repository.NoRepositoryBean
 
 @NoRepositoryBean
 interface SettingObjectRepository<T : SettingObject> : DBObjectRepository<T> {
-  fun findAllByParentAndNameContainingAndHiddenFalse(parent: Folder, name: String): List<T>
-
-  fun countByParentAndNameContainingAndHiddenFalse(parent: Folder, name: String): Int
-
   fun findAllByParentAndHiddenFalse(parent: Folder): List<T>
 
   fun countByParentAndHiddenFalse(parent: Folder): Int
 
   fun existsByParentAndHiddenFalse(parent: Folder): Boolean
 
-  fun findAllBySettingAndNameContainingAndParentIsNullAndHiddenFalse(setting: Setting, name: String): List<T>
+  fun findAllBySettingAndNameContainingAndHiddenFalse(setting: Setting, name: String): List<T>
 
-  fun countBySettingAndNameContainingAndParentIsNullAndHiddenFalse(setting: Setting, name: String): Int
+  fun countBySettingAndNameContainingAndHiddenFalse(setting: Setting, name: String): Int
 
   fun findAllBySettingAndParentIsNullAndHiddenFalse(setting: Setting): List<T>
 

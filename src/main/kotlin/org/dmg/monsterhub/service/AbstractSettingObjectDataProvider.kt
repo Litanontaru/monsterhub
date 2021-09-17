@@ -22,9 +22,7 @@ abstract class AbstractSettingObjectDataProvider<T : SettingObject>(
         search.isBlank() -> parent
             ?.let { repository.findAllByParentAndHiddenFalse(it) }
             ?: run { repository.findAllBySettingAndParentIsNullAndHiddenFalse(setting) }
-        else -> parent
-            ?.let { repository.findAllByParentAndNameContainingAndHiddenFalse(it, search) }
-            ?: run { repository.findAllBySettingAndNameContainingAndParentIsNullAndHiddenFalse(setting, search) }
+        else -> repository.findAllBySettingAndNameContainingAndHiddenFalse(setting, search)
       }
 
 
@@ -33,9 +31,7 @@ abstract class AbstractSettingObjectDataProvider<T : SettingObject>(
         search.isBlank() -> parent
             ?.let { repository.countByParentAndHiddenFalse(it) }
             ?: run { repository.countBySettingAndParentIsNullAndHiddenFalse(setting) }
-        else -> parent
-            ?.let { repository.countByParentAndNameContainingAndHiddenFalse(it, search) }
-            ?: run { repository.countBySettingAndNameContainingAndParentIsNullAndHiddenFalse(setting, search) }
+        else -> repository.countBySettingAndNameContainingAndHiddenFalse(setting, search)
       }
 
   override fun hasChildrenAlikeBySetting(parent: Folder?, setting: Setting) =

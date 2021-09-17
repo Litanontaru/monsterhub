@@ -12,15 +12,21 @@ class FolderDataProvider(
 ) : SimpleSettingObjectDataProvider<Folder>(Folder::class.java, "FOLDER", "Папка", repository) {
 
   override fun getChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting) =
-      parent
-          ?.let { repository.findAllByParentAndHiddenFalse(it) }
-          ?: run { repository.findAllBySettingAndParentIsNullAndHiddenFalse(setting) }
+      when {
+        search.isBlank() -> parent
+            ?.let { repository.findAllByParentAndHiddenFalse(it) }
+            ?: run { repository.findAllBySettingAndParentIsNullAndHiddenFalse(setting) }
+        else -> listOf()
+      }
 
 
   override fun countChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting) =
-      parent
-          ?.let { repository.countByParentAndHiddenFalse(it) }
-          ?: run { repository.countBySettingAndParentIsNullAndHiddenFalse(setting) }
+      when {
+        search.isBlank() -> parent
+            ?.let { repository.countByParentAndHiddenFalse(it) }
+            ?: run { repository.countBySettingAndParentIsNullAndHiddenFalse(setting) }
+        else -> 0
+      }
 
   override fun create(): SettingObject = Folder()
 }
