@@ -9,6 +9,7 @@ import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.menubar.MenuBar
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
@@ -24,10 +25,7 @@ import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.ChangeDialog
 import org.dmg.monsterhub.pages.edit.form.EditPanel
 import org.dmg.monsterhub.pages.edit.form.EditPanelConfig
-import org.dmg.monsterhub.repository.FeatureContainerItemRepository
-import org.dmg.monsterhub.repository.FeatureDataDesignationRepository
-import org.dmg.monsterhub.repository.WeaponAttackRepository
-import org.dmg.monsterhub.repository.WeaponRepository
+import org.dmg.monsterhub.repository.*
 import org.dmg.monsterhub.service.FeatureDataRepository
 import org.dmg.monsterhub.service.SettingService
 import org.dmg.monsterhub.service.TransactionService
@@ -43,6 +41,7 @@ class SettingView(
     private val featureDataDesignationRepository: FeatureDataDesignationRepository,
     private val weaponAttackRepository: WeaponAttackRepository,
     private val weaponRepository: WeaponRepository,
+    private val settingRepository: SettingRepository,
     private val transactionService: TransactionService
 ) : Div(), BeforeEnterObserver, HasDynamicTitle {
   private val config: EditPanelConfig = EditPanelConfig("Конфигурация")
@@ -90,6 +89,21 @@ class SettingView(
           width = "100%"
         }
 
+        val menuBar = MenuBar()
+        val menuItem = menuBar.addItem(Icon(VaadinIcon.MENU))
+        menuItem.subMenu.addItem("Выбрать игровой мир") {
+          SettingSelectionDialog(settingRepository) { newSetting ->
+            UI.getCurrent().navigate(
+                SettingView::class.java,
+                RouteParameters(
+                    RouteParam("settingId", newSetting.id.toString()),
+                    RouteParam("objId", newSetting.id.toString())
+                )
+            )
+          }.open()
+        }
+        val top = HorizontalLayout(filter, menuBar).apply { width = "100%" }
+
         tree = TreeGrid<SettingObject>().also { tree ->
           tree.addComponentHierarchyColumn { obj ->
             val item: Component = when (obj) {
@@ -127,7 +141,7 @@ class SettingView(
         }
 
 
-        add(filter, tree)
+        add(top, tree)
 
         height = "100%"
         width = "30%"
