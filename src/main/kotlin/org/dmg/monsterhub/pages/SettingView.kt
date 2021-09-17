@@ -20,7 +20,6 @@ import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderForSetting
 import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderService
-import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderService.Companion.getRecursive
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.ChangeDialog
 import org.dmg.monsterhub.pages.edit.form.EditPanel
@@ -54,8 +53,6 @@ class SettingView(
   private lateinit var tree: TreeGrid<SettingObject>
   private lateinit var rightPanel: VerticalLayout
 
-  private lateinit var settings: List<Setting>
-
   override fun beforeEnter(event: BeforeEnterEvent?) {
     if (event != null) {
       set(event.routeParameters["settingId"].get().toLong())
@@ -68,11 +65,9 @@ class SettingView(
       initialized = true
 
       setting = settingService.get(settingId)
-      settings = getRecursive(setting).toList()
 
       data = objectDataProviderService(setting)
       val dataWithFilter = data.withConfigurableFilter()
-      finderData = objectFinderDataProviderService(settings)
 
       rightPanel = VerticalLayout().apply {
         height = "100%"
@@ -185,10 +180,10 @@ class SettingView(
     rightPanel.add(EditPanel(
         item,
         ServiceLocator(
-            settings,
+            setting,
 
             data,
-            finderData,
+            objectFinderDataProviderService,
             featureDataRepository,
             featureContainerItemRepository,
             featureDataDesignationRepository,
@@ -199,7 +194,7 @@ class SettingView(
             transactionService,
 
             config
-        )
+        ).also { it.refreshSettings() }
     ))
   }
 

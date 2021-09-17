@@ -14,11 +14,6 @@ class ObjectFinderDataProviderService(
     private val dataProviders: List<SettingObjectDataProvider>
 ) {
   operator fun invoke(settings: List<Setting>) = ObjectFinderDataProviderForSetting(dataProviders, settings)
-
-  companion object {
-    fun getRecursive(setting: Setting): Sequence<Setting> =
-        sequenceOf(setting) + setting.base.asSequence().flatMap { getRecursive(it) }
-  }
 }
 
 class ObjectFinderDataProviderForSetting(

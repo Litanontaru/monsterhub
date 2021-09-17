@@ -15,7 +15,7 @@ object CreatureAttackSpace : AbstractCreatureSpace {
         summaryText = "Атака"
 
         addContent(VerticalLayout().apply {
-          val actions = AttackService.actions(obj, locator.weaponRepository, locator.settigs)
+          val actions = AttackService.actions(obj, locator.weaponRepository, locator.settings)
           actions
               .sortedWith(compareBy({ -it.speed }, { -it.distance }, { -it.finesseSum }, { -it.damageSum }))
               .forEach { action ->
@@ -31,7 +31,7 @@ object CreatureAttackSpace : AbstractCreatureSpace {
           val sizeProfile = CreatureService.sizeProfile(obj)
 
           CreatureService.naturalWeapons(obj)
-              .let { locator.weaponRepository.findAllByNameInAndSettingIn(it.map { it.first }, locator.settigs) }
+              .let { locator.weaponRepository.findAllByNameInAndSettingIn(it.map { it.first }, locator.settings) }
               .asSequence()
               .map { it.adjust(sizeProfile, true, attackFeatures.getOrDefault(it.name, emptyList())) }
               .flatMap { weapon -> weapon.attacks.asSequence().map { weapon to it } }

@@ -8,10 +8,10 @@ import org.dmg.monsterhub.service.FeatureDataRepository
 import org.dmg.monsterhub.service.TransactionService
 
 data class ServiceLocator(
-    val settigs: List<Setting>,
+    val setting: Setting,
 
     val data: ObjectTreeDataProvider,
-    val finderData: ObjectFinderDataProviderForSetting,
+    val finder: ObjectFinderDataProviderService,
     val featureDataRepository: FeatureDataRepository,
     val featureContainerItemRepository: FeatureContainerItemRepository,
     val featureDataDesignationRepository: FeatureDataDesignationRepository,
@@ -22,4 +22,18 @@ data class ServiceLocator(
     val transactionService: TransactionService,
 
     val config: EditPanelConfig
-)
+) {
+  lateinit var settings: List<Setting>
+
+  val finderData: ObjectFinderDataProviderForSetting
+    get() = finder(settings)
+
+  fun refreshSettings() {
+    settings = getRecursive(setting).toList()
+  }
+
+  companion object {
+    fun getRecursive(setting: Setting): Sequence<Setting> =
+        sequenceOf(setting) + setting.base.asSequence().flatMap { getRecursive(it) }
+  }
+}

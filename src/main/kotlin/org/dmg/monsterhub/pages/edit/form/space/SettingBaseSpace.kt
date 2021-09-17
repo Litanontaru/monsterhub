@@ -24,10 +24,10 @@ object SettingBaseSpace : Space {
 
     val parent = mutableListOf<Component>()
 
-    val dataProvider = SettingHierarchyDataProvider(
-        obj,
-        { update(it) {} }
-    )
+    val dataProvider = SettingHierarchyDataProvider(obj) {
+      update(it) {}
+      locator.refreshSettings()
+    }
 
     parent.add(HorizontalLayout().apply {
       val label = Label("Основа")
