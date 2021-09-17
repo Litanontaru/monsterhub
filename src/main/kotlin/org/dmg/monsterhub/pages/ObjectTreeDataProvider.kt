@@ -22,16 +22,7 @@ class ObjectTreeDataProvider(
     private val dataProviders: List<SettingObjectDataProvider>
 ) : AbstractBackEndHierarchicalDataProvider<SettingObject, String>() {
 
-  var children = mutableMapOf<Folder?, MutableList<SettingObject>>()
   var onAdd: ((SettingObject) -> Unit)? = null
-
-  init {
-    dataProviders
-        .flatMap { it.getAllBySetting(setting) }
-        .groupBy { it.parent }
-        .mapValues { it.value.asSequence().sortedWith(COMPARATOR).toMutableList() }
-        .also { children.putAll(it) }
-  }
 
   override fun hasChildren(settingObject: SettingObject?) = when (settingObject) {
     null, is Folder -> dataProviders.any { it.hasChildrenAlikeBySetting(settingObject as Folder?, setting) }
@@ -44,6 +35,7 @@ class ObjectTreeDataProvider(
             val search = query?.filter?.orElse("") ?: ""
             dataProviders
                 .flatMap { it.getChildrenAlikeBySetting(parent, search, setting) }
+                .sortedWith(COMPARATOR)
           }
           .stream()
 
@@ -54,20 +46,19 @@ class ObjectTreeDataProvider(
             dataProviders.sumBy { it.countChildrenAlikeBySetting(parent, search, setting) }
           }
 
-  @Deprecated(message = "")
-  fun children(parent: SettingObject?): List<SettingObject>? = when (parent) {
-    null -> children[null]
-    is Folder -> children[parent]
-    else -> emptyList()
-  }
+  fun firstFolder(parent: Folder?, search: String): Folder? =
+      dataProviders
+          .first { it.supportType("FOLDER") }
+          .getChildrenAlikeBySetting(parent, search, setting)
+          .filter { it.name == search }
+          .take(1)
+          .map { it as Folder }
+          .singleOrNull()
 
   fun add(newSettingObject: SettingObject) {
     action(newSettingObject) {
       newSettingObject.setting = setting
       val savedObject = it.refresh(it.save(newSettingObject))
-      val list = children.getOrPut(savedObject.parent) { mutableListOf() }
-      list += savedObject
-      list.sortWith(COMPARATOR)
 
       if (savedObject.parent != null) {
         refreshItem(savedObject.parent, true)
@@ -87,7 +78,6 @@ class ObjectTreeDataProvider(
         .save(settingObject)
         .also {
           if (!settingObject.hidden) {
-            replaceWithRefreshed(settingObject, it)
             refreshItem(it)
           }
         }
@@ -96,13 +86,7 @@ class ObjectTreeDataProvider(
   fun move(settingObject: SettingObject, new: Folder?) {
     action(settingObject) {
       val old = settingObject.parent
-      children[old]?.also {
-        it -= settingObject
-      }
       settingObject.parent = new
-      val list = children.getOrPut(settingObject.parent) { mutableListOf() }
-      list += settingObject
-      list.sortWith(COMPARATOR)
 
       it.save(settingObject).also {
         refreshItem(old, true)
@@ -113,10 +97,6 @@ class ObjectTreeDataProvider(
 
   fun delete(settingObject: SettingObject) {
     action(settingObject) {
-      children[settingObject.parent]?.also {
-        it -= settingObject
-      }
-
       settingObject.deleteOnly = true
       it.save(settingObject).also {
         if (it.parent != null) {
@@ -132,15 +112,7 @@ class ObjectTreeDataProvider(
     action(settingObject) {
       it
           .refresh(settingObject)
-          .also { replaceWithRefreshed(settingObject, it) }
-    }
-  }
-
-  private fun replaceWithRefreshed(settingObject: SettingObject, refreshed: SettingObject) {
-    children[settingObject.parent]?.let { list ->
-      list.remove(settingObject)
-      list.add(refreshed)
-      list.sortWith(COMPARATOR)
+          .also { refreshItem(it, true) }
     }
   }
 
@@ -152,7 +124,9 @@ class ObjectTreeDataProvider(
   fun dataProviders(): Sequence<SettingObjectDataProvider> = dataProviders.asSequence()
 
   fun find(objId: Long): SettingObject? =
-      children.values.asSequence().flatMap { it.asSequence() }.find { it.id == objId }
+      dataProviders
+          .map { it.getById(objId) }
+          .find { it != null }
 
   companion object {
     private val COMPARATOR = compareBy<SettingObject>({ it !is Folder }, { it.name })

@@ -238,17 +238,16 @@ class SettingView(
             if (folders.isEmpty()) {
               data.move(obj, null)
             } else {
-              var parent: SettingObject? = null
+              var parent: Folder? = null
               for (folder in folders) {
-                val next = data.children(parent)
-                    ?.find { it.name == folder && it is Folder }
+                val next = data.firstFolder(parent, folder)
                 parent = next
                 if (parent == null) {
                   break
                 }
               }
               if (parent != null) {
-                data.move(obj, parent as Folder)
+                data.move(obj, parent)
               }
             }
           }.open()

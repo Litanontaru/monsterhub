@@ -15,6 +15,8 @@ interface SettingObjectDataProvider {
 
   fun getAllBySetting(setting: Setting): List<SettingObject>
 
+  fun getById(id: Long): SettingObject?
+
   fun getChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting): List<SettingObject>
 
   fun countChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting): Int
