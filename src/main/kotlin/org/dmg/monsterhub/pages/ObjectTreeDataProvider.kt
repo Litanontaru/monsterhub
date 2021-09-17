@@ -7,7 +7,6 @@ import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.service.SettingObjectDataProvider
 import org.springframework.stereotype.Service
-import java.util.stream.Stream
 import javax.transaction.Transactional
 
 @Transactional
@@ -21,7 +20,7 @@ class ObjectTreeDataProviderService(
 class ObjectTreeDataProvider(
     private val setting: Setting,
     private val dataProviders: List<SettingObjectDataProvider>
-) : AbstractBackEndHierarchicalDataProvider<SettingObject, Unit>() {
+) : AbstractBackEndHierarchicalDataProvider<SettingObject, String>() {
 
   var children = mutableMapOf<Folder?, MutableList<SettingObject>>()
   var onAdd: ((SettingObject) -> Unit)? = null
@@ -35,24 +34,32 @@ class ObjectTreeDataProvider(
   }
 
   override fun hasChildren(settingObject: SettingObject?) = when (settingObject) {
-    null -> false
-    is Folder -> children[settingObject]?.isNotEmpty() ?: false
+    null, is Folder -> dataProviders.any { it.hasChildrenAlikeBySetting(settingObject as Folder?, setting) }
     else -> false
   }
 
-  override fun fetchChildrenFromBackEnd(query: HierarchicalQuery<SettingObject, Unit>?) =
-      children(query?.parent)?.stream() ?: Stream.empty()
+  override fun fetchChildrenFromBackEnd(query: HierarchicalQuery<SettingObject, String>?) =
+      query?.parent?.let { it as Folder }
+          .let { parent ->
+            val search = query?.filter?.orElse("") ?: ""
+            dataProviders
+                .flatMap { it.getChildrenAlikeBySetting(parent, search, setting) }
+          }
+          .stream()
 
-  override fun getChildCount(query: HierarchicalQuery<SettingObject, Unit>?) =
-      children(query?.parent)?.size ?: 0
+  override fun getChildCount(query: HierarchicalQuery<SettingObject, String>?) =
+      query?.parent?.let { it as Folder }
+          .let { parent ->
+            val search = query?.filter?.orElse("") ?: ""
+            dataProviders.sumBy { it.countChildrenAlikeBySetting(parent, search, setting) }
+          }
 
+  @Deprecated(message = "")
   fun children(parent: SettingObject?): List<SettingObject>? = when (parent) {
     null -> children[null]
     is Folder -> children[parent]
     else -> emptyList()
   }
-
-  fun roots() = children[null] ?: listOf<SettingObject>()
 
   fun add(newSettingObject: SettingObject) {
     action(newSettingObject) {
@@ -85,7 +92,6 @@ class ObjectTreeDataProvider(
           }
         }
   }
-
 
   fun move(settingObject: SettingObject, new: Folder?) {
     action(settingObject) {
