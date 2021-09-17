@@ -12,11 +12,19 @@ interface SettingObjectRepository<T : SettingObject> : DBObjectRepository<T> {
 
   fun countByParentAndNameContainingAndHiddenFalse(parent: Folder, name: String): Int
 
+  fun findAllByParentAndHiddenFalse(parent: Folder): List<T>
+
+  fun countByParentAndHiddenFalse(parent: Folder): Int
+
   fun existsByParentAndHiddenFalse(parent: Folder): Boolean
 
   fun findAllBySettingAndNameContainingAndParentIsNullAndHiddenFalse(setting: Setting, name: String): List<T>
 
   fun countBySettingAndNameContainingAndParentIsNullAndHiddenFalse(setting: Setting, name: String): Int
+
+  fun findAllBySettingAndParentIsNullAndHiddenFalse(setting: Setting): List<T>
+
+  fun countBySettingAndParentIsNullAndHiddenFalse(setting: Setting): Int
 
   fun existsBySettingAndParentIsNullAndHiddenFalse(setting: Setting): Boolean
 

@@ -11,6 +11,7 @@ import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.treegrid.TreeGrid
 import com.vaadin.flow.router.*
 import org.dmg.monsterhub.data.setting.Folder
@@ -72,6 +73,7 @@ class SettingView(
       settings = getRecursive(setting).toList()
 
       data = objectDataProviderService(setting)
+      val dataWithFilter = data.withConfigurableFilter()
       finderData = objectFinderDataProviderService(settings)
 
       rightPanel = VerticalLayout().apply {
@@ -82,6 +84,13 @@ class SettingView(
       }
 
       val leftPanel = VerticalLayout().apply {
+        val filter = TextField().apply {
+          addValueChangeListener {
+            dataWithFilter.setFilter(it.value)
+          }
+          width = "100%"
+        }
+
         tree = TreeGrid<SettingObject>().also { tree ->
           tree.addComponentHierarchyColumn { obj ->
             val item: Component = when (obj) {
@@ -108,7 +117,8 @@ class SettingView(
             }
           }
 
-          tree.setDataProvider(data)
+          tree.setDataProvider(dataWithFilter)
+
           data.onAdd = {
             tree.select(it)
             clickAndHistory(it)
@@ -118,7 +128,7 @@ class SettingView(
         }
 
 
-        add(tree)
+        add(filter, tree)
 
         height = "100%"
         width = "30%"

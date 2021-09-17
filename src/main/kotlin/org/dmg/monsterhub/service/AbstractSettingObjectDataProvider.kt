@@ -18,14 +18,25 @@ abstract class AbstractSettingObjectDataProvider<T : SettingObject>(
   override fun getById(id: Long): SettingObject? = repository.findByIdOrNull(id)
 
   override fun getChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting) =
-      parent
-          ?.let { repository.findAllByParentAndNameContainingAndHiddenFalse(it, search) }
-          ?: run { repository.findAllBySettingAndNameContainingAndParentIsNullAndHiddenFalse(setting, search) }
+      when {
+        search.isBlank() -> parent
+            ?.let { repository.findAllByParentAndHiddenFalse(it) }
+            ?: run { repository.findAllBySettingAndParentIsNullAndHiddenFalse(setting) }
+        else -> parent
+            ?.let { repository.findAllByParentAndNameContainingAndHiddenFalse(it, search) }
+            ?: run { repository.findAllBySettingAndNameContainingAndParentIsNullAndHiddenFalse(setting, search) }
+      }
+
 
   override fun countChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting) =
-      parent
-          ?.let { repository.countByParentAndNameContainingAndHiddenFalse(it, search) }
-          ?: run { repository.countBySettingAndNameContainingAndParentIsNullAndHiddenFalse(setting, search) }
+      when {
+        search.isBlank() -> parent
+            ?.let { repository.countByParentAndHiddenFalse(it) }
+            ?: run { repository.countBySettingAndParentIsNullAndHiddenFalse(setting) }
+        else -> parent
+            ?.let { repository.countByParentAndNameContainingAndHiddenFalse(it, search) }
+            ?: run { repository.countBySettingAndNameContainingAndParentIsNullAndHiddenFalse(setting, search) }
+      }
 
   override fun hasChildrenAlikeBySetting(parent: Folder?, setting: Setting) =
       parent
