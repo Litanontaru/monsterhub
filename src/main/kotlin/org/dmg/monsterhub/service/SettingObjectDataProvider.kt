@@ -24,5 +24,7 @@ interface SettingObjectDataProvider {
 
   fun save(one: SettingObject): SettingObject
 
+  fun canCreate(): Boolean = true
+
   fun create(): SettingObject
 }

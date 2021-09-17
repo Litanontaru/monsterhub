@@ -199,6 +199,7 @@ class SettingView(
         val toAdd = it.addItem("Добавить")
         data.dataProviders()
             .sortedBy { it.name }
+            .filter { it.canCreate() }
             .forEach { dataProvider ->
               toAdd.subMenu.addItem(dataProvider.name) {
                 ChangeDialog("Создать", "") {
