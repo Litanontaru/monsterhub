@@ -55,72 +55,92 @@ object TreeSpace : Space {
         HorizontalLayout().apply {
           isVisible = item == selectedItem
 
+          lateinit var updateVisibility: () -> Unit
           val components = mutableListOf<Component>()
 
-          val last = item.last()
-          if (last.canAdd()) {
-            val addNew = ComboBox<SettingObject>().apply {
-              setItems(locator.finderData(last.addableType()!!) as DataProvider<SettingObject, String>)
-              setItemLabelGenerator { it.name }
-            }
+          val addNewComboBox = ComboBox<SettingObject>().apply { setItemLabelGenerator { it.name } }
 
-            components.add(addNew)
-            components.add(Button(Icon(VaadinIcon.PLUS)) {
-              addNew.optionalValue.ifPresent {
-                val new = FeatureData().apply { feature = it as Feature }
-                last.add(new) { update(it) { } }
-
-                dataProvider.refreshItem(item, true)
-
-                addNew.value = null
-              }
-            }.apply {
-              addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
-            })
-          }
-
-          if (last.canEdit()) {
-            components.add(Button(Icon(VaadinIcon.EDIT)) {
-              EditDialog(last.editableObject(), locator) {
-                update(last.editableObject()) { }
-                dataProvider.refreshItem(item)
-                item.parent?.let { dataProvider.refreshItem(it) }
-              }.open()
-            }.apply {
-              addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
-            })
-          }
-
-          if (last.canRemove()) {
-            components.add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
-              last.remove { update(it) {} }
-
-              item.parent!!.let { dataProvider.refreshItem(it, true) }
-            }.apply {
-              addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
-            })
-          }
-
-          if (last.canCreate()) {
-            components.add(Button(Icon(VaadinIcon.MAGIC)) {
-              val new = locator
-                  .data
-                  .dataProviders()
-                  .first { it.supportType(last.addableType()!!) }
-                  .create()
-                  .let { update(it) { it.hidden = true } as Feature }
-                  .let { created -> FeatureData().apply { feature = created } }
-
-              last.add(new) { update(it) { } }
+          val add = Button(Icon(VaadinIcon.PLUS)) {
+            addNewComboBox.optionalValue.ifPresent {
+              val new = FeatureData().apply { feature = it as Feature }
+              item.last().add(new) { update(it) { } }
 
               dataProvider.refreshItem(item, true)
-              item.parent?.let { dataProvider.refreshItem(it) } ?: run { dataProvider.refreshAll() }
+              updateVisibility()
 
-
-            }.apply {
-              addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
-            })
+              addNewComboBox.value = null
+            }
+          }.apply {
+            addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
           }
+
+          val edit = Button(Icon(VaadinIcon.EDIT)) {
+            EditDialog(item.last().editableObject(), locator) {
+              update(item.last().editableObject()) { }
+              dataProvider.refreshItem(item)
+              item.parent?.let { dataProvider.refreshItem(it) }
+
+              updateVisibility()
+            }.open()
+          }.apply {
+            addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
+          }
+
+          val delete = Button(Icon(VaadinIcon.CLOSE_SMALL)) {
+            item.last().remove { update(it) {} }
+
+            dataProvider.refreshItem(item, true)
+            if (item.parent?.parent != null) {
+              item.parent!!.let { dataProvider.refreshItem(it, true) }
+            } else {
+              dataProvider.refreshAll()
+            }
+
+            updateVisibility()
+          }.apply {
+            addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
+          }
+
+          val create = Button(Icon(VaadinIcon.MAGIC)) {
+            val new = locator
+                .data
+                .dataProviders()
+                .first { it.supportType(item.last().addableType()!!) }
+                .create()
+                .let { update(it) { it.hidden = true } as Feature }
+                .let { created -> FeatureData().apply { feature = created } }
+
+            item.last().add(new) { update(it) { } }
+
+            dataProvider.refreshItem(item, true)
+            item.parent?.let { dataProvider.refreshItem(it) } ?: run { dataProvider.refreshAll() }
+
+            updateVisibility()
+          }.apply {
+            addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
+          }
+
+          fun setVisibility() {
+            val last = item.last()
+            addNewComboBox.isVisible = last.canAdd()
+            if (last.canAdd()) {
+              addNewComboBox.setItems(locator.finderData(last.addableType()!!) as DataProvider<SettingObject, String>)
+            }
+
+            add.isVisible = last.canAdd()
+            edit.isVisible = last.canEdit()
+            delete.isVisible = last.canRemove()
+            create.isVisible = last.canCreate()
+          }
+          updateVisibility = ::setVisibility
+
+          setVisibility()
+
+          components.add(addNewComboBox)
+          components.add(add)
+          components.add(edit)
+          components.add(delete)
+          components.add(create)
 
           isPadding = false
           isMargin = false
