@@ -24,7 +24,7 @@ class ChangeDialog(
           onSet(field.value)
           close()
         })
-        add(Button("Закрыть", { close() }))
+        add(Button("Закрыть") { close() })
       })
 
       isPadding = false
