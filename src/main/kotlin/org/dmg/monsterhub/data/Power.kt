@@ -20,6 +20,8 @@ class Power : ContainerData(), SkillLike {
   override fun rate() = calculator().calculator(this)
 
   companion object {
+    const val POWER = "POWER"
+
     val META = listOf(
         FeatureContainerItem().apply {
           name = "Эффект"

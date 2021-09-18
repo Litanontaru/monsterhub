@@ -69,6 +69,11 @@ class Creature : ContainerData(), Hierarchical<Creature> {
         FeatureContainerItem().apply {
           name = "Перки"
           featureType = Perk.PERK
+        },
+        FeatureContainerItem().apply {
+          name = "Силы"
+          featureType = Power.POWER
+          allowHidden = true
         }
     )
   }
