@@ -10,6 +10,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.treegrid.TreeGrid
 import com.vaadin.flow.data.provider.DataProvider
+import org.dmg.monsterhub.data.ContainerData
 import org.dmg.monsterhub.data.FeatureData
 import org.dmg.monsterhub.data.Power
 import org.dmg.monsterhub.data.meta.Feature
@@ -25,7 +26,7 @@ object TreeSpace : Space {
 
   override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Any): List<Component> {
     val parent = mutableListOf<Component>()
-    val obj = anyObj as Power
+    val obj = anyObj as ContainerData
 
     val dataProvider = AtomicTreeNodeDataProvider(obj.toTree(null))
 
