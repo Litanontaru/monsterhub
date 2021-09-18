@@ -31,7 +31,8 @@ class FeatureData : DBObject(), FeatureContainerData {
   override fun meta(): List<FeatureContainerItem> = feature.containFeatureTypes
 
   fun display(): String {
-    return (main() +
+    return (sequenceOf(feature.name) +
+        configuration() +
         feature.containFeatureTypes.asSequence()
             .flatMap { key -> features.asSequence().filter { it.feature.featureType == key.featureType } }
             .map { it.display() }
@@ -40,25 +41,24 @@ class FeatureData : DBObject(), FeatureContainerData {
         .joinToString()
   }
 
-  fun shortDisplay() = main().joinToString()
+  fun shortDisplay() = (sequenceOf(feature.name) + configuration()).joinToString()
 
-  private fun main(): Sequence<String> {
-    return sequenceOf(feature.name) +
+  fun displayConfig() = configuration().joinToString()
 
-        combo(x.stripTrailingZeros(), xa.stripTrailingZeros()) +
-        combo(y.stripTrailingZeros(), ya.stripTrailingZeros()) +
-        combo(z.stripTrailingZeros(), za.stripTrailingZeros()) +
+  private fun configuration(): Sequence<String> =
+      combo(x.stripTrailingZeros(), xa.stripTrailingZeros()) +
+          combo(y.stripTrailingZeros(), ya.stripTrailingZeros()) +
+          combo(z.stripTrailingZeros(), za.stripTrailingZeros()) +
 
-        feature.designations.asSequence()
-            .mapNotNull { key ->
-              val search = if (key.endsWith("*")) key.substring(0, key.length - 1) else key
-              designations.find { it.designationKey == search }
-            }
-            .map { it.value }
-            .filter { it.isNotBlank() }
-            .map { it.lines()[0] }
-            .filter { it.isNotBlank() }
-  }
+          feature.designations.asSequence()
+              .mapNotNull { key ->
+                val search = if (key.endsWith("*")) key.substring(0, key.length - 1) else key
+                designations.find { it.designationKey == search }
+              }
+              .map { it.value }
+              .filter { it.isNotBlank() }
+              .map { it.lines()[0] }
+              .filter { it.isNotBlank() }
 
   private fun combo(x: BigDecimal, xa: BigDecimal) =
       if (x.compareTo(BigDecimal.ZERO) == 0) {

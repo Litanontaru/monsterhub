@@ -56,16 +56,11 @@ abstract class AtomicTreeNode(
     val result = mutableListOf<String?>()
     var node = this
     while (true) {
+      node.name()?.let { result += it }
       if (node.isStopper) {
-        node.name()?.let { result += it }
-        return result.joinToString(",")
+        return result.joinToString(": ")
       }
-      val next = node.children.singleOrNull()
-      if (next == null) {
-        node.name()?.let { result += it }
-        return result.joinToString(",")
-      }
-      node = next
+      node = (node.children.singleOrNull() ?: return result.joinToString(": "))
     }
   }
 }
@@ -127,11 +122,20 @@ class ValueTreeNode(
     val value: FeatureData
 ) : AtomicTreeNode(parent) {
   override val isStopper: Boolean
-    get() = children.singleOrNull()?.let { it !is NestedValueTreeNode } ?: true
+    get() = children.singleOrNull() == null
 
   override fun detectCycle(obj: Any) = value == obj
 
-  override fun name(): String? = value.shortDisplay().takeIf { isStopper }
+  override fun name(): String? = when (value.feature) {
+    is ContainerData -> {
+      if (detectCycleAll(value.feature)) {
+        value.shortDisplay()
+      } else {
+        value.displayConfig().takeIf { it.isNotBlank() }
+      }
+    }
+    else -> value.shortDisplay()
+  }
 
   override fun rate(): Decimal? = value.rate()
 
