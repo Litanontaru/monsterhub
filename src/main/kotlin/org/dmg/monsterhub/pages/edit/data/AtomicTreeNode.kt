@@ -17,6 +17,18 @@ abstract class AtomicTreeNode(
 
   abstract val isStopper: Boolean
 
+  abstract fun detectCycle(obj: Any): Boolean
+  fun detectCycleAll(obj: Any): Boolean {
+    var node: AtomicTreeNode? = this
+    while (node != null) {
+      if (node.detectCycle(obj)) {
+        return true
+      }
+      node = node.parent
+    }
+    return false
+  }
+
   abstract fun name(): String?
   abstract fun rate(): Decimal?
 
@@ -64,6 +76,8 @@ class AttributeTreeNode(
     val attribute: FeatureContainerItem
 ) : AtomicTreeNode(parent) {
   override val isStopper = !attribute.onlyOne
+
+  override fun detectCycle(obj: Any): Boolean = false
 
   override fun name(): String? = attribute.name
 
@@ -115,6 +129,8 @@ class ValueTreeNode(
   override val isStopper: Boolean
     get() = children.singleOrNull()?.let { it !is NestedValueTreeNode } ?: true
 
+  override fun detectCycle(obj: Any) = value == obj
+
   override fun name(): String? = value.shortDisplay().takeIf { isStopper }
 
   override fun rate(): Decimal? = value.rate()
@@ -148,6 +164,8 @@ class NestedValueTreeNode(
     val feature: Feature
 ) : AtomicTreeNode(parent) {
   override val isStopper = true
+
+  override fun detectCycle(obj: Any) = feature == obj
 
   override fun name(): String? = feature.name
 
@@ -205,7 +223,11 @@ fun FeatureData.toTree(parent: AtomicTreeNode?): AtomicTreeNode =
           .toMutableList()
 
       when (val theFeature = feature) {
-        is ContainerData -> node.children.add(theFeature.toTree(node))
+        is ContainerData -> {
+          if (!node.detectCycleAll(theFeature)) {
+            node.children.add(theFeature.toTree(node))
+          }
+        }
       }
     }
 
