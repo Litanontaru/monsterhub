@@ -15,7 +15,7 @@ object CreatureTraitSpace : AbstractCreatureSpace {
           add(Label("Восприятие: ${obj.getAllTraits("Восприятие").map { it.display() }.joinToString()}"))
           add(Label("Движение: ${obj.getAllTraits("Движение").map { it.display() }.joinToString()}"))
           add(Label("Интеллект: ${obj.getAllTraits("Интеллект").map { it.display() }.joinToString()}"))
-          add(Label("Манимуляторы: ${obj.getAllTraits("Манипуляторы").map { it.display() }.joinToString()}"))
+          add(Label("Манипуляторы: ${obj.getAllTraits("Манипуляторы").map { it.display() }.joinToString()}"))
           add(Label("Остальные: ${obj.getAllTraits("Общее").map { it.display() }.joinToString()}"))
 
           width = "100%"
