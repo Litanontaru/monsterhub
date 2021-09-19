@@ -116,7 +116,6 @@ class EditPanel(
         listOf(FreeFeatureSpace),
         listOf(CreatureSpace),
         listOf(TreeSpace),
-//        listOf(FeatureContainerDataSpace),
         listOf(DescriptionSpace),
         listOf(FeatureSpace),
         listOf(OneWeaponAttackSpace),
@@ -124,6 +123,7 @@ class EditPanel(
         listOf(FeatureContainerSpace),
         listOf(TraitSpace),
         listOf(FeatureDataSpace),
+        listOf(FeatureContainerDataSpace),
         listOf(WeaponAttackSpace),
         listOf(SettingBaseSpace)
     )
