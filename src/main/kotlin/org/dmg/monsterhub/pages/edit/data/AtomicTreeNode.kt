@@ -82,7 +82,7 @@ class AttributeTreeNode(
 
   override fun canEdit() = false
 
-  override fun canRemove() = false
+  override fun canRemove() = parent?.let { !it.isStopper && it.canRemove() } ?: false
 
   override fun canCreate() = canAdd() && attribute.allowHidden
 
@@ -113,7 +113,11 @@ class AttributeTreeNode(
   }
 
   override fun remove(update: (Any) -> Any) {
-    throw UnsupportedOperationException()
+    if (canRemove()) {
+      parent!!.remove(update)
+    } else {
+      throw UnsupportedOperationException()
+    }
   }
 }
 
