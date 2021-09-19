@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 
 @Service
 object CreatureService {
-  private val base = listOf(-1, 0, 0, 0, -26, 0, -13, 0, -18, 0, -3)
+  private val BASE = listOf(-1, 0, 0, 0, -26, 0, -13, 0, -18, 0, -3)
 
   fun superiority(creature: Creature): Superiority {
     val allTraits = creature.getAllTraits()
@@ -23,7 +23,7 @@ object CreatureService {
         .toList()
 
 
-    val evaluated = base.withIndex().map {
+    val evaluated = BASE.withIndex().map {
       val index = it.index
       if (index % 2 == 1) values.map { it[index] }.max() ?: 0
       else values.map { it[index] }.sum() + it.value
@@ -39,26 +39,30 @@ object CreatureService {
     val offence = off + (per + mov) / 2 + hnd
     val defence = def + (per + mov) / 2
 
-    val sortedSuper = arrayOf(offence, defence, com).sortedArray()
-    val maxSuper = Math.max(Math.max(sortedSuper[0] * 4, sortedSuper[1] * 3), sortedSuper[2] * 2)
+    val sortedSuper = arrayOf(offence, defence, com).map { it.toDouble() }.sorted()
 
-    val maxCR = Math.max(Math.min(offence, defence) * 3, Math.max(offence, defence) * 2)
+    val one = (sortedSuper[2] + sortedSuper[1]) / 2
+    val another = (3 * sortedSuper[2] + sortedSuper[0]) / 4
+    val sup = Math.max(one, another)
+
+    val alpha = Math.max(offence, defence)
+    val beta = Math.min(offence, defence)
+    val cr = (2.0 * alpha + beta) / 3.0
 
     return Superiority(
-        Math.ceil(0.2 * maxSuper).toInt(),
-        Math.ceil(0.2 * maxCR).toInt(),
+        Math.ceil(sup / 2).toInt(),
+        sup,
+        sortedSuper[2] - sup,
 
-        primary(offence, maxSuper),
-        primary(defence, maxSuper),
-        primary(com, maxSuper)
+        Math.ceil(cr / 2).toInt(),
+
+        primary(offence, sup),
+        primary(defence, sup),
+        primary(com, sup)
     )
   }
 
-  private fun primary(value: Int, max: Int) = when {
-    value * 4 < max -> PrimaryRate(value, (max / 4.0 - value).toInt())
-    value * 3 < max -> PrimaryRate(value, (max / 3.0 - value).toInt())
-    else -> PrimaryRate(value, (max / 2.0 - value).toInt())
-  }
+  private fun primary(value: Int, sup: Double) = PrimaryRate(value, sup - value)
 
   fun size(creature: Creature) = creature
       .getAllTraits("Размер")

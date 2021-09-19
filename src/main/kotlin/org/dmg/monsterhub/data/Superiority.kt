@@ -2,6 +2,9 @@ package org.dmg.monsterhub.data
 
 data class Superiority(
     val value: Int,
+    val level: Double,
+    val skew: Double,
+
     val challengeRating: Int,
 
     val offence: PrimaryRate,
@@ -9,5 +12,5 @@ data class Superiority(
     val common: PrimaryRate
 )
 
-data class PrimaryRate(val value: Int, val underDate: Int)
+data class PrimaryRate(val value: Int, val underDate: Double)
 
