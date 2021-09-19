@@ -49,7 +49,7 @@ class ObjectTreeDataProvider(
   fun firstFolder(parent: Folder?, search: String): Folder? =
       dataProviders
           .first { it.supportType("FOLDER") }
-          .getChildrenAlikeBySetting(parent, search, setting)
+          .getChildrenAlikeBySetting(parent, "", setting)
           .filter { it.name == search }
           .take(1)
           .map { it as Folder }
@@ -89,7 +89,9 @@ class ObjectTreeDataProvider(
       settingObject.parent = new
 
       it.save(settingObject).also {
-        refreshItem(old, true)
+        if (old != null) {
+          refreshItem(old, true)
+        }
         refreshItem(new, true)
       }
     }
