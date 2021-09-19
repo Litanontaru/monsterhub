@@ -3,6 +3,7 @@ package org.dmg.monsterhub.data
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.service.SizeProfile
 import java.math.BigDecimal
+import java.math.MathContext
 import javax.persistence.Entity
 import javax.persistence.JoinColumn
 import javax.persistence.OneToMany
@@ -33,7 +34,7 @@ class WeaponAttack : DBObject(), FeatureContainerData {
           sequenceOf(
               name,
               "урон $damage/$desturction",
-              "$distance м",
+              "${distance.round(MathContext(2)).stripTrailingZeros().toPlainString()} м",
               "скр. $speed"
           ) +
 

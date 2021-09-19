@@ -2,6 +2,7 @@ package org.dmg.monsterhub.service
 
 import org.dmg.monsterhub.data.Creature
 import java.math.BigDecimal
+import java.math.MathContext
 
 object CreatureSpeedService {
   private val MODS = mapOf(
@@ -67,6 +68,6 @@ object CreatureSpeedService {
         modifierSize
     )
 
-    fun display(): String = "$mode: ${step.stripTrailingZeros().toPlainString()} м, рывок ${dash.stripTrailingZeros().toPlainString()} м ${features.joinToString()}"
+    fun display(): String = "$mode: ${step.round(MathContext(2)).stripTrailingZeros().toPlainString()} м, рывок ${dash.round(MathContext(2)).stripTrailingZeros().toPlainString()} м ${features.joinToString()}"
   }
 }
