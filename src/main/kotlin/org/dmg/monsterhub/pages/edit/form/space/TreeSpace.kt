@@ -53,24 +53,26 @@ object TreeSpace : Space {
       //NAME
       addComponentHierarchyColumn { item ->
         Label(item.compactedName()).also { label ->
-          if (item.last() != item && item.compactable) {
-            ContextMenu().also {
-              it.addItem("Раскрыть") {
-                item.compactable = false
-                dataProvider.refreshItem(item, true)
-              }
+          val actions = mutableListOf<Pair<String, () -> Unit>>()
 
-              it.target = label
+          if (item.last() != item && item.compactable) {
+            actions += "Раскрыть" to {
+              item.compactable = false
+              dataProvider.refreshItem(item, true)
             }
           }
           if (!item.compactable && !item.isStopper && item.children.size == 1) {
-            ContextMenu().also {
-              it.addItem("Схлопнуть") {
-                item.compactable = true
-                dataProvider.refreshItem(item, true)
-              }
+            actions += "Схлопнуть" to {
+              item.compactable = true
+              dataProvider.refreshItem(item, true)
+            }
+          }
 
-              it.target = label
+          if (actions.isNotEmpty()) {
+            ContextMenu().also { menu ->
+              actions.forEach { (text, action) -> menu.addItem(text) { action() } }
+
+              menu.target = label
             }
           }
         }
