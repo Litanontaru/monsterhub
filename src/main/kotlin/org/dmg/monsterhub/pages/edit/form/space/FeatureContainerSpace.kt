@@ -17,7 +17,7 @@ import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.pages.edit.data.FeatureContainerItemDataProvider
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.FeatureContaiterItemEditDialog
-import org.dmg.monsterhub.repository.updateAsync
+import org.dmg.monsterhub.repository.update
 
 object FeatureContainerSpace : Space {
   override fun support(obj: Any) = obj is FeatureContainer && obj !is ContainerData
@@ -38,7 +38,7 @@ object FeatureContainerSpace : Space {
         addNew.optionalValue.ifPresent {
           FeatureContainerItem()
               .apply { featureType = addNew.value }
-              .also { locator.featureContainerItemRepository.updateAsync(it).thenAccept { dataProvider.add(it) } }
+              .also { locator.featureContainerItemRepository.update(it).let { dataProvider.add(it) } }
           addNew.value = ""
         }
       }.apply {
@@ -52,7 +52,7 @@ object FeatureContainerSpace : Space {
     val grid = Grid<FeatureContainerItem>().apply {
       fun edit(containerItem: FeatureContainerItem) {
         FeatureContaiterItemEditDialog(containerItem) {
-          locator.featureContainerItemRepository.updateAsync(it).thenAccept { dataProvider.refreshItem(it) }
+          locator.featureContainerItemRepository.update(it).let { dataProvider.refreshItem(it) }
         }.open()
       }
 
@@ -67,6 +67,7 @@ object FeatureContainerSpace : Space {
         HorizontalLayout().apply {
           add(Button(Icon(VaadinIcon.EDIT)) {
             edit(containerItem)
+            dataProvider.refreshItem(containerItem)
           }.apply {
             addThemeVariants(ButtonVariant.LUMO_SMALL)
           })
@@ -74,7 +75,8 @@ object FeatureContainerSpace : Space {
           add(Button(Icon(VaadinIcon.CLOSE_SMALL)) {
             dataProvider.delete(containerItem)
             containerItem.deleteOnly = true
-            locator.featureContainerItemRepository.updateAsync(containerItem)
+            locator.featureContainerItemRepository.update(containerItem)
+            dataProvider.refreshAll()
           }.apply {
             addThemeVariants(ButtonVariant.LUMO_SMALL)
           })
