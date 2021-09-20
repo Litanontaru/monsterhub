@@ -18,7 +18,6 @@ import com.vaadin.flow.router.*
 import org.dmg.monsterhub.data.setting.Folder
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
-import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderForSetting
 import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderService
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.ChangeDialog
@@ -48,7 +47,6 @@ class SettingView(
   private var initialized = false
   private lateinit var setting: Setting
   private lateinit var data: ObjectTreeDataProvider
-  private lateinit var finderData: ObjectFinderDataProviderForSetting
 
   private lateinit var tree: TreeGrid<SettingObject>
   private lateinit var rightPanel: VerticalLayout
