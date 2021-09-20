@@ -14,10 +14,18 @@ import java.util.*
 
 object AttackService {
   fun actions(creature: Creature, weaponRepository: WeaponRepository, settings: List<Setting>): List<Action> {
-    val perks = creature
-        .getAll(PERK)
+    val naturalPerks = creature.getAllTraits("Перк")
+        .flatMap { it.features.asSequence() }
+        .filter { it.feature is Perk }
         .map { it.feature as Perk }
         .toList()
+
+    val perks = (
+        naturalPerks + creature
+            .getAll(PERK)
+            .map { it.feature as Perk }
+            .toList()
+        ).distinct()
 
     val groupSize = creature.getAllTraits("Группа").take(1).singleOrNull()?.x?.toInt() ?: 0
 
