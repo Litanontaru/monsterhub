@@ -14,6 +14,7 @@ abstract class AtomicTreeNode(
     var parent: AtomicTreeNode?
 ) {
   lateinit var children: MutableList<AtomicTreeNode>
+  var compactable = true
 
   abstract val isStopper: Boolean
 
@@ -45,7 +46,7 @@ abstract class AtomicTreeNode(
   fun last(): AtomicTreeNode {
     var result = this
     while (true) {
-      if (result.isStopper) {
+      if (!result.compactable || result.isStopper) {
         return result
       }
       result = (result.children.singleOrNull() ?: return result)
@@ -57,10 +58,21 @@ abstract class AtomicTreeNode(
     var node = this
     while (true) {
       node.name()?.let { result += it }
-      if (node.isStopper) {
+      if (!node.compactable || node.isStopper) {
         return result.joinToString(": ")
       }
       node = (node.children.singleOrNull() ?: return result.joinToString(": "))
+    }
+  }
+
+  fun compactRate(): Decimal? {
+    var node = this
+    while (true) {
+      val rate = node.rate()
+      when {
+        rate != null && rate.isNotBlank() || !node.compactable || node.isStopper -> return rate
+        else -> node = (node.children.singleOrNull() ?: return rate)
+      }
     }
   }
 }
@@ -82,7 +94,7 @@ class AttributeTreeNode(
 
   override fun canEdit() = false
 
-  override fun canRemove() = parent?.let { !it.isStopper && it.canRemove() } ?: false
+  override fun canRemove() = parent?.let { it.compactable && !it.isStopper && it.canRemove() } ?: false
 
   override fun canCreate() = canAdd() && attribute.allowHidden
 

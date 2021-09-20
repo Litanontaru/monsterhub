@@ -4,6 +4,8 @@ import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.combobox.ComboBox
+import com.vaadin.flow.component.contextmenu.ContextMenu
+import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
@@ -49,18 +51,36 @@ object TreeSpace : Space {
       }
 
       //NAME
-      addHierarchyColumn {
-        it.compactedName()
+      addComponentHierarchyColumn { item ->
+        Label(item.compactedName()).also { label ->
+          if (item.last() != item && item.compactable) {
+            ContextMenu().also {
+              it.addItem("Раскрыть") {
+                item.compactable = false
+                dataProvider.refreshItem(item, true)
+              }
+
+              it.target = label
+            }
+          }
+          if (!item.compactable && !item.isStopper && item.children.size == 1) {
+            ContextMenu().also {
+              it.addItem("Схлопнуть") {
+                item.compactable = true
+                dataProvider.refreshItem(item, true)
+              }
+
+              it.target = label
+            }
+          }
+        }
       }.also {
         it.isAutoWidth = true
       }
 
       //RATE
       addColumn {
-        it
-            .last()
-            .rate()
-            ?.takeIf { it.isNotBlank() }
+        it.compactRate()?.takeIf { it.isNotBlank() }
       }.also {
         it.width = "6em"
         it.flexGrow = 0
