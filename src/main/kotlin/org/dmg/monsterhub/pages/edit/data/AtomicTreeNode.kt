@@ -53,28 +53,21 @@ abstract class AtomicTreeNode(
     }
   }
 
-  fun compactedName(): String {
-    val result = mutableListOf<String?>()
+  fun compacted(): List<AtomicTreeNode> {
+    val result = mutableListOf<AtomicTreeNode>()
     var node = this
     while (true) {
-      node.name()?.let { result += it }
+      result += node
       if (!node.compactable || node.isStopper) {
-        return result.joinToString(": ")
+        return result
       }
-      node = (node.children.singleOrNull() ?: return result.joinToString(": "))
+      node = (node.children.singleOrNull() ?: return result)
     }
   }
 
-  fun compactRate(): Decimal? {
-    var node = this
-    while (true) {
-      val rate = node.rate()
-      when {
-        rate != null && rate.isNotBlank() || !node.compactable || node.isStopper -> return rate
-        else -> node = (node.children.singleOrNull() ?: return rate)
-      }
-    }
-  }
+  fun compactedName(): String = compacted().mapNotNull { it.name() }.joinToString(": ")
+
+  fun compactRate(): Decimal? = compacted().mapNotNull { it.rate() }.find { it.isNotBlank() }
 }
 
 class AttributeTreeNode(
