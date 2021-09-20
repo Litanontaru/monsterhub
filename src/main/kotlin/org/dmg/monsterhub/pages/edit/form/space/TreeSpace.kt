@@ -14,12 +14,10 @@ import com.vaadin.flow.component.treegrid.TreeGrid
 import com.vaadin.flow.data.provider.DataProvider
 import org.dmg.monsterhub.data.ContainerData
 import org.dmg.monsterhub.data.FeatureData
+import org.dmg.monsterhub.data.Power
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.setting.SettingObject
-import org.dmg.monsterhub.pages.edit.data.AtomicTreeNode
-import org.dmg.monsterhub.pages.edit.data.AtomicTreeNodeDataProvider
-import org.dmg.monsterhub.pages.edit.data.ServiceLocator
-import org.dmg.monsterhub.pages.edit.data.toTree
+import org.dmg.monsterhub.pages.edit.data.*
 import org.dmg.monsterhub.pages.edit.form.EditDialog
 
 object TreeSpace : Space {
@@ -67,6 +65,24 @@ object TreeSpace : Space {
               dataProvider.refreshItem(item, true)
             }
           }
+
+          item
+              .compacted()
+              .find { it.canEdit() && it.editableObject() is Power }
+              ?.let { powerNode ->
+                actions += "Добавить Приобретение" to {
+                  powerNode.parent?.let {
+                    val power = powerNode.editableObject() as Power
+                    val wrapped = PowerService.wrapWithAcquisition(power, locator, update)
+                    val featureData = it.editableObject() as FeatureData
+                    update(featureData) { featureData.feature = wrapped }
+
+                    var node = it
+                    while (node.last() == it) node = node.parent ?: break
+                    dataProvider.refreshItem(node, true)
+                  } ?: Unit
+                }
+              }
 
           if (actions.isNotEmpty()) {
             ContextMenu().also { menu ->

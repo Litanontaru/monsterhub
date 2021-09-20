@@ -15,6 +15,7 @@ data class ServiceLocator(
     val featureDataRepository: FeatureDataRepository,
     val featureContainerItemRepository: FeatureContainerItemRepository,
     val featureDataDesignationRepository: FeatureDataDesignationRepository,
+    val powerEffectRepository: PowerEffectRepository,
     val weaponRepository: WeaponRepository,
     val weaponAttackRepository: WeaponAttackRepository,
     val settingRepository: SettingRepository,
