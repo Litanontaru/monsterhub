@@ -40,7 +40,7 @@ object AttackService {
 
     val sizeProfile = CreatureService.sizeProfile(creature)
     val attackFeatures = creature.getAllTraits("Свойство атаки")
-        .groupBy { it.designations.find { it.designationKey == "Естественное оружие" }!!.value }
+        .groupBy { it.designations.find { it.designationKey == "Естественное оружие" }?.value ?: "Неизвестно" }
 
     val naturalWeapons = CreatureService
         .naturalWeapons(creature)

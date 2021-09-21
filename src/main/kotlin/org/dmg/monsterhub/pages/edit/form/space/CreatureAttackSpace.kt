@@ -26,7 +26,7 @@ object CreatureAttackSpace : AbstractCreatureSpace {
           add(Label(obj.getAllTraits("Общая атака").map { it.display() }.joinToString()))
 
           val attackFeatures = obj.getAllTraits("Свойство атаки")
-              .groupBy { it.designations.find { it.designationKey == "Естественное оружие" }!!.value }
+              .groupBy { it.designations.find { it.designationKey == "Естественное оружие" }?.value ?: "Неизвестно" }
 
           val sizeProfile = CreatureService.sizeProfile(obj)
 
