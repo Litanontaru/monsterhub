@@ -46,6 +46,8 @@ class Creature : ContainerData(), Hierarchical<Creature> {
   override fun rate(): Decimal = CreatureService.superiority(this).value.toBigDecimal().toDecimal()
 
   companion object {
+    const val CREATURE = "CREATURE"
+
     val META = listOf(
         FeatureContainerItem().apply {
           name = "Черты"
