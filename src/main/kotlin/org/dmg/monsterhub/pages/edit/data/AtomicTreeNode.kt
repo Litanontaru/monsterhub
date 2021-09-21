@@ -244,7 +244,7 @@ class BaseOnTreeNode(
 
   override fun canRemove(): Boolean = false
 
-  override fun canCreate(): Boolean = true
+  override fun canCreate(): Boolean = false
 
   override fun addableType(): String = CREATURE
 
