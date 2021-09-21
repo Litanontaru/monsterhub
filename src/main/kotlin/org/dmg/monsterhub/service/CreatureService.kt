@@ -1,9 +1,6 @@
 package org.dmg.monsterhub.service
 
-import org.dmg.monsterhub.data.Creature
-import org.dmg.monsterhub.data.PrimaryRate
-import org.dmg.monsterhub.data.Superiority
-import org.dmg.monsterhub.data.Trait
+import org.dmg.monsterhub.data.*
 import org.springframework.stereotype.Service
 
 @Service
@@ -49,18 +46,28 @@ object CreatureService {
     val beta = Math.min(offence, defence)
     val cr = (2.0 * alpha + beta) / 3.0
 
+    val aggregatedSup = getPowerSuperiority(creature)?.let { Math.max(it * 2.0, sup) } ?: sup
+
     return Superiority(
-        Math.ceil(sup / 2).toInt(),
+        Math.ceil(aggregatedSup / 2).toInt(),
         sup,
         sortedSuper[2] - sup,
 
         Math.ceil(cr / 2).toInt(),
 
-        primary(offence, sup),
-        primary(defence, sup),
-        primary(com, sup)
+        primary(offence, aggregatedSup),
+        primary(defence, aggregatedSup),
+        primary(com, aggregatedSup)
     )
   }
+
+  private fun getPowerSuperiority(creature: Creature) = creature
+      .getAllTraits("Сила")
+      .mapNotNull { it.features.singleOrNull() }
+      .map { it.feature as Power }
+      .map { it.rate().toBigDecimal() }
+      .max()
+      ?.toInt()
 
   private fun primary(value: Int, sup: Double) = PrimaryRate(value, sup - value)
 
