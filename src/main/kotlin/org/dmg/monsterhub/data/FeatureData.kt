@@ -62,14 +62,14 @@ class FeatureData : DBObject(), FeatureContainerData {
 
   private fun combo(x: BigDecimal, xa: BigDecimal) =
       if (x.compareTo(BigDecimal.ZERO) == 0) {
-        if (xa.compareTo(BigDecimal.ZERO) == 0) emptySequence() else sequenceOf("0/$xa")
+        if (xa.compareTo(BigDecimal.ZERO) == 0) emptySequence() else sequenceOf("0/${xa.toPlainString()}")
       } else {
-        if (xa.compareTo(BigDecimal.ZERO) == 0) sequenceOf(f(x)) else sequenceOf("$x/$xa")
+        if (xa.compareTo(BigDecimal.ZERO) == 0) sequenceOf(f(x)) else sequenceOf("$x/${xa.toPlainString()}")
       }
 
   private fun f(x: BigDecimal) = when (x) {
     Int.MAX_VALUE.toBigDecimal() -> "Бесконечность"
-    else -> x.toString()
+    else -> x.toPlainString()
   }
 
   @Transient
