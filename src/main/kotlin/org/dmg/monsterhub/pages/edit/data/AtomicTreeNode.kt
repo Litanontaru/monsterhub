@@ -3,6 +3,8 @@ package org.dmg.monsterhub.pages.edit.data
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery
 import org.dmg.monsterhub.data.ContainerData
+import org.dmg.monsterhub.data.Creature
+import org.dmg.monsterhub.data.Creature.Companion.CREATURE
 import org.dmg.monsterhub.data.FeatureContainerData
 import org.dmg.monsterhub.data.FeatureData
 import org.dmg.monsterhub.data.meta.Feature
@@ -224,12 +226,78 @@ class NestedValueTreeNode(
   }
 }
 
+class BaseOnTreeNode(
+    parent: AtomicTreeNode?,
+    var creature: Creature
+) : AtomicTreeNode(parent) {
+  override val isStopper = true
+
+  override fun detectCycle(obj: Any) = false
+
+  override fun name(): String = "Основа"
+
+  override fun rate(): Decimal? = null
+
+  override fun canAdd(): Boolean = true
+
+  override fun canEdit(): Boolean = false
+
+  override fun canRemove(): Boolean = false
+
+  override fun canCreate(): Boolean = true
+
+  override fun addableType(): String = CREATURE
+
+  override fun add(obj: Any, update: (Any) -> Any) = when (obj) {
+    is FeatureData -> {
+      when (val feature = obj.feature) {
+        is Creature -> {
+          creature.base.add(feature)
+          creature = update(creature) as Creature
+
+          feature.toTree(this).also {
+            children.add(it)
+          }
+        }
+        else -> throw UnsupportedOperationException("Unknown type of data ${obj.feature}")
+      }
+    }
+    else -> throw UnsupportedOperationException("Unknown type of data $obj")
+  }
+
+  override fun editableObject() = false
+
+  override fun remove(update: (Any) -> Any) {
+    throw UnsupportedOperationException()
+  }
+
+  override fun removeChild(child: AtomicTreeNode, update: (Any) -> Any) {
+    when (child) {
+      is NestedValueTreeNode -> {
+        when (val baseCreature = child.feature) {
+          is Creature -> {
+            creature.base.remove(baseCreature)
+            creature = update(creature) as Creature
+
+            children.remove(child)
+          }
+          else -> throw UnsupportedOperationException()
+        }
+      }
+      else -> throw UnsupportedOperationException()
+    }
+  }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+
 fun ContainerData.toTree(parent: AtomicTreeNode?): AtomicTreeNode =
     NestedValueTreeNode(parent, this).also { node ->
-      node.children = meta()
-          .asSequence()
-          .map { it.toTree(node, this) }
-          .toMutableList()
+      node.children = mutableListOf()
+      when (this) {
+        is Creature -> node.children.add(this.toBaseTree(node))
+      }
+      node.children.addAll(meta().asSequence().map { it.toTree(node, this) })
     }
 
 fun FeatureContainerItem.toTree(parent: AtomicTreeNode?, container: FeatureContainerData): AtomicTreeNode =
@@ -257,6 +325,16 @@ fun FeatureData.toTree(parent: AtomicTreeNode?): AtomicTreeNode =
         }
       }
     }
+
+fun Creature.toBaseTree(parent: AtomicTreeNode?) =
+    BaseOnTreeNode(parent, this).also { node ->
+      node.children = base
+          .asSequence()
+          .map { it.toTree(node) }
+          .toMutableList()
+    }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 class AtomicTreeNodeDataProvider(
     val root: AtomicTreeNode

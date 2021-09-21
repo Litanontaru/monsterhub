@@ -114,7 +114,6 @@ class EditPanel(
     val SPACES = listOf(
         listOf(SettingObjectSpace, SkillLikeSpace, PowerEffectSpace, RateSpace, EditableRateSpace),
         listOf(FreeFeatureSpace),
-        listOf(CreatureSpace),
         listOf(TreeSpace),
         listOf(DescriptionSpace),
         listOf(FeatureSpace),
