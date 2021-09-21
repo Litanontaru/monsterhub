@@ -42,6 +42,7 @@ abstract class AtomicTreeNode(
   abstract fun add(obj: Any, update: (Any) -> Any): AtomicTreeNode
   abstract fun editableObject(): Any
   abstract fun remove(update: (Any) -> Any)
+  abstract fun removeChild(child: AtomicTreeNode, update: (Any) -> Any)
 
   fun last(): AtomicTreeNode {
     var result = this
@@ -106,13 +107,6 @@ class AttributeTreeNode(
     else -> throw UnsupportedOperationException("Unknown type of data $obj")
   }
 
-  fun remove(obj: ValueTreeNode, update: (Any) -> Any) {
-    data.features.remove(obj.value)
-    data = update(data) as FeatureContainerData
-
-    children.remove(obj)
-  }
-
   override fun editableObject(): Any {
     throw UnsupportedOperationException()
   }
@@ -122,6 +116,18 @@ class AttributeTreeNode(
       parent!!.remove(update)
     } else {
       throw UnsupportedOperationException()
+    }
+  }
+
+  override fun removeChild(child: AtomicTreeNode, update: (Any) -> Any) {
+    when (child) {
+      is ValueTreeNode -> {
+        data.features.remove(child.value)
+        data = update(data) as FeatureContainerData
+
+        children.remove(child)
+      }
+      else -> throw UnsupportedOperationException()
     }
   }
 }
@@ -165,10 +171,14 @@ class ValueTreeNode(
   override fun editableObject(): Any = value
 
   override fun remove(update: (Any) -> Any) {
-    (parent as AttributeTreeNode).remove(this, update)
+    parent?.removeChild(this, update)
 
     value.deleteOnly = true
     update(value)
+  }
+
+  override fun removeChild(child: AtomicTreeNode, update: (Any) -> Any) {
+    remove(update)
   }
 }
 
@@ -201,12 +211,16 @@ class NestedValueTreeNode(
   override fun editableObject() = feature
 
   override fun remove(update: (Any) -> Any) {
-    parent?.remove(update)
+    parent?.removeChild(this, update)
 
     if (feature.hidden) {
       feature.deleteOnly = true
       update(feature)
     }
+  }
+
+  override fun removeChild(child: AtomicTreeNode, update: (Any) -> Any) {
+    throw UnsupportedOperationException()
   }
 }
 
