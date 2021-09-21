@@ -22,6 +22,8 @@ open class Decimal(val value: BigDecimal, val type: DecimalType) : Comparable<De
 
   fun toInt(): Int = value.toInt()
 
+  fun toBigDecimal() = value
+
   companion object {
     val NONE = NoneDecimal(DecimalType.DIGIT)
     val ZERO = Decimal(BigDecimal.ZERO, DecimalType.DIGIT)
