@@ -17,7 +17,6 @@ import org.dmg.monsterhub.data.FeatureDataDesignation
 import org.dmg.monsterhub.data.meta.NumberOption
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.EditDialog
-import org.dmg.monsterhub.repository.updateAsync
 import java.math.BigDecimal
 
 object FeatureDataSpace : Space {
@@ -54,14 +53,14 @@ object FeatureDataSpace : Space {
         val oneKey = key.substring(0, key.length - 1)
         parent.add(TextArea(oneKey).apply {
           this.value = obj.designations.find { it.designationKey == oneKey }?.value ?: ""
-          addValueChangeListener { assignDesignation(obj, oneKey, it.value, locator, update) }
+          addValueChangeListener { assignDesignation(obj, oneKey, it.value, update) }
 
           width = "100%"
         })
       } else {
         parent.add(TextField(key).apply {
           this.value = obj.designations.find { it.designationKey == key }?.value ?: ""
-          addValueChangeListener { assignDesignation(obj, key, it.value, locator, update) }
+          addValueChangeListener { assignDesignation(obj, key, it.value, update) }
 
           width = "100%"
         })
@@ -72,16 +71,17 @@ object FeatureDataSpace : Space {
   }
 }
 
-private fun assignDesignation(obj: FeatureData, key: String, newValue: String, locator: ServiceLocator, update: (Any, () -> Unit) -> Any) {
+private fun assignDesignation(obj: FeatureData, key: String, newValue: String, update: (Any, () -> Unit) -> Any) {
   obj.designations
       .find { it.designationKey == key }
-      ?.run { update(obj) { this.value = newValue } }
+      ?.also { designation -> update(designation) { designation.value = newValue } }
       ?: update(obj) {
         FeatureDataDesignation().apply {
           this.designationKey = key
           this.value = newValue
 
-          locator.featureDataDesignationRepository.updateAsync(this).thenAccept { obj.designations.add(it) }
+          update(this) {}
+          update(obj) { obj.designations.add(this) }
         }
       }
 }

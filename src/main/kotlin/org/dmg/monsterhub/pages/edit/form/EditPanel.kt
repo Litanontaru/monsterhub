@@ -7,6 +7,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.tabs.Tab
 import com.vaadin.flow.component.tabs.Tabs
 import org.dmg.monsterhub.data.FeatureData
+import org.dmg.monsterhub.data.FeatureDataDesignation
 import org.dmg.monsterhub.data.WeaponAttack
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
@@ -105,6 +106,9 @@ class EditPanel(
           }
           is WeaponAttack -> {
             locator.weaponAttackRepository.update(obj)
+          }
+          is FeatureDataDesignation -> {
+            locator.featureDataDesignationRepository.update(obj)
           }
           else -> throw UnsupportedOperationException()
         }
