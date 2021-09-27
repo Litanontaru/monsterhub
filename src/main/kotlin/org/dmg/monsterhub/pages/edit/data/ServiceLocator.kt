@@ -4,7 +4,6 @@ import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.pages.ObjectTreeDataProvider
 import org.dmg.monsterhub.pages.edit.form.EditPanelConfig
 import org.dmg.monsterhub.repository.*
-import org.dmg.monsterhub.service.FeatureDataRepository
 import org.dmg.monsterhub.service.TransactionService
 
 data class ServiceLocator(

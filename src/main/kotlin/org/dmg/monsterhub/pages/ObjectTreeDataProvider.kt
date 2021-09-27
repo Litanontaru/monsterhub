@@ -89,10 +89,12 @@ class ObjectTreeDataProvider(
       settingObject.parent = new
 
       it.save(settingObject).also {
-        if (old != null) {
+        if (old == null || new == null) {
+          refreshAll()
+        } else {
           refreshItem(old, true)
+          refreshItem(new, true)
         }
-        refreshItem(new, true)
       }
     }
   }

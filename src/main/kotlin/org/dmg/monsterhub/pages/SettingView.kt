@@ -10,6 +10,7 @@ import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.menubar.MenuBar
+import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
@@ -24,7 +25,7 @@ import org.dmg.monsterhub.pages.edit.form.ChangeDialog
 import org.dmg.monsterhub.pages.edit.form.EditPanel
 import org.dmg.monsterhub.pages.edit.form.EditPanelConfig
 import org.dmg.monsterhub.repository.*
-import org.dmg.monsterhub.service.FeatureDataRepository
+import org.dmg.monsterhub.service.DependencyAnalyzer
 import org.dmg.monsterhub.service.SettingService
 import org.dmg.monsterhub.service.TransactionService
 
@@ -41,6 +42,7 @@ class SettingView(
     private val weaponAttackRepository: WeaponAttackRepository,
     private val weaponRepository: WeaponRepository,
     private val settingRepository: SettingRepository,
+    private val dependencyAnalyzer: DependencyAnalyzer,
     private val transactionService: TransactionService
 ) : Div(), BeforeEnterObserver, HasDynamicTitle {
   private val config: EditPanelConfig = EditPanelConfig("Конфигурация")
@@ -263,7 +265,7 @@ class SettingView(
               .joinToString(".")
 
           ChangeDialog("Переместить в", initial) { changedFolder ->
-            val folders = changedFolder.split("\\.".toRegex())
+            val folders = changedFolder.split("\\.".toRegex()).filter { it.isNotBlank() }
             if (folders.isEmpty()) {
               data.move(obj, null)
             } else {
@@ -284,6 +286,29 @@ class SettingView(
 
         it.addItem("Обновить") {
           data.reread(obj)
+        }
+
+        it.addItem("Переместить в игровой мир") {
+          SettingSelectionDialog(settingRepository) {
+            val violations = dependencyAnalyzer.analyzeMoveToSetting(obj, it)
+            if (violations.isNotEmpty()) {
+              Notification("${violations.size} нарушений видимости найдено").apply {
+                duration = 3000
+              }.open()
+            } else {
+              val oldParent = obj.parent
+
+              obj.setting = it
+              obj.parent = null
+              data.update(obj)
+
+              if (oldParent == null) {
+                data.refreshAll()
+              } else {
+                data.refreshItem(oldParent, true)
+              }
+            }
+          }.open()
         }
       }
 
