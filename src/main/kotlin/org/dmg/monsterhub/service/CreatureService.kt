@@ -80,17 +80,15 @@ object CreatureService {
 
   fun sizeProfile(creature: Creature) = SizeProfileService.get(size(creature), partsSize(creature))
 
-  fun physicalSize(creature: Creature): Int = partsSize(creature) +
+  fun physicalSize(creature: Creature): Int = getBasePhysicalSize(creature) +
       creature.getAllTraits("Крупногабаритный", "Крылатый").sumBy { 1 }
 
-  fun partsSize(creature: Creature): Int =
-      creature.getAllTraits("Тяжёлый")
-          .singleOrNull()
-          ?.let { size(creature) - 1 }
-          ?: (creature.getAllTraits("Очень тяжёлый")
-              .singleOrNull()
-              ?.let { size(creature) - 3 }
-              ?: size(creature))
+  fun partsSize(creature: Creature): Int = getBasePhysicalSize(creature) +
+      (creature.getAllTraits("Длинные конечности").singleOrNull()?.x?.toInt() ?: 0)
+
+  private fun getBasePhysicalSize(creature: Creature) = size(creature) +
+      (creature.getAllTraits("Тяжёлый").singleOrNull()?.let { -1 } ?: 0) +
+      (creature.getAllTraits("Очень тяжёлый").singleOrNull()?.let { -3 } ?: 0)
 
   fun naturalWeapons(creature: Creature) =
       creature.getAllTraits("Естественное оружие")
