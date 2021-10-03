@@ -18,6 +18,7 @@ class Trait : Feature() {
   var moveBase: String? = null
   var moveAlt: String? = null
   var common: String? = null
+  var commonAlt: String? = null
 
   fun formulas(context: (String) -> BigDecimal) = sequenceOf(
       offenceBase,
@@ -30,7 +31,8 @@ class Trait : Feature() {
       handsAlt,
       moveBase,
       moveAlt,
-      common
+      common,
+      commonAlt
   )
       .map { it.toFormula(context) }
 

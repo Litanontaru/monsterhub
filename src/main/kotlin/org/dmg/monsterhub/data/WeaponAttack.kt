@@ -53,10 +53,16 @@ class WeaponAttack : DBObject(), FeatureContainerData {
     else -> clipSize.toString()
   }
 
-  fun adjustToSize(sizeProfile: SizeProfile, isNatural: Boolean) = WeaponAttack().also {
+  fun adjust(sizeProfile: SizeProfile, externalFeatures: List<FeatureData>, isNatural: Boolean) = WeaponAttack().also {
     it.mode = mode
 
+    val metalFist = externalFeatures.find { it.feature.name == "Железные кулаки" }?.let { it.x }?.toInt() ?: 0
+
     it.damage = damage + sizeProfile.damageModifier
+    if (isNatural) {
+      it.damage += metalFist
+    }
+
     it.desturction = desturction + sizeProfile.destructionModifier
     it.distance = if (isNatural) sizeProfile.modifyNaturalWeaponDistance(distance)
     else sizeProfile.modifyWeaponDistance(distance)

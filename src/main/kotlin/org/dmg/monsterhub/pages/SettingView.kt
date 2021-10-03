@@ -57,7 +57,7 @@ class SettingView(
   override fun beforeEnter(event: BeforeEnterEvent?) {
     if (event != null) {
       set(event.routeParameters["settingId"].get().toLong())
-      event.routeParameters["objId"].ifPresent { select(it.toLong()) }
+//      event.routeParameters["objId"].ifPresent { select(it.toLong()) }
     }
   }
 
@@ -176,6 +176,8 @@ class SettingView(
   }
 
   private fun click(item: SettingObject) {
+    println("SELECTED ${item::class.java.simpleName} ${item.id}")
+
     rightPanel.removeAll()
 
     rightPanel.add(EditPanel(

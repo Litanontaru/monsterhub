@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 
 @Service
 object CreatureService {
-  private val BASE = listOf(-1, 0, 0, 0, -26, 0, -13, 0, -18, 0, -3)
+  private val BASE = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
   fun superiority(creature: Creature): Superiority {
     val allTraits = creature.getAllTraits()
@@ -22,21 +22,21 @@ object CreatureService {
 
     val evaluated = BASE.withIndex().map {
       val index = it.index
-      if (index % 2 == 1) values.map { it[index] }.max() ?: 0
-      else values.map { it[index] }.sum() + it.value
+      when {
+        index % 2 == 1 ->
+          values.partition { it[index] > 0 }
+              .let { (positive, negative) ->
+                (positive.map { it[index] }.max() ?: 0) + (negative.map { it[index] }.min() ?: 0)
+              }
+        else -> values.map { it[index] }.sum()
+      }
     }
 
-    val off = evaluated[0] + evaluated[1]
-    val def = evaluated[2] + evaluated[3]
-    val per = evaluated[4] + evaluated[5]
-    val hnd = evaluated[6] + evaluated[7]
-    val mov = evaluated[8] + evaluated[9]
-    val com = evaluated[10]
+    val offence = evaluated[0] + evaluated[1]
+    val defence = evaluated[2] + evaluated[3]
+    val common = evaluated[10] + evaluated[11]
 
-    val offence = off + (per + mov) / 2 + hnd
-    val defence = def + (per + mov) / 2
-
-    val sortedSuper = arrayOf(offence, defence, com).map { it.toDouble() }.sorted()
+    val sortedSuper = arrayOf(offence, defence, common).map { it.toDouble() }.sorted()
 
     val one = (sortedSuper[2] + sortedSuper[1]) / 2
     val another = (3 * sortedSuper[2] + sortedSuper[0]) / 4
@@ -57,7 +57,7 @@ object CreatureService {
 
         primary(offence, aggregatedSup),
         primary(defence, aggregatedSup),
-        primary(com, aggregatedSup)
+        primary(common, aggregatedSup)
     )
   }
 

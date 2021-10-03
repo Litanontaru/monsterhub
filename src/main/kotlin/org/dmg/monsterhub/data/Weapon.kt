@@ -16,7 +16,7 @@ class Weapon: Item() {
 
   fun adjust(sizeProfile: SizeProfile, isNatural: Boolean, externalFeatures: List<FeatureData>) = Weapon().also {
     it.name = name
-    it.attacks = attacks.asSequence().map { it.adjustToSize(sizeProfile, isNatural) }.toMutableList()
+    it.attacks = attacks.asSequence().map { it.adjust(sizeProfile, externalFeatures, isNatural) }.toMutableList()
     it.features = features.asSequence().toMutableList()
     it.features = (features + externalFeatures).toMutableList()
   }
