@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 
 @Service
 object CreatureService {
-  private val BASE = listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+  private val BASE = listOf(-18, 0, -14, 0, -18, 0)
 
   fun superiority(creature: Creature): Superiority {
     val allTraits = creature.getAllTraits()
@@ -28,13 +28,13 @@ object CreatureService {
               .let { (positive, negative) ->
                 (positive.map { it[index] }.max() ?: 0) + (negative.map { it[index] }.min() ?: 0)
               }
-        else -> values.map { it[index] }.sum()
+        else -> values.map { it[index] }.sum() + it.value
       }
     }
 
     val offence = evaluated[0] + evaluated[1]
     val defence = evaluated[2] + evaluated[3]
-    val common = evaluated[10] + evaluated[11]
+    val common = evaluated[4] + evaluated[5]
 
     val sortedSuper = arrayOf(offence, defence, common).map { it.toDouble() }.sorted()
 

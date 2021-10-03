@@ -59,19 +59,20 @@ object TraitSpace : Space {
         isPadding = false
         isSpacing = false
       }
-      val perception = VerticalLayout().apply {
-        add(TextField("Восприятие").apply {
-          value = obj.perceptionBase ?: ""
+
+      val common = VerticalLayout().apply {
+        add(TextField("Общее").apply {
+          value = obj.common ?: ""
           addValueChangeListener {
-            update(obj) { obj.perceptionBase = it.value.takeIf { it.isNotBlank() } }
+            update(obj) { obj.common = it.value.takeIf { it.isNotBlank() } }
           }
           width = "100%"
         })
 
         add(TextField().apply {
-          value = obj.perceptionAlt ?: ""
+          value = obj.commonAlt ?: ""
           addValueChangeListener {
-            update(obj) { obj.perceptionAlt = it.value.takeIf { it.isNotBlank() } }
+            update(obj) { obj.commonAlt = it.value.takeIf { it.isNotBlank() } }
           }
           width = "100%"
         })
@@ -80,58 +81,9 @@ object TraitSpace : Space {
         isPadding = false
         isSpacing = false
       }
-      val hands = VerticalLayout().apply {
-        add(TextField("Манипуляторы").apply {
-          value = obj.handsBase ?: ""
-          addValueChangeListener {
-            update(obj) { obj.handsBase = it.value.takeIf { it.isNotBlank() } }
-          }
-          width = "100%"
-        })
 
-        add(TextField().apply {
-          value = obj.handsAlt ?: ""
-          addValueChangeListener {
-            update(obj) { obj.handsAlt = it.value.takeIf { it.isNotBlank() } }
-          }
-          width = "100%"
-        })
-
-        width = "100%"
-        isPadding = false
-        isSpacing = false
-      }
-      val move = VerticalLayout().apply {
-        add(TextField("Движение").apply {
-          value = obj.moveBase ?: ""
-          addValueChangeListener {
-            update(obj) { obj.moveBase = it.value.takeIf { it.isNotBlank() } }
-          }
-          width = "100%"
-        })
-
-        add(TextField().apply {
-          value = obj.moveAlt ?: ""
-          addValueChangeListener {
-            update(obj) { obj.moveAlt = it.value.takeIf { it.isNotBlank() } }
-          }
-          width = "100%"
-        })
-
-        width = "100%"
-        isPadding = false
-        isSpacing = false
-      }
-      val common = TextField("Общее").apply {
-        value = obj.common ?: ""
-        addValueChangeListener {
-          update(obj) { obj.common = it.value.takeIf { it.isNotBlank() } }
-        }
-        width = "100%"
-      }
-
-      add(offence, defence, perception, hands, move, common)
-      expand(offence, defence, perception, hands, move, common)
+      add(offence, defence, common)
+      expand(offence, defence, common)
 
       width = "100%"
       isPadding = false
