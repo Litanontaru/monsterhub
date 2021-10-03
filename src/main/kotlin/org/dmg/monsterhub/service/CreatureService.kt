@@ -39,12 +39,10 @@ object CreatureService {
     val sortedSuper = arrayOf(offence, defence, common).map { it.toDouble() }.sorted()
 
     val one = (sortedSuper[2] + sortedSuper[1]) / 2
-    val another = (3 * sortedSuper[2] + sortedSuper[0]) / 4
+    val another = (2 * sortedSuper[2] + sortedSuper[0]) / 3
     val sup = Math.max(one, another)
 
-    val alpha = Math.max(offence, defence)
-    val beta = Math.min(offence, defence)
-    val cr = (2.0 * alpha + beta) / 3.0
+    val cr = (offence + defence) / 2.0
 
     val aggregatedSup = getPowerSuperiority(creature)?.let { Math.max(it * 2.0, sup) } ?: sup
 
