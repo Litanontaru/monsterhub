@@ -33,13 +33,15 @@ object TreeSpace : Space {
       //ADD SELECTION TRACKER
       var selectedItem: AtomicTreeNode? = null
       fun updateSelection(node: AtomicTreeNode?) {
-        val oldSelected = selectedItem
-        selectedItem = node
-        if (oldSelected != null) {
-          dataProvider.refreshItem(oldSelected)
-        }
-        if (selectedItem != null) {
-          dataProvider.refreshItem(selectedItem)
+        if (node == null || selectedItem == null || node != selectedItem) {
+          val oldSelected = selectedItem
+          selectedItem = node
+          if (oldSelected != null) {
+            dataProvider.refreshItem(oldSelected)
+          }
+          if (selectedItem != null) {
+            dataProvider.refreshItem(selectedItem)
+          }
         }
       }
 
