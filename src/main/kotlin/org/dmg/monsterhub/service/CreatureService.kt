@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 
 @Service
 object CreatureService {
-  private val BASE = listOf(-18, 0, -14, 0, -20, 0)
+  private val BASE = listOf(-43, 0, -39, 0, -50, 0)
 
   fun superiority(creature: Creature): Superiority {
     val allTraits = creature.getAllTraits()
@@ -102,7 +102,9 @@ object CreatureService {
 
   private fun getBasePhysicalSize(creature: Creature) = size(creature) +
       (creature.getAllTraits("Тяжёлый").singleOrNull()?.let { -1 } ?: 0) +
-      (creature.getAllTraits("Очень тяжёлый").singleOrNull()?.let { -3 } ?: 0)
+      (creature.getAllTraits("Очень тяжёлый").singleOrNull()?.let { -3 } ?: 0) +
+      (creature.getAllTraits("Лёгкий").singleOrNull()?.let { 1 } ?: 0) +
+      (creature.getAllTraits("Очень лёгкий").singleOrNull()?.let { 1 } ?: 0)
 
   fun naturalWeapons(creature: Creature) =
       creature.getAllTraits("Естественное оружие")
