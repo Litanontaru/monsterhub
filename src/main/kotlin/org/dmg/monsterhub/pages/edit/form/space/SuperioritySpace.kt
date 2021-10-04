@@ -15,12 +15,11 @@ object SuperioritySpace : AbstractCreatureSpace {
 
         addContent(VerticalLayout().apply {
           add(Label("Превосходство: ${superiority.value}"))
-          add(Label("Перекос: ${superiority.skew}"))
           add(Label("Опасность: ${superiority.challengeRating}"))
 
-          add(Label("Общее нападение: ${superiority.offence.value} (${superiority.offence.underDate})"))
-          add(Label("Общая защита: ${superiority.defence.value} (${superiority.defence.underDate})"))
-          add(Label("Общие черты: ${superiority.common.value} (${superiority.common.underDate})"))
+          add(Label("Нападение: ${superiority.offence.value} ПЧ, (${superiority.offence.under})"))
+          add(Label("Защита: ${superiority.defence.value} ПЧ, (${superiority.defence.under})"))
+          add(Label("Общее: ${superiority.common.value} ПЧ, (${superiority.common.under})"))
 
           width = "100%"
           isPadding = false

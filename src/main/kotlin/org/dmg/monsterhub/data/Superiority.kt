@@ -12,5 +12,5 @@ data class Superiority(
     val common: PrimaryRate
 )
 
-data class PrimaryRate(val value: Int, val underDate: Double)
+data class PrimaryRate(val value: Int, val under: Int)
 

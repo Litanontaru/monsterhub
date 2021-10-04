@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 
 @Service
 object CreatureService {
-  private val BASE = listOf(-18, 0, -14, 0, -18, 0)
+  private val BASE = listOf(-18, 0, -14, 0, -20, 0)
 
   fun superiority(creature: Creature): Superiority {
     val allTraits = creature.getAllTraits()
@@ -32,9 +32,20 @@ object CreatureService {
       }
     }
 
-    val offence = evaluated[0] + evaluated[1]
-    val defence = evaluated[2] + evaluated[3]
-    val common = evaluated[4] + evaluated[5]
+    val powers = creature
+        .getAllTraits("Сила")
+        .map { it.features[0].feature as Power }
+        .toList()
+
+    val addedByPower = powers
+        .map { it.skillType to it.features.filter { it.feature.name == "За показатель черты" }.map { it.x } }
+        .filter { it.second.isNotEmpty() }
+        .groupBy { it.first }
+        .mapValues { it.value.flatMap { it.second }.map { it.toInt() }.sum() }
+
+    val offence = evaluated[0] + evaluated[1] + addedByPower.getOrDefault(SkillType.OFFENSE, 0)
+    val defence = evaluated[2] + evaluated[3] + addedByPower.getOrDefault(SkillType.DEFENCE, 0)
+    val common = evaluated[4] + evaluated[5] + addedByPower.getOrDefault(SkillType.COMMON, 0)
 
     val sortedSuper = arrayOf(offence, defence, common).map { it.toDouble() }.sorted()
 
@@ -46,16 +57,20 @@ object CreatureService {
 
     val aggregatedSup = getPowerSuperiority(creature)?.let { Math.max(it * 2.0, sup) } ?: sup
 
+    val level = Math.ceil(aggregatedSup / 2).toInt()
+    val skew = (sortedSuper[2] - sup).toInt()
+    val expected = arrayOf(2 * level + skew, 2 * level - skew, 2 * level - 2 * skew)
+
     return Superiority(
-        Math.ceil(aggregatedSup / 2).toInt(),
+        level,
         sup,
         sortedSuper[2] - sup,
 
         Math.ceil(cr / 2).toInt(),
 
-        primary(offence, aggregatedSup),
-        primary(defence, aggregatedSup),
-        primary(common, aggregatedSup)
+        primary(offence, expected),
+        primary(defence, expected),
+        primary(common, expected)
     )
   }
 
@@ -67,7 +82,8 @@ object CreatureService {
       .max()
       ?.toInt()
 
-  private fun primary(value: Int, sup: Double) = PrimaryRate(value, sup - value)
+  private fun primary(actual: Int, expected: Array<Int>) = PrimaryRate(actual, expected.map { it - actual }.filter { it > 0 }.min()
+      ?: 0)
 
   fun size(creature: Creature) = creature
       .getAllTraits("Размер")
