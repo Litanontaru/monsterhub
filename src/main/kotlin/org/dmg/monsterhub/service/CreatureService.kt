@@ -104,7 +104,7 @@ object CreatureService {
       (creature.getAllTraits("Тяжёлый").singleOrNull()?.let { -1 } ?: 0) +
       (creature.getAllTraits("Очень тяжёлый").singleOrNull()?.let { -3 } ?: 0) +
       (creature.getAllTraits("Лёгкий").singleOrNull()?.let { 1 } ?: 0) +
-      (creature.getAllTraits("Очень лёгкий").singleOrNull()?.let { 1 } ?: 0)
+      (creature.getAllTraits("Очень лёгкий").singleOrNull()?.let { 3 } ?: 0)
 
   fun naturalWeapons(creature: Creature) =
       creature.getAllTraits("Естественное оружие")
