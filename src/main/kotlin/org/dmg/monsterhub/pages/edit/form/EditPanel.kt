@@ -128,7 +128,8 @@ class EditPanel(
         listOf(FeatureDataSpace),
         listOf(FeatureContainerDataSpace),
         listOf(WeaponAttackSpace),
-        listOf(SettingBaseSpace)
+        listOf(SettingBaseSpace),
+        listOf(TraitApplicationSpace)
     )
 
     val STAT_SPACES = listOf(
