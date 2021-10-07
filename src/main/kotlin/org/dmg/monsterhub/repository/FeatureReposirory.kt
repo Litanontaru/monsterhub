@@ -14,6 +14,6 @@ interface FeatureRepository : JpaRepository<Feature, Long> {
 
   fun countFeatureBySettingAndFolderAndHiddenFalse(setting: Setting, folder: String): Int
 
-  @Query("SELECT f.id as id, f.name as name, f.featureType as featureType FROM Feature f WHERE f.setting = :setting AND f.folder = :folder")
+  @Query("SELECT f.id as id, f.name as name, f.featureType as featureType, f.folder as folder FROM Feature f WHERE f.setting = :setting AND f.folder = :folder")
   fun featureBySettingAndFolder(setting: Setting, folder: String): List<SettingObjectTreeNode>
 }

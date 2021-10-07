@@ -87,12 +87,14 @@ interface SettingObjectTreeNode {
   val id: Long
   val name: String
   val featureType: String
+  val folder: String
 }
 
 data class FeatureTreeNode(
     override val id: Long,
     override val name: String,
-    override val featureType: String
+    override val featureType: String,
+    override val folder: String
 ) : SettingObjectTreeNode
 
 data class FolderTreeNode(
@@ -103,6 +105,9 @@ data class FolderTreeNode(
 
   override val featureType: String
     get() = "FOLDER"
+
+  override val folder: String
+    get() = name.substring(0, name.length - 1).let { it.substring(0, it.lastIndexOf('.') + 1) }
 }
 
 class SettingTreeNode(
@@ -111,9 +116,12 @@ class SettingTreeNode(
 ) : SettingObjectTreeNode {
   override val featureType: String
     get() = "SETTING"
+
+  override val folder: String
+    get() = ""
 }
 
-fun SettingObjectTreeNode.toFeature() = FeatureTreeNode(id, name, featureType)
+fun SettingObjectTreeNode.toFeature() = FeatureTreeNode(id, name, featureType, folder)
 
 fun SettingObjectTreeNode.isFolder() =
     this is FolderTreeNode
