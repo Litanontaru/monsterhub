@@ -21,4 +21,8 @@ interface FeatureRepository : JpaRepository<Feature, Long> {
   @Modifying
   @Query("UPDATE Feature f SET f.hidden = true WHERE f.id = :id")
   fun hide(id: Long)
+
+  @Modifying
+  @Query("UPDATE Feature f SET f.folder = :newFolder WHERE f.id = :id")
+  fun move(id: Long, newFolder: String)
 }

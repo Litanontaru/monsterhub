@@ -76,15 +76,6 @@ class SettingObjectTree(
       }
 
       if (obj != null) {
-        /*if (obj is Folder) {
-          it.addItem("Переименовать") {
-            ChangeDialog("Новое название", obj.name) {
-              obj.name = it
-              data.update(obj)
-            }.open()
-          }
-        }*/
-
         if (obj.isFolder()) {
           //todo
         } else {
@@ -93,34 +84,18 @@ class SettingObjectTree(
           }
         }
 
-        /*it.addItem("Переместить") {
-          val initial = generateSequence(obj.parent) { it.parent }
-              .map { it.name }
-              .toList()
-              .reversed()
-              .joinToString(".")
-
-          ChangeDialog("Переместить в", initial) { changedFolder ->
-            val folders = changedFolder.split("\\.".toRegex()).filter { it.isNotBlank() }
-            if (folders.isEmpty()) {
-              data.move(obj, null)
+        it.addItem("Переместить") {
+          ChangeDialog("Переместить в", obj.folder) { changedFolder ->
+            val newFolder = if (changedFolder.endsWith('.') || changedFolder.isBlank()) {
+              changedFolder
             } else {
-              var parent: Folder? = null
-              for (folder in folders) {
-                val next = data.firstFolder(parent, folder)
-                parent = next
-                if (parent == null) {
-                  break
-                }
-              }
-              if (parent != null) {
-                data.move(obj, parent)
-              }
+              changedFolder + "."
             }
+            data.move(obj, newFolder)
           }.open()
         }
 
-        it.addItem("Переместить в игровой мир") {
+        /*it.addItem("Переместить в игровой мир") {
           SettingSelectionDialog(settingRepository) {
             val violations = dependencyAnalyzer.analyzeMoveToSetting(obj, it)
             if (violations.isNotEmpty()) {

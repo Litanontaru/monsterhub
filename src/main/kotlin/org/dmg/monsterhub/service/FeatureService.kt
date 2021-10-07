@@ -25,4 +25,8 @@ class FeatureService(
   fun hide(id: Long) {
     featureRepository.hide(id)
   }
+
+  fun move(id: Long, newFolder: String) {
+    featureRepository.move(id, newFolder)
+  }
 }
