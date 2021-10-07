@@ -19,6 +19,8 @@ open class SettingObject : DBObject(), WithNamed {
   @JoinColumn(name = "parent_id", nullable = true)
   open var parent: Folder? = null
 
+  open var folder: String = ""
+
   open var hidden: Boolean = false
 
   open fun rate() = Decimal.ZERO
