@@ -41,6 +41,7 @@ class ObjectTreeDataProvider2(
     val folders = childrenFolders(folder).sorted().map { FolderTreeNode(it) }
     val features = featureRepository
         .featureBySettingAndFolder(setting, folder)
+        .map { it.toFeature() }
         .sortedBy { it.name }
 
     val settingIn = if (folder == "") {
@@ -85,7 +86,12 @@ interface SettingObjectTreeNode {
   val featureType: String
 }
 
-class FolderTreeNode(
+data class FeatureTreeNode(
+    override val name: String,
+    override val featureType: String
+) : SettingObjectTreeNode
+
+data class FolderTreeNode(
     override val name: String
 ) : SettingObjectTreeNode {
   override val featureType: String
@@ -98,6 +104,8 @@ class SettingTreeNode(
   override val featureType: String
     get() = "SETTING"
 }
+
+fun SettingObjectTreeNode.toFeature() = FeatureTreeNode(name, featureType)
 
 fun SettingObjectTreeNode.isFolder() =
     this is FolderTreeNode
