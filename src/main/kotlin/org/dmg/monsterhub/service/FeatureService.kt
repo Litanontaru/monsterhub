@@ -29,4 +29,8 @@ class FeatureService(
   fun move(id: Long, newFolder: String) {
     featureRepository.move(id, newFolder)
   }
+
+  fun move(id: Long, setting: Setting) {
+    featureRepository.move(id, setting)
+  }
 }

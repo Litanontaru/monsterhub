@@ -6,15 +6,20 @@ import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.treegrid.TreeGrid
 import org.dmg.monsterhub.pages.edit.form.ChangeDialog
+import org.dmg.monsterhub.repository.SettingRepository
+import org.dmg.monsterhub.service.DependencyAnalyzer
 import org.dmg.monsterhub.service.SettingObjectDataProvider
 
 class SettingObjectTree(
     private val data: ObjectTreeDataProvider2,
     private val dataProviders: List<SettingObjectDataProvider>,
+    private val settingRepository: SettingRepository,
+    private val dependencyAnalyzer: DependencyAnalyzer,
     onClick: (SettingObjectTreeNode) -> Unit
 ) : VerticalLayout() {
   init {
@@ -95,28 +100,23 @@ class SettingObjectTree(
           }.open()
         }
 
-        /*it.addItem("Переместить в игровой мир") {
+        it.addItem("Переместить в игровой мир") {
           SettingSelectionDialog(settingRepository) {
-            val violations = dependencyAnalyzer.analyzeMoveToSetting(obj, it)
-            if (violations.isNotEmpty()) {
-              Notification("${violations.size} нарушений видимости найдено").apply {
-                duration = 3000
-              }.open()
-            } else {
-              val oldParent = obj.parent
-
-              obj.setting = it
-              obj.parent = null
-              data.update(obj)
-
-              if (oldParent == null) {
-                data.refreshAll()
-              } else {
-                data.refreshItem(oldParent, true)
-              }
-            }
+            dataProviders
+                .find { it.supportType(obj.featureType) }
+                ?.getById(obj.id)
+                ?.let { settingObject ->
+                  val violations = dependencyAnalyzer.analyzeMoveToSetting(settingObject, it)
+                  if (violations.isNotEmpty()) {
+                    Notification("${violations.size} нарушений видимости найдено").apply {
+                      duration = 3000
+                    }.open()
+                  } else {
+                    data.move(obj, it)
+                  }
+                }
           }.open()
-        }*/
+        }
       }
 
       it.target = this

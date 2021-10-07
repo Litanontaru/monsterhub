@@ -153,6 +153,7 @@ object TreeSpace : Space {
               val new = locator
                   .objectManagerService
                   .create(item.last().addableType()!!)
+                  .also { it.hidden = true }
                   .let { update(it) { } as Feature }
                   .let { created -> FeatureData().apply { feature = created } }
 

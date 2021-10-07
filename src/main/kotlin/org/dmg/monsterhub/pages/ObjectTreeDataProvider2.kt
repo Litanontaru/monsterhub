@@ -98,7 +98,20 @@ class ObjectTreeDataProvider2(
       } else {
         //todo поддержать полное обновление, если удалён последний элемент папки
         refreshItem(FolderTreeNode(obj.folder), true)
+        //todo поддержать полное обновление, если папка полностью новая
         refreshItem(FolderTreeNode(newFolder), true)
+      }
+    }
+  }
+
+  fun move(obj: SettingObjectTreeNode, newSetting: Setting) {
+    if (obj is FeatureTreeNode) {
+      featureService.move(obj.id, newSetting)
+      if (obj.folder.isBlank()) {
+        refreshAll()
+      } else {
+        //todo поддержать полное обновление, если удалён последний элемент папки
+        refreshItem(FolderTreeNode(obj.folder), true)
       }
     }
   }

@@ -137,7 +137,6 @@ class ObjectTreeDataProvider(
       dataProviders()
           .first { it.supportType(featureType) }
           .create()
-          .also { it.hidden = true }
 
   companion object {
     private val COMPARATOR = compareBy<SettingObject>({ it !is Folder }, { it.name })
