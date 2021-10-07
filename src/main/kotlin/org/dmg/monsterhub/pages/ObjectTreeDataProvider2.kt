@@ -4,20 +4,13 @@ import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataPr
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.repository.FeatureRepository
-import org.springframework.stereotype.Service
 import java.util.stream.Stream
 
-@Service
-class ObjectTreeDataProviderService2(
-    private val featureRepository: FeatureRepository
-) {
-  operator fun invoke(setting: Setting): ObjectTreeDataProvider2 = ObjectTreeDataProvider2(setting, featureRepository)
-}
-
 class ObjectTreeDataProvider2(
-    private val setting: Setting,
     private val featureRepository: FeatureRepository
 ) : AbstractBackEndHierarchicalDataProvider<SettingObjectTreeNode, Unit>() {
+  var setting: Setting? = null
+
   var filter: String = ""
     set(value) {
       field = value
@@ -25,47 +18,56 @@ class ObjectTreeDataProvider2(
     }
 
   override fun hasChildren(item: SettingObjectTreeNode?): Boolean {
-    if (item == null) {
-      return true
-    }
-    if (item.featureType != "FOLDER") {
-      return false
-    }
-    return featureRepository.existsFeatureBySettingAndFolderStartingWith(setting, item.name)
+    return setting
+        ?.let { setting ->
+          when {
+            item == null -> true
+            item.featureType != "FOLDER" -> false
+            else -> featureRepository.existsFeatureBySettingAndFolderStartingWith(setting, item.name)
+          }
+        }
+        ?: false
   }
 
   override fun fetchChildrenFromBackEnd(query: HierarchicalQuery<SettingObjectTreeNode, Unit>?): Stream<SettingObjectTreeNode> {
-    val item = query?.parent
-    val folder = item?.name ?: ""
+    return setting
+        ?.let { setting ->
+          val item = query?.parent
+          val folder = item?.name ?: ""
 
-    val folders = childrenFolders(folder).sorted().map { FolderTreeNode(it) }
-    val features = featureRepository
-        .featureBySettingAndFolder(setting, folder)
-        .map { it.toFeature() }
-        .sortedBy { it.name }
+          val folders = childrenFolders(setting, folder).sorted().map { FolderTreeNode(it) }
+          val features = featureRepository
+              .featureBySettingAndFolder(setting, folder)
+              .map { it.toFeature() }
+              .sortedBy { it.name }
 
-    val settingIn = if (folder == "") {
-      listOf(SettingTreeNode(setting.name))
-    } else listOf()
+          val settingIn = if (folder == "") {
+            listOf(SettingTreeNode(setting.name))
+          } else listOf()
 
-    return (folders + features + settingIn).stream()
+          return (folders + features + settingIn).stream()
+        }
+        ?: Stream.empty()
   }
 
   override fun getChildCount(query: HierarchicalQuery<SettingObjectTreeNode, Unit>?): Int {
-    val item = query?.parent
+    return setting
+        ?.let { setting ->
+          val item = query?.parent
 
-    val settingIn = if (item == null) 1 else 0
+          val settingIn = if (item == null) 1 else 0
 
-    val folder = item?.name ?: ""
+          val folder = item?.name ?: ""
 
-    val featuresCount = featureRepository.countFeatureBySettingAndFolderAndHiddenFalse(setting, folder)
+          val featuresCount = featureRepository.countFeatureBySettingAndFolderAndHiddenFalse(setting, folder)
 
-    return settingIn +
-        featuresCount +
-        childrenFolders(folder).size
+          return settingIn +
+              featuresCount +
+              childrenFolders(setting, folder).size
+        } ?: 0
   }
 
-  private fun childrenFolders(folder: String): List<String> {
+  private fun childrenFolders(setting: Setting, folder: String): List<String> {
     val start = if (folder.isNotBlank()) folder.length + 1 else 0
     return featureRepository.foldersBySettingAndFolderStartingWithAndHiddenFalse(setting, folder + "%")
         .filter { it.isNotBlank() }

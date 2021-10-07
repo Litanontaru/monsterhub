@@ -8,15 +8,11 @@ import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.treegrid.TreeGrid
-import org.dmg.monsterhub.data.setting.Setting
 
 class SettingObjectTree(
-    private val setting: Setting,
-    private val objectTreeDataProviderService2: ObjectTreeDataProviderService2
+    data: ObjectTreeDataProvider2
 ) : VerticalLayout() {
   init {
-    val data = objectTreeDataProviderService2(setting)
-
     val tree = TreeGrid<SettingObjectTreeNode>()
     tree.addComponentHierarchyColumn { obj ->
       try {
