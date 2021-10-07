@@ -42,7 +42,7 @@ class ObjectTreeDataProvider2(
               .sortedBy { it.name }
 
           val settingIn = if (folder == "") {
-            listOf(SettingTreeNode(setting.name))
+            listOf(SettingTreeNode(setting.id, setting.name))
           } else listOf()
 
           return (folders + features + settingIn).stream()
@@ -84,11 +84,13 @@ class ObjectTreeDataProvider2(
 }
 
 interface SettingObjectTreeNode {
+  val id: Long
   val name: String
   val featureType: String
 }
 
 data class FeatureTreeNode(
+    override val id: Long,
     override val name: String,
     override val featureType: String
 ) : SettingObjectTreeNode
@@ -96,18 +98,22 @@ data class FeatureTreeNode(
 data class FolderTreeNode(
     override val name: String
 ) : SettingObjectTreeNode {
+  override val id: Long
+    get() = 0
+
   override val featureType: String
     get() = "FOLDER"
 }
 
 class SettingTreeNode(
+    override val id: Long,
     override val name: String
 ) : SettingObjectTreeNode {
   override val featureType: String
     get() = "SETTING"
 }
 
-fun SettingObjectTreeNode.toFeature() = FeatureTreeNode(name, featureType)
+fun SettingObjectTreeNode.toFeature() = FeatureTreeNode(id, name, featureType)
 
 fun SettingObjectTreeNode.isFolder() =
     this is FolderTreeNode
