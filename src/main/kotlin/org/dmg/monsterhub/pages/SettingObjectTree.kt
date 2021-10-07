@@ -75,21 +75,25 @@ class SettingObjectTree(
             }
       }
 
-      /*if (obj != null) {
-        if (obj is Folder) {
+      if (obj != null) {
+        /*if (obj is Folder) {
           it.addItem("Переименовать") {
             ChangeDialog("Новое название", obj.name) {
               obj.name = it
               data.update(obj)
             }.open()
           }
+        }*/
+
+        if (obj.isFolder()) {
+          //todo
+        } else {
+          it.addItem("Удалить") {
+            data.hide(obj)
+          }
         }
 
-        it.addItem("Удалить") {
-          data.delete(obj)
-        }
-
-        it.addItem("Переместить") {
+        /*it.addItem("Переместить") {
           val initial = generateSequence(obj.parent) { it.parent }
               .map { it.name }
               .toList()
@@ -116,10 +120,6 @@ class SettingObjectTree(
           }.open()
         }
 
-        it.addItem("Обновить") {
-          data.reread(obj)
-        }
-
         it.addItem("Переместить в игровой мир") {
           SettingSelectionDialog(settingRepository) {
             val violations = dependencyAnalyzer.analyzeMoveToSetting(obj, it)
@@ -141,8 +141,8 @@ class SettingObjectTree(
               }
             }
           }.open()
-        }
-      }*/
+        }*/
+      }
 
       it.target = this
     }

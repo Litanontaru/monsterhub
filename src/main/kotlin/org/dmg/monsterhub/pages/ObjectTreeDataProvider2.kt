@@ -3,11 +3,11 @@ package org.dmg.monsterhub.pages
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery
 import org.dmg.monsterhub.data.setting.Setting
-import org.dmg.monsterhub.repository.FeatureRepository
+import org.dmg.monsterhub.service.FeatureService
 import java.util.stream.Stream
 
 class ObjectTreeDataProvider2(
-    private val featureRepository: FeatureRepository
+    private val featureService: FeatureService
 ) : AbstractBackEndHierarchicalDataProvider<SettingObjectTreeNode, Unit>() {
   var setting: Setting? = null
 
@@ -23,7 +23,7 @@ class ObjectTreeDataProvider2(
           when {
             item == null -> true
             item.featureType != "FOLDER" -> false
-            else -> featureRepository.existsFeatureBySettingAndFolderStartingWith(setting, item.name)
+            else -> featureService.exists(setting, item.name)
           }
         }
         ?: false
@@ -36,8 +36,8 @@ class ObjectTreeDataProvider2(
           val folder = item?.name ?: ""
 
           val folders = childrenFolders(setting, folder).sorted().map { FolderTreeNode(it) }
-          val features = featureRepository
-              .featureBySettingAndFolder(setting, folder)
+          val features = featureService
+              .features(setting, folder)
               .map { it.toFeature() }
               .sortedBy { it.name }
 
@@ -59,7 +59,7 @@ class ObjectTreeDataProvider2(
 
           val folder = item?.name ?: ""
 
-          val featuresCount = featureRepository.countFeatureBySettingAndFolderAndHiddenFalse(setting, folder)
+          val featuresCount = featureService.count(setting, folder)
 
           return settingIn +
               featuresCount +
@@ -69,7 +69,7 @@ class ObjectTreeDataProvider2(
 
   private fun childrenFolders(setting: Setting, folder: String): List<String> {
     val start = if (folder.isNotBlank()) folder.length + 1 else 0
-    return featureRepository.foldersBySettingAndFolderStartingWithAndHiddenFalse(setting, folder + "%")
+    return featureService.folders(setting, folder + "%")
         .filter { it.isNotBlank() }
         .map {
           it.indexOf('.', start)
@@ -80,6 +80,14 @@ class ObjectTreeDataProvider2(
         }
         .filter { it.isNotBlank() }
         .distinct()
+  }
+
+  fun hide(obj: SettingObjectTreeNode) {
+    if (obj is FeatureTreeNode) {
+      featureService.hide(obj.id)
+      //todo поддержать полное обновление, если удалён последний элемент папки
+      refreshItem(FolderTreeNode(obj.folder), true)
+    }
   }
 }
 

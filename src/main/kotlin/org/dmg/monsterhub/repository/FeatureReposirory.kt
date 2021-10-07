@@ -4,6 +4,7 @@ import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.pages.SettingObjectTreeNode
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 
 interface FeatureRepository : JpaRepository<Feature, Long> {
@@ -16,4 +17,8 @@ interface FeatureRepository : JpaRepository<Feature, Long> {
 
   @Query("SELECT f.id as id, f.name as name, f.featureType as featureType, f.folder as folder FROM Feature f WHERE f.setting = :setting AND f.folder = :folder")
   fun featureBySettingAndFolder(setting: Setting, folder: String): List<SettingObjectTreeNode>
+
+  @Modifying
+  @Query("UPDATE Feature f SET f.hidden = true WHERE f.id = :id")
+  fun hide(id: Long)
 }
