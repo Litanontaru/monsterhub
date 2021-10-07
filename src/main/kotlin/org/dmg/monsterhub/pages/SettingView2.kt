@@ -6,11 +6,13 @@ import com.vaadin.flow.router.BeforeEnterObserver
 import com.vaadin.flow.router.HasDynamicTitle
 import com.vaadin.flow.router.Route
 import org.dmg.monsterhub.repository.FeatureRepository
+import org.dmg.monsterhub.service.SettingObjectDataProvider
 import org.dmg.monsterhub.service.SettingService
 
 @Route("setting2/:settingId")
 class SettingView2(
     featureRepository: FeatureRepository,
+    dataProviders: List<SettingObjectDataProvider>,
 
     private val settingService: SettingService
 ) : Div(), BeforeEnterObserver, HasDynamicTitle {
@@ -18,7 +20,7 @@ class SettingView2(
   private val data = ObjectTreeDataProvider2(featureRepository)
 
   init {
-    add(SettingObjectTree(data))
+    add(SettingObjectTree(data, dataProviders) { })
 
     height = "100%"
     width = "100%"
