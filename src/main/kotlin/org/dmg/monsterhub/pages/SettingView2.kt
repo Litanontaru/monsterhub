@@ -115,7 +115,7 @@ class SettingView2(
         "settingId" to data.setting!!.id.toString(),
         "objId" to item.id.toString()
     ))
-    val url = routeConfiguration.getUrl(SettingView::class.java, parameters)
+    val url = routeConfiguration.getUrl(SettingView2::class.java, parameters)
     UI.getCurrent().page.history.pushState(null, url)
   }
 
