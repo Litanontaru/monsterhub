@@ -93,7 +93,7 @@ class EditPanel(
         action()
         when (obj) {
           is SettingObject -> {
-            locator.data
+            locator.objectManagerService
                 .update(obj)
                 .also {
                   if (onUpdate != null && obj == this.obj) {

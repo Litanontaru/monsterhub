@@ -185,8 +185,8 @@ class SettingView(
         ServiceLocator(
             setting,
 
-            data,
             objectFinderDataProviderService,
+            data,
             featureDataRepository,
             featureContainerItemRepository,
             featureDataDesignationRepository,
@@ -194,7 +194,6 @@ class SettingView(
             weaponRepository,
             weaponAttackRepository,
             settingRepository,
-
             transactionService,
 
             config

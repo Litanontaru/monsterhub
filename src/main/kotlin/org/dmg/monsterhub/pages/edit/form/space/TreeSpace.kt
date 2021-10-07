@@ -151,11 +151,9 @@ object TreeSpace : Space {
             //CERATE
             val create = Button(Icon(VaadinIcon.MAGIC)) {
               val new = locator
-                  .data
-                  .dataProviders()
-                  .first { it.supportType(item.last().addableType()!!) }
-                  .create()
-                  .let { update(it) { it.hidden = true } as Feature }
+                  .objectManagerService
+                  .create(item.last().addableType()!!)
+                  .let { update(it) { } as Feature }
                   .let { created -> FeatureData().apply { feature = created } }
 
               item.last().add(new) { update(it) { } }

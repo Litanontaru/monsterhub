@@ -5,6 +5,7 @@ import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery
 import org.dmg.monsterhub.data.setting.Folder
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
+import org.dmg.monsterhub.service.ObjectManagerService
 import org.dmg.monsterhub.service.SettingObjectDataProvider
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -20,7 +21,7 @@ class ObjectTreeDataProviderService(
 class ObjectTreeDataProvider(
     private val setting: Setting,
     private val dataProviders: List<SettingObjectDataProvider>
-) : AbstractBackEndHierarchicalDataProvider<SettingObject, String>() {
+) : AbstractBackEndHierarchicalDataProvider<SettingObject, String>(), ObjectManagerService {
 
   var onAdd: ((SettingObject) -> Unit)? = null
 
@@ -73,7 +74,7 @@ class ObjectTreeDataProvider(
     }
   }
 
-  fun update(settingObject: SettingObject): SettingObject = action(settingObject) {
+  override fun update(settingObject: SettingObject): SettingObject = action(settingObject) {
     it
         .save(settingObject)
         .also {
@@ -131,6 +132,12 @@ class ObjectTreeDataProvider(
       dataProviders
           .map { it.getById(objId) }
           .find { it != null }
+
+  override fun create(featureType: String): SettingObject =
+      dataProviders()
+          .first { it.supportType(featureType) }
+          .create()
+          .also { it.hidden = true }
 
   companion object {
     private val COMPARATOR = compareBy<SettingObject>({ it !is Folder }, { it.name })
