@@ -108,7 +108,7 @@ class FCast(private val value: FNode, private val type: DecimalType) : FNode {
 }
 
 object Formula {
-  private val PATTERN = "(\\d+(.\\d+)?)|X|Y|Z|ПЭ|ПК|×|Н|З|О|R|-|\\+|\\*|/|\\(|\\)|\\||max|min".toRegex()
+  private val PATTERN = "(\\d+(.\\d+)?)|MAX|MIN|X|Y|Z|ПЭ|ПК|×|Н|З|О|R|-|\\+|\\*|/|\\(|\\)|\\|".toRegex()
 
   operator fun invoke(value: String, context: (String) -> BigDecimal): FNode {
     if (value.isBlank()) {
@@ -144,8 +144,8 @@ object Formula {
           part == "-" -> action = { a, b -> a - b }
           part == "*" -> action = times
           part == "/" -> action = { a, b -> a / b }
-          part == "|" || part == "min" -> action = { a, b -> a min b }
-          part == "max" -> action = { a, b -> a max b }
+          part == "|" || part == "MIN" -> action = { a, b -> a min b }
+          part == "MAX" -> action = { a, b -> a max b }
           part == "(" -> result = action(result, parse().close())
           part == ")" -> return result
         }
@@ -170,6 +170,7 @@ object Formula {
 
     listOf(
         null,
+        "(x - 3) max 0",
         "1",
         "1.0",
         "1 + X",
