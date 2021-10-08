@@ -6,10 +6,13 @@ import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.menubar.MenuBar
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.treegrid.TreeGrid
+import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.pages.edit.form.ChangeDialog
 import org.dmg.monsterhub.repository.SettingRepository
 import org.dmg.monsterhub.service.DependencyAnalyzer
@@ -20,9 +23,38 @@ class SettingObjectTree(
     private val dataProviders: List<SettingObjectDataProvider>,
     private val settingRepository: SettingRepository,
     private val dependencyAnalyzer: DependencyAnalyzer,
+
     onClick: (SettingObjectTreeNode) -> Unit
 ) : VerticalLayout() {
   init {
+    val filter = TextField().apply {
+      addValueChangeListener { data.filter = it.value }
+      width = "100%"
+    }
+
+    val menuBar = MenuBar()
+    val menuItem = menuBar.addItem(Icon(VaadinIcon.MENU))
+    menuItem.subMenu.addItem("Создать игровой мир") {
+      ChangeDialog("Название игрового мира", "Мир") { newName ->
+        Setting()
+            .apply { name = newName }
+            .let { settingRepository.save(it) }
+            .also { it.setting = it }
+            .let { settingRepository.save(it) }
+            .let {
+              data.setting = it
+              onClick(SettingTreeNode(it.id, it.name))
+            }
+      }.open()
+    }
+    menuItem.subMenu.addItem("Выбрать игровой мир") {
+      SettingSelectionDialog(settingRepository) {
+        data.setting = it
+        onClick(SettingTreeNode(it.id, it.name))
+      }.open()
+    }
+    val top = HorizontalLayout(filter, menuBar).apply { width = "100%" }
+
     val tree = TreeGrid<SettingObjectTreeNode>()
     tree.addComponentHierarchyColumn { obj ->
       try {
@@ -51,7 +83,7 @@ class SettingObjectTree(
     }
     tree.setDataProvider(data)
 
-    add(tree)
+    add(top, tree)
 
     height = "100%"
     width = "30%"

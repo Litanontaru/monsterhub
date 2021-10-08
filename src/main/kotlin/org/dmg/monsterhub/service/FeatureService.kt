@@ -10,17 +10,25 @@ import org.springframework.transaction.annotation.Transactional
 class FeatureService(
     val featureRepository: FeatureRepository
 ) {
-  fun exists(setting: Setting, folder: String): Boolean =
-      featureRepository.existsFeatureBySettingAndFolderStartingWith(setting, folder)
+  fun exists(setting: Setting, folder: String, filter: String): Boolean = when {
+    filter.isBlank() -> featureRepository.existsFeatureBySettingAndFolderStartingWith(setting, folder)
+    else -> featureRepository.existsFeatureBySettingAndFolderStartingWithAndNameContaining(setting, folder, filter)
+  }
 
-  fun folders(setting: Setting, folder: String) =
-      featureRepository.foldersBySettingAndFolderStartingWithAndHiddenFalse(setting, folder)
+  fun folders(setting: Setting, folder: String, filter: String) = when {
+    filter.isBlank() -> featureRepository.foldersBySettingAndFolderStartingWithAndHiddenFalse(setting, folder)
+    else -> featureRepository.foldersBySettingAndFolderStartingWithAndNameContainingAndHiddenFalse(setting, folder, "%$filter%")
+  }
 
-  fun count(setting: Setting, folder: String) =
-      featureRepository.countFeatureBySettingAndFolderAndHiddenFalse(setting, folder)
+  fun count(setting: Setting, folder: String, filter: String) = when {
+    filter.isBlank() -> featureRepository.countFeatureBySettingAndFolderAndHiddenFalse(setting, folder)
+    else -> featureRepository.countFeatureBySettingAndFolderAndNameContainingAndHiddenFalse(setting, folder, filter)
+  }
 
-  fun features(setting: Setting, folder: String) =
-      featureRepository.featureBySettingAndFolder(setting, folder)
+  fun features(setting: Setting, folder: String, filter: String) = when {
+    filter.isBlank() -> featureRepository.featureBySettingAndFolder(setting, folder)
+    else -> featureRepository.featureBySettingAndFolder(setting, folder, filter)
+  }
 
   fun hide(id: Long) {
     featureRepository.hide(id)

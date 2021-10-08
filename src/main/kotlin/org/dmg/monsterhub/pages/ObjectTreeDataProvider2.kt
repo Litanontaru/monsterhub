@@ -21,10 +21,13 @@ class ObjectTreeDataProvider2(
     return setting
         ?.let { setting ->
           when {
-            item == null -> true
-            item.featureType != "FOLDER" -> false
-            else -> featureService.exists(setting, item.name)
+            item == null -> when {
+              filter.isBlank() -> return true
+              setting.name.contains(filter) -> return true
+            }
+            item.featureType != "FOLDER" -> return false
           }
+          featureService.exists(setting, item?.name ?: "", filter)
         }
         ?: false
   }
@@ -37,7 +40,7 @@ class ObjectTreeDataProvider2(
 
           val folders = childrenFolders(setting, folder).sorted().map { FolderTreeNode(it) }
           val features = featureService
-              .features(setting, folder)
+              .features(setting, folder, filter)
               .map { it.toFeature() }
               .sortedBy { it.name }
 
@@ -59,7 +62,7 @@ class ObjectTreeDataProvider2(
 
           val folder = item?.name ?: ""
 
-          val featuresCount = featureService.count(setting, folder)
+          val featuresCount = featureService.count(setting, folder, filter)
 
           return settingIn +
               featuresCount +
@@ -69,7 +72,7 @@ class ObjectTreeDataProvider2(
 
   private fun childrenFolders(setting: Setting, folder: String): List<String> {
     val start = if (folder.isNotBlank()) folder.length + 1 else 0
-    return featureService.folders(setting, folder + "%")
+    return featureService.folders(setting, folder + "%", filter)
         .filter { it.isNotBlank() }
         .map {
           it.indexOf('.', start)

@@ -5,6 +5,7 @@ import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.*
+import org.dmg.monsterhub.data.DBObject
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.pages.edit.data.ObjectFinderDataProviderService
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
@@ -80,7 +81,7 @@ class SettingView2(
     obj.toObject()
         ?.let {
           click(it)
-          history(it)
+          history(data.setting!!, it)
         }
   }
 
@@ -109,10 +110,10 @@ class SettingView2(
     ))
   }
 
-  private fun history(item: SettingObject) {
+  private fun history(setting: DBObject, item: DBObject) {
     val routeConfiguration = RouteConfiguration.forSessionScope()
     val parameters = RouteParameters(mutableMapOf(
-        "settingId" to data.setting!!.id.toString(),
+        "settingId" to setting.id.toString(),
         "objId" to item.id.toString()
     ))
     val url = routeConfiguration.getUrl(SettingView2::class.java, parameters)

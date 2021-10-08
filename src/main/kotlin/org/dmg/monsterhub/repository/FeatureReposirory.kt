@@ -10,13 +10,23 @@ import org.springframework.data.jpa.repository.Query
 interface FeatureRepository : JpaRepository<Feature, Long> {
   fun existsFeatureBySettingAndFolderStartingWith(setting: Setting, folder: String): Boolean
 
+  fun existsFeatureBySettingAndFolderStartingWithAndNameContaining(setting: Setting, folder: String, name: String): Boolean
+
   @Query("SELECT DISTINCT f.folder FROM Feature f WHERE f.setting = :setting AND f.folder LIKE :folder AND f.hidden = false")
   fun foldersBySettingAndFolderStartingWithAndHiddenFalse(setting: Setting, folder: String): List<String>
 
+  @Query("SELECT DISTINCT f.folder FROM Feature f WHERE f.setting = :setting AND f.folder LIKE :folder AND f.name LIKE :name AND f.hidden = false")
+  fun foldersBySettingAndFolderStartingWithAndNameContainingAndHiddenFalse(setting: Setting, folder: String, name: String): List<String>
+
   fun countFeatureBySettingAndFolderAndHiddenFalse(setting: Setting, folder: String): Int
+
+  fun countFeatureBySettingAndFolderAndNameContainingAndHiddenFalse(setting: Setting, folder: String, name: String): Int
 
   @Query("SELECT f.id as id, f.name as name, f.featureType as featureType, f.folder as folder FROM Feature f WHERE f.setting = :setting AND f.folder = :folder")
   fun featureBySettingAndFolder(setting: Setting, folder: String): List<SettingObjectTreeNode>
+
+  @Query("SELECT f.id as id, f.name as name, f.featureType as featureType, f.folder as folder FROM Feature f WHERE f.setting = :setting AND f.folder = :folder AND f.name LIKE :name")
+  fun featureBySettingAndFolder(setting: Setting, folder: String, name: String): List<SettingObjectTreeNode>
 
   @Modifying
   @Query("UPDATE Feature f SET f.hidden = true WHERE f.id = :id")
