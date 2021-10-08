@@ -16,7 +16,9 @@ interface FNode {
 
   operator fun div(right: FNode): FNode = FDiv(this, right)
 
-  infix fun cap(right: FNode): FNode = FCap(this, right)
+  infix fun min(right: FNode): FNode = FMin(this, right)
+
+  infix fun max(right: FNode): FNode = FMax(this, right)
 
   infix fun cast(type: DecimalType): FNode = FCast(this, type)
 
@@ -36,7 +38,7 @@ class FNone(val type: DecimalType) : FNode {
 
   override fun div(right: FNode): FNode = FConst(Decimal.ONE cast type) / right
 
-  override fun cap(right: FNode): FNode = FConst(Decimal.ZERO cast type) cap right
+  override fun min(right: FNode): FNode = FConst(Decimal.ZERO cast type) min right
 
   override fun cast(type: DecimalType): FNode = FNone(type)
 }
@@ -62,7 +64,7 @@ class FSum(private val values: List<FNode>) : FNode {
 
   override fun div(right: FNode) = FSum(values.dropLast(1) + (values.last() / right))
 
-  override fun cap(right: FNode) = FSum(values.dropLast(1) + (values.last() cap right))
+  override fun min(right: FNode) = FSum(values.dropLast(1) + (values.last() min right))
 
   override fun close(): FNode = FVar { calculate() }
 }
@@ -77,7 +79,7 @@ class FDiv(private val left: FNode, private val right: FNode) : FNode {
   override fun calculate() = left.calculate() / right.calculate()
 }
 
-class FCap(private val value: FNode, private val cap: FNode) : FNode {
+class FMin(private val value: FNode, private val cap: FNode) : FNode {
   override fun calculate() =
       value.calculate().let { v ->
         cap.calculate().let {
@@ -89,12 +91,24 @@ class FCap(private val value: FNode, private val cap: FNode) : FNode {
       }
 }
 
+class FMax(private val value: FNode, private val cap: FNode) : FNode {
+  override fun calculate() =
+      value.calculate().let { v ->
+        cap.calculate().let {
+          when {
+            v < it -> it cast v.type
+            else -> v
+          }
+        }
+      }
+}
+
 class FCast(private val value: FNode, private val type: DecimalType) : FNode {
   override fun calculate(): Decimal = value.calculate() cast type
 }
 
 object Formula {
-  private val PATTERN = "(\\d+(.\\d+)?)|X|Y|Z|ПЭ|ПК|×|Н|З|О|R|-|\\+|\\*|/|\\(|\\)|\\|".toRegex()
+  private val PATTERN = "(\\d+(.\\d+)?)|X|Y|Z|ПЭ|ПК|×|Н|З|О|R|-|\\+|\\*|/|\\(|\\)|\\||max|min".toRegex()
 
   operator fun invoke(value: String, context: (String) -> BigDecimal): FNode {
     if (value.isBlank()) {
@@ -116,28 +130,24 @@ object Formula {
         val part = parts[i].value
         i++
 
-        if (part in setOf("ПЭ", "ПК", "×")) {
-          result = result cast DecimalType(part)
-        } else if (part in setOf("X", "Y", "Z", "Н", "З", "О", "R")) {
-          result = action(result, FVar { context(part).toDecimal() })
-          action = times
-        } else if (part.toBigDecimalOrNull() != null) {
-          result = action(result, FConst(part.toBigDecimal().toDecimal()))
-          action = times
-        } else if (part == "+") {
-          action = { a, b -> a + b }
-        } else if (part == "-") {
-          action = { a, b -> a - b }
-        } else if (part == "*") {
-          action == times
-        } else if (part == "/") {
-          action = { a, b -> a / b }
-        } else if (part == "|") {
-          action = { a, b -> a cap b }
-        } else if (part == "(") {
-          result = action(result, parse().close())
-        } else if (part == ")") {
-          return result
+        when {
+          part in setOf("ПЭ", "ПК", "×") -> result = result cast DecimalType(part)
+          part in setOf("X", "Y", "Z", "Н", "З", "О", "R") -> {
+            result = action(result, FVar { context(part).toDecimal() })
+            action = times
+          }
+          part.toBigDecimalOrNull() != null -> {
+            result = action(result, FConst(part.toBigDecimal().toDecimal()))
+            action = times
+          }
+          part == "+" -> action = { a, b -> a + b }
+          part == "-" -> action = { a, b -> a - b }
+          part == "*" -> action = times
+          part == "/" -> action = { a, b -> a / b }
+          part == "|" || part == "min" -> action = { a, b -> a min b }
+          part == "max" -> action = { a, b -> a max b }
+          part == "(" -> result = action(result, parse().close())
+          part == ")" -> return result
         }
 
         if (i == parts.size) {
