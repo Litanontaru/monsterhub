@@ -17,6 +17,7 @@ import org.dmg.monsterhub.data.FeatureData
 import org.dmg.monsterhub.data.Power
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.setting.SettingObject
+import org.dmg.monsterhub.pages.SelectionTable
 import org.dmg.monsterhub.pages.edit.data.*
 import org.dmg.monsterhub.pages.edit.form.EditDialog
 
@@ -111,13 +112,25 @@ object TreeSpace : Space {
               setItemLabelGenerator { it.name }
             }
 
+            fun addSelected(settingObject: SettingObject) {
+              val new = FeatureData().apply { feature = settingObject as Feature }
+              item.last().add(new) { update(it) { } }
+
+              dataProvider.refreshItem(item, true)
+              updateVisibility()
+            }
+
+            val selectFromTable = Button(Icon(VaadinIcon.GRID_SMALL)) {
+              SelectionTable(item.last().addableType()!!, locator) {
+                addSelected(it)
+              }.open()
+            }.apply {
+              addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ICON)
+            }
+
             val add = Button(Icon(VaadinIcon.PLUS)) {
               addNewComboBox.optionalValue.ifPresent {
-                val new = FeatureData().apply { feature = it as Feature }
-                item.last().add(new) { update(it) { } }
-
-                dataProvider.refreshItem(item, true)
-                updateVisibility()
+                addSelected(it)
 
                 addNewComboBox.value = null
               }
@@ -175,6 +188,7 @@ object TreeSpace : Space {
               }
 
               add.isVisible = last.canAdd()
+              selectFromTable.isVisible = last.canAdd()
               edit.isVisible = last.canEdit()
               delete.isVisible = last.canRemove()
               create.isVisible = last.canCreate()
@@ -185,6 +199,7 @@ object TreeSpace : Space {
 
             components.add(addNewComboBox)
             components.add(add)
+            components.add(selectFromTable)
             components.add(edit)
             components.add(delete)
             components.add(create)

@@ -26,7 +26,11 @@ interface SettingObjectRepository<T : SettingObject> : DBObjectRepository<T> {
 
   fun findAllBySettingAndHiddenFalse(setting: Setting): List<T>
 
+  fun findAllBySettingIn(settings: List<Setting>, pageable: Pageable): List<T>
+
   fun findAllByNameContainingAndSettingIn(name: String, settings: List<Setting>, pageable: Pageable): List<T>
+
+  fun countBySettingIn(settings: List<Setting>): Int
 
   fun countByNameContainingAndSettingIn(name: String, settings: List<Setting>): Int
 }

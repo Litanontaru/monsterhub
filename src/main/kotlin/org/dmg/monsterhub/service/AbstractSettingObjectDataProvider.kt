@@ -39,8 +39,14 @@ abstract class AbstractSettingObjectDataProvider<T : SettingObject>(
           ?.let { repository.existsByParentAndHiddenFalse(it) }
           ?: run { repository.existsBySettingAndParentIsNullAndHiddenFalse(setting) }
 
+  override fun getBySettings(type: String, settings: List<Setting>, pageable: Pageable) =
+      repository.findAllBySettingIn(settings, pageable)
+
   override fun getAlikeBySettings(type: String, name: String, settings: List<Setting>, pageable: Pageable) =
       repository.findAllByNameContainingAndSettingIn(name, settings, pageable)
+
+  override fun countBySettings(type: String, settings: List<Setting>) =
+      repository.countBySettingIn(settings)
 
   override fun countAlikeBySettings(type: String, name: String, settings: List<Setting>) =
       repository.countByNameContainingAndSettingIn(name, settings)

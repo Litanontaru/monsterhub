@@ -12,8 +12,14 @@ class FreeFeatureDataProvider(
     override val repository: FreeFeatureRepository
 ) : AbstractSettingObjectDataProvider<FreeFeature>(FreeFeature::class.java, repository) {
 
+  override fun getBySettings(type: String, settings: List<Setting>, pageable: Pageable) =
+      repository.findAllByFeatureTypeAndSettingIn(type, settings, pageable)
+
   override fun getAlikeBySettings(type: String, name: String, settings: List<Setting>, pageable: Pageable) =
       repository.findAllByFeatureTypeAndNameContainingAndSettingIn(type, name, settings, pageable)
+
+  override fun countBySettings(type: String, settings: List<Setting>) =
+      repository.countByFeatureTypeAndSettingIn(type, settings)
 
   override fun countAlikeBySettings(type: String, name: String, settings: List<Setting>) =
       repository.countByFeatureTypeAndNameContainingAndSettingIn(type, name, settings)

@@ -26,6 +26,13 @@ class ObjectFinderDataProviderForSetting(
           dataProviders.find { it.supportType(type) }!!,
           settings
       )
+
+  fun select(type: String): ObjectSelectorDataProvider =
+      ObjectSelectorDataProvider(
+          type,
+          dataProviders.find { it.supportType(type) }!!,
+          settings
+      )
 }
 
 class ObjectFinderDataProvider(
@@ -58,6 +65,26 @@ class ObjectFinderDataProvider(
                   .stream()
               else -> Stream.empty()
             }
+          }
+          ?: Stream.empty<SettingObject>()
+}
+
+class ObjectSelectorDataProvider(
+    private val type: String,
+    private val dataProvider: SettingObjectDataProvider,
+    private val settings: List<Setting>
+) : AbstractBackEndDataProvider<SettingObject, Unit>() {
+  override fun sizeInBackEnd(query: Query<SettingObject, Unit>?) =
+      query
+          ?.let { dataProvider.countBySettings(type, settings) }
+          ?: 0
+
+  override fun fetchFromBackEnd(query: Query<SettingObject, Unit>?) =
+      query
+          ?.let {
+            dataProvider
+                .getBySettings(type, settings, PageRequest.of(query.page, query.pageSize))
+                .stream()
           }
           ?: Stream.empty<SettingObject>()
 }
