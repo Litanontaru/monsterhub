@@ -29,6 +29,7 @@ class SettingView2(
     private val weaponAttackRepository: WeaponAttackRepository,
     private val weaponRepository: WeaponRepository,
     private val settingRepository: SettingRepository,
+    private val freeFeatureDataProvider: FreeFeatureDataProvider,
     private val transactionService: TransactionService
 ) : Div(), BeforeEnterObserver, HasDynamicTitle {
 
@@ -102,6 +103,7 @@ class SettingView2(
             weaponRepository,
             weaponAttackRepository,
             settingRepository,
+            freeFeatureDataProvider,
 
             transactionService,
 

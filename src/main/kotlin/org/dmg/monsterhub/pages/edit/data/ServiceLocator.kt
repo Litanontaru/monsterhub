@@ -3,6 +3,7 @@ package org.dmg.monsterhub.pages.edit.data
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.pages.edit.form.EditPanelConfig
 import org.dmg.monsterhub.repository.*
+import org.dmg.monsterhub.service.FreeFeatureDataProvider
 import org.dmg.monsterhub.service.ObjectManagerService
 import org.dmg.monsterhub.service.TransactionService
 
@@ -18,6 +19,7 @@ data class ServiceLocator(
     val weaponRepository: WeaponRepository,
     val weaponAttackRepository: WeaponAttackRepository,
     val settingRepository: SettingRepository,
+    val freeFeatureDataProvider: FreeFeatureDataProvider,
     val transactionService: TransactionService,
 
     val config: EditPanelConfig

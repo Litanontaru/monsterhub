@@ -1,16 +1,31 @@
 package org.dmg.monsterhub.service
 
 import org.dmg.monsterhub.data.FreeFeature
+import org.dmg.monsterhub.data.meta.FreeFeatureType
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.FreeFeatureRepository
+import org.dmg.monsterhub.repository.FreeFeatureTypeRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
 class FreeFeatureDataProvider(
-    override val repository: FreeFeatureRepository
+    override val repository: FreeFeatureRepository,
+    private val typeRepository: FreeFeatureTypeRepository
 ) : AbstractSettingObjectDataProvider<FreeFeature>(FreeFeature::class.java, repository) {
+
+  lateinit var supportedTypes: List<FreeFeatureType>
+  private lateinit var supportedTypeNames: Set<String>
+
+  init {
+    refreshTypes()
+  }
+
+  final fun refreshTypes() {
+    supportedTypes = typeRepository.findAll().sortedBy { it.display }
+    supportedTypeNames = typeRepository.findAll().map { it.name }.toSet()
+  }
 
   override fun getBySettings(type: String, settings: List<Setting>, pageable: Pageable) =
       repository.findAllByFeatureTypeAndSettingIn(type, settings, pageable)
@@ -24,7 +39,7 @@ class FreeFeatureDataProvider(
   override fun countAlikeBySettings(type: String, name: String, settings: List<Setting>) =
       repository.countByFeatureTypeAndNameContainingAndSettingIn(type, name, settings)
 
-  override fun supportType(type: String) = MY_TYPES.contains(type)
+  override fun supportType(type: String) = supportedTypeNames.contains(type)
 
   override val name: String = "Свободный аспект"
 
@@ -43,45 +58,5 @@ class FreeFeatureDataProvider(
     const val ACTIVATION_PAYMENT = "ACTIVATION_PAYMENT"
     const val POWER_CONDITION = "POWER_CONDITION"
     const val POWER_RESERVE = "POWER_RESERVE"
-
-
-    val MY_TYPES = setOf(
-        "NONE",
-
-        "POISON_EFFECT",
-        "POISON_DELAY",
-        "POISONING_WAY",
-
-        "DISEASE",
-
-        EFFECT_DURATION,
-        EFFECT_DISTANCE,
-        AREA_OF_EFFECT,
-        EFFECT_TARGET_TYPE,
-        EFFECT_THREAT,
-
-        ACTIVATION_ROLL,
-        ACTIVATION_EVENT,
-        ACTIVATION_DURATION,
-        ACTIVATION_PAYMENT,
-        POWER_CONDITION,
-        POWER_RESERVE,
-
-        "COUNTER_SIZE_TABLE",
-
-        "AREA_SPHERE",
-        "AREA_CUBE",
-        "AREA_EXPLOSION",
-        "AREA_LINE",
-        "AREA_CONE",
-
-        "COLLISION",
-
-        "WEAPON_FEATURE",
-        "WEAPON_ATTACK_FEATURE",
-        "POWER_UP_TYPE",
-
-        "ARMOR_FEATURE"
-    )
   }
 }

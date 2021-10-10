@@ -26,6 +26,7 @@ import org.dmg.monsterhub.pages.edit.form.EditPanel
 import org.dmg.monsterhub.pages.edit.form.EditPanelConfig
 import org.dmg.monsterhub.repository.*
 import org.dmg.monsterhub.service.DependencyAnalyzer
+import org.dmg.monsterhub.service.FreeFeatureDataProvider
 import org.dmg.monsterhub.service.SettingService
 import org.dmg.monsterhub.service.TransactionService
 
@@ -42,6 +43,7 @@ class SettingView(
     private val weaponAttackRepository: WeaponAttackRepository,
     private val weaponRepository: WeaponRepository,
     private val settingRepository: SettingRepository,
+    private val freeFeatureDataProvider: FreeFeatureDataProvider,
     private val dependencyAnalyzer: DependencyAnalyzer,
     private val transactionService: TransactionService
 ) : Div(), BeforeEnterObserver, HasDynamicTitle {
@@ -194,6 +196,7 @@ class SettingView(
             weaponRepository,
             weaponAttackRepository,
             settingRepository,
+            freeFeatureDataProvider,
             transactionService,
 
             config
