@@ -9,7 +9,7 @@ import org.dmg.monsterhub.service.TransactionService
 data class ServiceLocator(
     val setting: Setting,
 
-    val finder: ObjectFinderDataProviderService,
+    val source: ObjectFinderDataProviderService,
     val objectManagerService: ObjectManagerService,
     val featureDataRepository: FeatureDataRepository,
     val featureContainerItemRepository: FeatureContainerItemRepository,
@@ -24,8 +24,8 @@ data class ServiceLocator(
 ) {
   lateinit var settings: List<Setting>
 
-  val finderData: ObjectFinderDataProviderForSetting
-    get() = finder(settings)
+  val data: ObjectFinderDataProviderForSetting
+    get() = source(settings)
 
   fun refreshSettings() {
     settings = getRecursive(setting).toList()

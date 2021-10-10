@@ -171,7 +171,7 @@ object TreeSpace : Space {
               val last = item.last()
               addNewComboBox.isVisible = last.canAdd()
               if (last.canAdd()) {
-                addNewComboBox.setItems(locator.finderData(last.addableType()!!) as DataProvider<SettingObject, String>)
+                addNewComboBox.setItems(locator.data.find(last.addableType()!!) as DataProvider<SettingObject, String>)
               }
 
               add.isVisible = last.canAdd()

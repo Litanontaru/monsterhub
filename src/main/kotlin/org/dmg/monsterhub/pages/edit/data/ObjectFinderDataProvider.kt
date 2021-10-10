@@ -20,7 +20,7 @@ class ObjectFinderDataProviderForSetting(
     private val dataProviders: List<SettingObjectDataProvider>,
     val settings: List<Setting>
 ) {
-  operator fun invoke(type: String): ObjectFinderDataProvider =
+  fun find(type: String): ObjectFinderDataProvider =
       ObjectFinderDataProvider(
           type,
           dataProviders.find { it.supportType(type) }!!,
