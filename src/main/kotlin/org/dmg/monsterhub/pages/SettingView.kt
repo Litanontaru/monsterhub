@@ -54,12 +54,13 @@ class SettingView(
   private lateinit var data: ObjectTreeDataProvider
 
   private lateinit var tree: TreeGrid<SettingObject>
+  private var selectedObjId: Long? = null
   private lateinit var rightPanel: VerticalLayout
 
   override fun beforeEnter(event: BeforeEnterEvent?) {
     if (event != null) {
       set(event.routeParameters["settingId"].get().toLong())
-//      event.routeParameters["objId"].ifPresent { select(it.toLong()) }
+      event.routeParameters["objId"].ifPresent { select(it.toLong()) }
     }
   }
 
@@ -178,8 +179,6 @@ class SettingView(
   }
 
   private fun click(item: SettingObject) {
-    println("SELECTED ${item::class.java.simpleName} ${item.id}")
-
     rightPanel.removeAll()
 
     rightPanel.add(EditPanel(
@@ -215,17 +214,20 @@ class SettingView(
   }
 
   private fun select(objId: Long) {
-    data
-        .find(objId)
-        ?.also { obj ->
-          generateSequence(obj.parent) { it.parent }
-              .toList()
-              .reversed()
-              .forEach { tree.expand(it) }
+    if (selectedObjId == null || selectedObjId != objId) {
+      data
+          .find(objId)
+          ?.also { obj ->
+            generateSequence(obj.parent) { it.parent }
+                .toList()
+                .reversed()
+                .forEach { tree.expand(it) }
 
-          tree.select(obj)
-          click(obj)
-        }
+            selectedObjId = objId
+            tree.select(obj)
+            click(obj)
+          }
+    }
   }
 
   private fun Component.contextMenu(obj: SettingObject?) {
