@@ -103,7 +103,7 @@ private fun addNumber(
     }
     NumberOption.POSITIVE -> {
       parent.add(TextField(label).apply {
-        this.value = value.toString()
+        this.value = value.stripTrailingZeros().toString()
         addValueChangeListener {
           setter(it.value.toBigDecimalOrNull()?.takeIf { it > BigDecimal.ZERO } ?: BigDecimal.ZERO)
         }
@@ -111,7 +111,7 @@ private fun addNumber(
     }
     NumberOption.POSITIVE_AND_INFINITE -> parent.add(
         HorizontalLayout().apply {
-          val (field, infinite) = valueWithInfinite(value, label, setter)
+          val (field, infinite) = valueWithInfinite(value.stripTrailingZeros(), label, setter)
 
           add(field, infinite)
           setVerticalComponentAlignment(FlexComponent.Alignment.END, field, infinite)
@@ -119,21 +119,21 @@ private fun addNumber(
     )
     NumberOption.FREE -> {
       parent.add(TextField(label).apply {
-        this.value = value.toString()
+        this.value = value.stripTrailingZeros().toString()
         addValueChangeListener { setter(it.value.toBigDecimalOrNull() ?: BigDecimal.ZERO) }
       })
     }
     NumberOption.DAMAGE -> parent.add(
         HorizontalLayout().apply {
           val damage = TextField(label).apply {
-            this.value = value.toString()
+            this.value = value.stripTrailingZeros().toString()
             addValueChangeListener {
               setter(it.value.toBigDecimalOrNull()?.takeIf { it > BigDecimal.ZERO } ?: BigDecimal.ZERO)
             }
           }
           val slash = Label("/")
           val destruction = TextField().apply {
-            this.value = valueA.toString()
+            this.value = valueA.stripTrailingZeros().toString()
             addValueChangeListener {
               setterA(it.value.toBigDecimalOrNull()?.takeIf { it > BigDecimal.ZERO } ?: BigDecimal.ZERO)
             }
@@ -144,11 +144,11 @@ private fun addNumber(
     )
     NumberOption.ARMOR -> parent.add(
         HorizontalLayout().apply {
-          val (field, infinite) = valueWithInfinite(value, "$label Сильная", setter)
+          val (field, infinite) = valueWithInfinite(value.stripTrailingZeros(), "$label Сильная", setter)
           val dash = Label("/")
-          val (fieldA, infiniteA) = valueWithInfinite(valueA, "Стандартная", setterA)
+          val (fieldA, infiniteA) = valueWithInfinite(valueA.stripTrailingZeros(), "Стандартная", setterA)
           val dashB = Label("/")
-          val (fieldB, infiniteB) = valueWithInfinite(valueB, "Слабая", setterB)
+          val (fieldB, infiniteB) = valueWithInfinite(valueB.stripTrailingZeros(), "Слабая", setterB)
 
           add(field, infinite, dash, fieldA, infiniteA, dashB, fieldB, infiniteB)
           setVerticalComponentAlignment(FlexComponent.Alignment.END, field, infinite, dash, fieldA, infiniteA, dashB, fieldB, infiniteB)
