@@ -44,9 +44,9 @@ object FeatureDataSpace : Space {
       width = "100%"
     })
 
-    addNumber(parent, "X", obj.x, obj.xa, { update(obj) { obj.x = it } }, { update(obj) { obj.xa = it } }, obj.feature.x)
-    addNumber(parent, "Y", obj.y, obj.ya, { update(obj) { obj.y = it } }, { update(obj) { obj.ya = it } }, obj.feature.y)
-    addNumber(parent, "Z", obj.z, obj.za, { update(obj) { obj.z = it } }, { update(obj) { obj.za = it } }, obj.feature.z)
+    addNumber(parent, "X", obj.x, obj.xa, obj.xb, { update(obj) { obj.x = it } }, { update(obj) { obj.xa = it } }, { update(obj) { obj.xb = it } }, obj.feature.x)
+    addNumber(parent, "Y", obj.y, obj.ya, obj.yb, { update(obj) { obj.y = it } }, { update(obj) { obj.ya = it } }, { update(obj) { obj.yb = it } }, obj.feature.y)
+    addNumber(parent, "Z", obj.z, obj.za, obj.zb, { update(obj) { obj.z = it } }, { update(obj) { obj.za = it } }, { update(obj) { obj.zb = it } }, obj.feature.z)
 
     obj.feature.designations.forEach { key ->
       if (key.endsWith("*")) {
@@ -91,8 +91,10 @@ private fun addNumber(
     label: String,
     value: BigDecimal,
     valueA: BigDecimal,
+    valueB: BigDecimal,
     setter: (BigDecimal) -> Unit,
     setterA: (BigDecimal) -> Unit,
+    setterB: (BigDecimal) -> Unit,
     option: NumberOption
 ) {
   when (option) {
@@ -109,36 +111,10 @@ private fun addNumber(
     }
     NumberOption.POSITIVE_AND_INFINITE -> parent.add(
         HorizontalLayout().apply {
-          val isInfinite = value == Int.MAX_VALUE.toBigDecimal()
+          val (field, infinite) = valueWithInfinite(value, label, setter)
 
-          val field = TextField(label).apply {
-            this.value = if (isInfinite) "" else value.toString()
-            isEnabled = !isInfinite
-
-            addValueChangeListener {
-              setter(it.value.toBigDecimalOrNull()?.takeIf { it > BigDecimal.ZERO } ?: BigDecimal.ZERO)
-            }
-          }
-          val inifinite = Checkbox("Бесконечность").apply {
-            this.value = isInfinite
-
-            addValueChangeListener {
-              if (it.value) {
-                field.value = ""
-                field.isEnabled = false
-
-                setter(Int.MAX_VALUE.toBigDecimal())
-              } else {
-                field.value = "0"
-                field.isEnabled = true
-
-                setter(BigDecimal.ZERO)
-              }
-            }
-          }
-
-          add(field, inifinite)
-          setVerticalComponentAlignment(FlexComponent.Alignment.END, field, inifinite)
+          add(field, infinite)
+          setVerticalComponentAlignment(FlexComponent.Alignment.END, field, infinite)
         }
     )
     NumberOption.FREE -> {
@@ -166,6 +142,18 @@ private fun addNumber(
           setVerticalComponentAlignment(FlexComponent.Alignment.END, damage, slash, destruction)
         }
     )
+    NumberOption.ARMOR -> parent.add(
+        HorizontalLayout().apply {
+          val (field, infinite) = valueWithInfinite(value, "$label Сильная", setter)
+          val dash = Label("/")
+          val (fieldA, infiniteA) = valueWithInfinite(valueA, "Стандартная", setterA)
+          val dashB = Label("/")
+          val (fieldB, infiniteB) = valueWithInfinite(valueB, "Слабая", setterB)
+
+          add(field, infinite, dash, fieldA, infiniteA, dashB, fieldB, infiniteB)
+          setVerticalComponentAlignment(FlexComponent.Alignment.END, field, infinite, dash, fieldA, infiniteA, dashB, fieldB, infiniteB)
+        }
+    )
     NumberOption.IMPORTANCE -> {
       val options = listOf(
           "Никогда или Никакую роль",
@@ -190,4 +178,38 @@ private fun addNumber(
       })
     }
   }
+}
+
+private fun valueWithInfinite(value: BigDecimal, label: String, setter: (BigDecimal) -> Unit): Pair<TextField, Checkbox> {
+  val isInfinite = value == Int.MAX_VALUE.toBigDecimal()
+
+  val field = TextField(label).apply {
+    this.value = if (isInfinite) "" else value.toString()
+    isEnabled = !isInfinite
+
+    addValueChangeListener {
+      setter(it.value.toBigDecimalOrNull()?.takeIf { it > BigDecimal.ZERO } ?: BigDecimal.ZERO)
+    }
+
+    width = "10em"
+  }
+  val inifinite = Checkbox("Бесконечность").apply {
+    this.value = isInfinite
+
+    addValueChangeListener {
+      if (it.value) {
+        field.value = ""
+        field.isEnabled = false
+
+        setter(Int.MAX_VALUE.toBigDecimal())
+      } else {
+        field.value = "0"
+        field.isEnabled = true
+
+        setter(BigDecimal.ZERO)
+      }
+    }
+  }
+
+  return field to inifinite
 }

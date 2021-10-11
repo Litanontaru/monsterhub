@@ -6,6 +6,7 @@ enum class NumberOption(val displayName: String) {
   POSITIVE_AND_INFINITE("Позитивные и бесконечность"),
   FREE("Любые целые"),
   DAMAGE("Урон"),
+  ARMOR("Очки брони"),
   IMPORTANCE("Важность");
 
   companion object {

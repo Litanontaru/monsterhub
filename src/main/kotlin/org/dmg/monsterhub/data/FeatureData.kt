@@ -1,5 +1,6 @@
 package org.dmg.monsterhub.data
 
+import org.dmg.isZero
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.service.Decimal
@@ -15,10 +16,13 @@ class FeatureData : DBObject(), FeatureContainerData {
 
   var x: BigDecimal = BigDecimal.ZERO
   var xa: BigDecimal = BigDecimal.ZERO
+  var xb: BigDecimal = BigDecimal.ZERO
   var y: BigDecimal = BigDecimal.ZERO
   var ya: BigDecimal = BigDecimal.ZERO
+  var yb: BigDecimal = BigDecimal.ZERO
   var z: BigDecimal = BigDecimal.ZERO
   var za: BigDecimal = BigDecimal.ZERO
+  var zb: BigDecimal = BigDecimal.ZERO
 
   @OneToMany(orphanRemoval = true)
   @JoinColumn(name = "feature_data_id")
@@ -46,9 +50,9 @@ class FeatureData : DBObject(), FeatureContainerData {
   fun displayConfig() = configuration().joinToString()
 
   private fun configuration(): Sequence<String> =
-      combo(x.stripTrailingZeros(), xa.stripTrailingZeros()) +
-          combo(y.stripTrailingZeros(), ya.stripTrailingZeros()) +
-          combo(z.stripTrailingZeros(), za.stripTrailingZeros()) +
+      combo(x, xa, xb) +
+          combo(y, ya, yb) +
+          combo(z, za, zb) +
 
           feature.designations.asSequence()
               .mapNotNull { key ->
@@ -60,12 +64,16 @@ class FeatureData : DBObject(), FeatureContainerData {
               .map { it.lines()[0] }
               .filter { it.isNotBlank() }
 
-  private fun combo(x: BigDecimal, xa: BigDecimal) =
-      if (x.compareTo(BigDecimal.ZERO) == 0) {
-        if (xa.compareTo(BigDecimal.ZERO) == 0) emptySequence() else sequenceOf("0/${xa.toPlainString()}")
-      } else {
-        if (xa.compareTo(BigDecimal.ZERO) == 0) sequenceOf(f(x)) else sequenceOf("$x/${xa.toPlainString()}")
-      }
+  private fun combo(x: BigDecimal, xa: BigDecimal, xb: BigDecimal) =
+      (when {
+        x.isZero() -> listOf(x, xa, xb)
+            .takeIf { it.any { !it.isZero() } }
+            ?.let { it.asSequence().map { it } }
+            ?: emptySequence()
+        xa.isZero() && xb.isZero() -> sequenceOf(x)
+        xb.isZero() -> sequenceOf(x, xa)
+        else -> sequenceOf(x, xa, xb)
+      }).map { it.stripTrailingZeros().toPlainString() }
 
   private fun f(x: BigDecimal) = when (x) {
     Int.MAX_VALUE.toBigDecimal() -> "Бесконечность"
@@ -75,9 +83,9 @@ class FeatureData : DBObject(), FeatureContainerData {
   @Transient
   val context: (String) -> BigDecimal = {
     when (it) {
-      "X" -> (x + xa)
-      "Y" -> (y + ya)
-      "Z" -> (z + za)
+      "X" -> (x + xa + xb)
+      "Y" -> (y + ya + yb)
+      "Z" -> (z + za + zb)
       "Н" -> skillRate(SkillType.OFFENSE)
       "З" -> skillRate(SkillType.DEFENCE)
       "О" -> skillRate(SkillType.COMMON)
