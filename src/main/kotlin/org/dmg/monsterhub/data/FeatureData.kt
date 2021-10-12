@@ -81,15 +81,15 @@ class FeatureData : DBObject(), FeatureContainerData {
   }
 
   @Transient
-  val context: (String) -> BigDecimal = {
+  val context: (String) -> List<BigDecimal> = {
     when (it) {
-      "X" -> (x + xa + xb)
-      "Y" -> (y + ya + yb)
-      "Z" -> (z + za + zb)
-      "Н" -> skillRate(SkillType.OFFENSE)
-      "З" -> skillRate(SkillType.DEFENCE)
-      "О" -> skillRate(SkillType.COMMON)
-      "R" -> features.map { it.feature.rate().value }.fold(BigDecimal.ZERO, { a, b -> a + b })
+      "X" -> listOf(x, xa, xb)
+      "Y" -> listOf(y, ya, yb)
+      "Z" -> listOf(z, za, zb)
+      "Н" -> listOf(skillRate(SkillType.OFFENSE))
+      "З" -> listOf(skillRate(SkillType.DEFENCE))
+      "О" -> listOf(skillRate(SkillType.COMMON))
+      "R" -> listOf(features.map { it.feature.rate().value }.fold(BigDecimal.ZERO, { a, b -> a + b }))
       else -> throw IllegalArgumentException()
     }
   }
@@ -110,5 +110,5 @@ class FeatureData : DBObject(), FeatureContainerData {
 
   fun rate(): Decimal = features
       .map { it.rate() }
-      .fold(feature.rate.toFormula(context).calculate()) { a, b -> a + b }
+      .fold(feature.rate.toFormula(context).calculateFinal()) { a, b -> a + b }
 }

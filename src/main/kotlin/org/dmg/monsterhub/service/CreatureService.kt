@@ -14,7 +14,7 @@ object CreatureService {
         .map { data ->
           (data.feature as Trait)
               .formulas(data.context)
-              .map { it.calculate().toInt() }
+              .map { it.calculateFinal().toInt() }
               .toList()
         }
         .toList()

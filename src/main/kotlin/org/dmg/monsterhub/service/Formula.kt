@@ -4,7 +4,9 @@ import java.math.BigDecimal
 
 
 interface FNode {
-  fun calculate(): Decimal
+  fun calculateFinal(): Decimal = calculate().fold(Decimal.ZERO) { acc, r -> acc + r }
+
+  fun calculate(): List<Decimal>
 
   operator fun unaryMinus(): FNode = FNegate(this)
 
@@ -26,7 +28,7 @@ interface FNode {
 }
 
 class FNone(val type: DecimalType) : FNode {
-  override fun calculate() = NoneDecimal(type)
+  override fun calculate() = listOf<Decimal>()
 
   override fun unaryMinus(): FNode = this
 
@@ -44,19 +46,19 @@ class FNone(val type: DecimalType) : FNode {
 }
 
 class FConst(private val value: Decimal) : FNode {
-  override fun calculate() = value
+  override fun calculate() = listOf(value)
 }
 
-class FVar(private val value: () -> Decimal) : FNode {
+class FVar(private val value: () -> List<Decimal>) : FNode {
   override fun calculate() = value()
 }
 
 class FNegate(private val value: FNode) : FNode {
-  override fun calculate() = -value.calculate()
+  override fun calculate() = value.calculate().map { -it }
 }
 
 class FSum(private val values: List<FNode>) : FNode {
-  override fun calculate() = values.asSequence().map { it.calculate() }.fold(Decimal.ZERO) { acc, e -> acc + e }
+  override fun calculate() = values.flatMap { it.calculate() }
 
   override fun plus(right: FNode): FNode = FSum(values + right)
 
@@ -70,47 +72,60 @@ class FSum(private val values: List<FNode>) : FNode {
 }
 
 class FMult(private val values: List<FNode>) : FNode {
-  override fun calculate() = values.asSequence().map { it.calculate() }.fold(Decimal.ONE) { acc, e -> acc * e }
+  override fun calculate() = values.asSequence().map { it.calculate() }.fold(listOf(Decimal.ONE)) { acc, e ->
+    acc.flatMap { a -> e.map { a * it } }
+  }
 
   override fun times(right: FNode): FNode = FMult(values + right)
 }
 
 class FDiv(private val left: FNode, private val right: FNode) : FNode {
-  override fun calculate() = left.calculate() / right.calculate()
+  override fun calculate(): List<Decimal> {
+    val r = right.calculate()
+    return left.calculate().flatMap { l -> r.map { l / it } }
+  }
 }
 
 class FMin(private val value: FNode, private val cap: FNode) : FNode {
-  override fun calculate() =
-      value.calculate().let { v ->
-        cap.calculate().let {
-          when {
-            v > it -> it cast v.type
-            else -> v
-          }
+  override fun calculate(): List<Decimal> {
+    val vv = value.calculate()
+    val cc = cap.calculate()
+
+    return vv.flatMap { v ->
+      cc.map { c ->
+        when {
+          v > c -> c cast v.type
+          else -> v
         }
       }
+    }
+  }
 }
 
 class FMax(private val value: FNode, private val cap: FNode) : FNode {
-  override fun calculate() =
-      value.calculate().let { v ->
-        cap.calculate().let {
-          when {
-            v < it -> it cast v.type
-            else -> v
-          }
+  override fun calculate(): List<Decimal> {
+    val vv = value.calculate()
+    val cc = cap.calculate()
+
+    return vv.flatMap { v ->
+      cc.map { c ->
+        when {
+          v < c -> c cast v.type
+          else -> v
         }
       }
+    }
+  }
 }
 
 class FCast(private val value: FNode, private val type: DecimalType) : FNode {
-  override fun calculate(): Decimal = value.calculate() cast type
+  override fun calculate() = value.calculate().map { it cast type }
 }
 
 object Formula {
   private val PATTERN = "(\\d+(.\\d+)?)|MAX|MIN|X|Y|Z|ПЭ|ПК|×|Н|З|О|R|-|\\+|\\*|/|\\(|\\)|\\|".toRegex()
 
-  operator fun invoke(value: String, context: (String) -> BigDecimal): FNode {
+  operator fun invoke(value: String, context: (String) -> List<BigDecimal>): FNode {
     if (value.isBlank()) {
       return FNone(DecimalType.DIGIT)
     }
@@ -133,7 +148,7 @@ object Formula {
         when {
           part in setOf("ПЭ", "ПК", "×") -> result = result cast DecimalType(part)
           part in setOf("X", "Y", "Z", "Н", "З", "О", "R") -> {
-            result = action(result, FVar { context(part).toDecimal() })
+            result = action(result, FVar { context(part).map { it.toDecimal() } })
             action = times
           }
           part.toBigDecimalOrNull() != null -> {
@@ -159,7 +174,7 @@ object Formula {
     return parse()
   }
 
-  fun String?.toFormula(context: (String) -> BigDecimal) = this
+  fun String?.toFormula(context: (String) -> List<BigDecimal>) = this
       ?.let { Formula(it, context) }
       ?: FNone(DecimalType.DIGIT)
 

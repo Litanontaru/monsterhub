@@ -15,7 +15,7 @@ object TraitApplicationSpace : Space {
   override fun use(anyObj: Any, locator: ServiceLocator, update: (Any, () -> Unit) -> Any): List<Component> {
     val featureData = anyObj as FeatureData
     val trait = featureData.feature as Trait
-    val values = trait.formulas(featureData.context).map { it.calculate().toInt() }.toList()
+    val values = trait.formulas(featureData.context).map { it.calculateFinal().toInt() }.toList()
 
     return listOf(
         Label("Показатели черты"),

@@ -14,7 +14,7 @@ class Trait : Feature() {
   var common: String? = null
   var commonAlt: String? = null
 
-  fun formulas(context: (String) -> BigDecimal) = sequenceOf(
+  fun formulas(context: (String) -> List<BigDecimal>) = sequenceOf(
       offenceBase,
       offenceAlt,
       defenceBase,
