@@ -3,29 +3,23 @@ package org.dmg.monsterhub.pages.edit.form.space
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.details.Details
 import com.vaadin.flow.component.html.Label
-import com.vaadin.flow.component.html.ListItem
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup
 import com.vaadin.flow.component.textfield.TextField
-import org.dmg.monsterhub.data.Creature
+import org.dmg.monsterhub.data.GameCharacter
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.service.AttackEffectiveness
 import org.dmg.monsterhub.service.DamageService
 import org.dmg.monsterhub.service.WeaponType
 
-object GameCharacterDefence : AbstractCreatureSpace {
-  override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Any) = listOf(
+object GameCharacterDefence : AbstractGameCharacterSpace {
+  override fun use(obj: GameCharacter, locator: ServiceLocator, update: (Any, () -> Unit) -> Any) = listOf(
       Details().apply {
         summaryText = "Защита"
 
         addContent(VerticalLayout().apply {
-          obj.getAllTraits("Тип тела").map { it.display() }.joinToString().takeIf { it.isNotBlank() }?.run { add(ListItem(this)) }
-          obj.getAllTraits("Регенерация").map { it.display() }.joinToString().takeIf { it.isNotBlank() }?.run { add(ListItem(this)) }
-          obj.getAllTraits("Особая защита").forEach { add(ListItem(it.display())) }
-          obj.getAllTraits("Общая защита").map { it.display() }.joinToString().takeIf { it.isNotBlank() }?.run { add(ListItem(this)) }
-
           val damage = TextField("Урон").apply {
             this.value = "0"
           }
