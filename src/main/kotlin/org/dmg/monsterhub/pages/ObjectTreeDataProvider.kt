@@ -8,6 +8,7 @@ import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.service.ObjectManagerService
 import org.dmg.monsterhub.service.SettingObjectDataProvider
 import org.springframework.stereotype.Service
+import java.util.stream.Stream
 import javax.transaction.Transactional
 
 @Transactional
@@ -30,15 +31,18 @@ class ObjectTreeDataProvider(
     else -> false
   }
 
-  override fun fetchChildrenFromBackEnd(query: HierarchicalQuery<SettingObject, String>?) =
-      query?.parent?.let { it as Folder }
-          .let { parent ->
-            val search = query?.filter?.orElse("") ?: ""
-            dataProviders
-                .flatMap { it.getChildrenAlikeBySetting(parent, search, setting) }
-                .sortedWith(COMPARATOR)
-          }
-          .stream()
+  override fun fetchChildrenFromBackEnd(query: HierarchicalQuery<SettingObject, String>?): Stream<SettingObject> {
+    val let = query?.parent?.let { it as Folder }
+        .let { parent ->
+          val search = query?.filter?.orElse("") ?: ""
+          dataProviders
+              .flatMap { it.getChildrenAlikeBySetting(parent, search, setting) }
+              .sortedWith(COMPARATOR)
+              .distinct()
+        }
+    return let
+        .stream()
+  }
 
   override fun getChildCount(query: HierarchicalQuery<SettingObject, String>?) =
       query?.parent?.let { it as Folder }

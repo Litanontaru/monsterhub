@@ -8,7 +8,8 @@ import org.dmg.monsterhub.service.toDecimal
 import javax.persistence.*
 
 @Entity
-class Creature : ContainerData(), Hierarchical<Creature> {
+@Inheritance(strategy = InheritanceType.JOINED)
+open class Creature : ContainerData(), Hierarchical<Creature> {
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "Base_Creature",
