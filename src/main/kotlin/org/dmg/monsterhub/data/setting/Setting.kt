@@ -17,4 +17,8 @@ class Setting : SettingObject(), WithDescription {
   var base: MutableList<Setting> = mutableListOf()
 
   override var description: String = ""
+
+  companion object {
+    val SETTING = "SETTING"
+  }
 }

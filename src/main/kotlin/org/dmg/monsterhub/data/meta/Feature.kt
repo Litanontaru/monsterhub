@@ -8,8 +8,6 @@ import javax.persistence.*
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 open class Feature : SettingObject(), FeatureContainer, WithDescription {
-  open lateinit var featureType: String
-
   open var rate: String? = null
 
   @Type(type = "text")

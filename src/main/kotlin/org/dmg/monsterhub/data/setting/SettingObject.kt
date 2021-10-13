@@ -11,6 +11,8 @@ import javax.persistence.MappedSuperclass
 open class SettingObject : DBObject(), WithNamed {
   override var name: String = ""
 
+  open lateinit var featureType: String
+
   @ManyToOne
   @JoinColumn(name = "setting_id", nullable = true)
   open lateinit var setting: Setting

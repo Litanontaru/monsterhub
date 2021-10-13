@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.service
 
 import org.dmg.monsterhub.data.setting.Folder
+import org.dmg.monsterhub.data.setting.Folder.Companion.FOLDER
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.FolderRepository
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class FolderDataProvider(
     repository: FolderRepository
-) : SimpleSettingObjectDataProvider<Folder>(Folder::class.java, "FOLDER", "Папка", repository) {
+) : SimpleSettingObjectDataProvider<Folder>(Folder::class.java, FOLDER, "Папка", repository) {
 
   override fun getChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting) =
       when {
@@ -28,5 +29,5 @@ class FolderDataProvider(
         else -> 0
       }
 
-  override fun create(): SettingObject = Folder()
+  override fun create(): SettingObject = Folder().apply { featureType = FOLDER }
 }

@@ -3,6 +3,7 @@ package org.dmg.monsterhub.pages
 import com.vaadin.flow.data.provider.hierarchy.AbstractBackEndHierarchicalDataProvider
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery
 import org.dmg.monsterhub.data.setting.Setting
+import org.dmg.monsterhub.data.setting.Setting.Companion.SETTING
 import org.dmg.monsterhub.service.FeatureService
 import java.util.stream.Stream
 
@@ -152,7 +153,7 @@ class SettingTreeNode(
     override val name: String
 ) : SettingObjectTreeNode {
   override val featureType: String
-    get() = "SETTING"
+    get() = SETTING
 
   override val folder: String
     get() = ""
