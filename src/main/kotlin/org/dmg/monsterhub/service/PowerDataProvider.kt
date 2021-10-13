@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service
 @Service
 class PowerDataProvider(
     repository: PowerRepository
-) : SimpleSettingObjectDataProvider<Power>(Power::class.java, POWER, "Сила", repository) {
+) : SimpleSettingObjectDataProvider<Power>(POWER, "Сила", repository) {
   override fun create(): SettingObject = Power().apply { featureType = type }
 }

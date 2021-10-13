@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service
 @Service
 class ArmorDataProvider(
     repository: ArmorRepository
-) : SimpleSettingObjectDataProvider<Armor>(Armor::class.java, ARMOR, "Броня", repository) {
+) : SimpleSettingObjectDataProvider<Armor>(ARMOR, "Броня", repository) {
   override fun create(): SettingObject = Armor().apply { featureType = ARMOR }
 }

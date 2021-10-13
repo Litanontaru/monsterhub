@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service
 @Service
 class PerkDataProvider(
     repository: PerkRepository
-) : SimpleSettingObjectDataProvider<Perk>(Perk::class.java, PERK, "Перк", repository) {
+) : SimpleSettingObjectDataProvider<Perk>(PERK, "Перк", repository) {
   override fun create(): SettingObject = Perk().apply { featureType = PERK }
 }

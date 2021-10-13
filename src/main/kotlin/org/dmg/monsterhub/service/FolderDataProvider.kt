@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class FolderDataProvider(
     repository: FolderRepository
-) : SimpleSettingObjectDataProvider<Folder>(Folder::class.java, FOLDER, "Папка", repository) {
+) : SimpleSettingObjectDataProvider<Folder>(FOLDER, "Папка", repository) {
 
   override fun getChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting) =
       when {

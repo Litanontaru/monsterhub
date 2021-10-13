@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service
 @Service
 class CreatureDataProvider(
     repository: CreatureRepository
-) : SimpleSettingObjectDataProvider<Creature>(Creature::class.java, CREATURE, "Существо", repository) {
+) : SimpleSettingObjectDataProvider<Creature>(CREATURE, "Существо", repository) {
   override fun create(): SettingObject = Creature().apply { featureType = type }
 }

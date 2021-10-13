@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 class FreeFeatureDataProvider(
     override val repository: FreeFeatureRepository,
     private val typeRepository: FreeFeatureTypeRepository
-) : AbstractSettingObjectDataProvider<FreeFeature>(FreeFeature::class.java, repository) {
+) : AbstractSettingObjectDataProvider<FreeFeature>(repository) {
 
   lateinit var supportedTypes: List<FreeFeatureType>
   private lateinit var supportedTypeNames: Set<String>

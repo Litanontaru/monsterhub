@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 
 abstract class AbstractSettingObjectDataProvider<T : SettingObject>(
-    override val objectClass: Class<*>,
     open val repository: SettingObjectRepository<T>
 ) : SettingObjectDataProvider {
   override fun getAllBySetting(setting: Setting): List<SettingObject> = repository.findAllBySettingAndHiddenFalse(setting)

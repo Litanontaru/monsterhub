@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service
 @Service
 class FactionDataProvider(
     repository: FactionRepository
-) : SimpleSettingObjectDataProvider<Faction>(Faction::class.java, FACTION, "Фракция", repository) {
+) : SimpleSettingObjectDataProvider<Faction>(FACTION, "Фракция", repository) {
   override fun create(): SettingObject = Faction().apply { featureType = FACTION }
 }

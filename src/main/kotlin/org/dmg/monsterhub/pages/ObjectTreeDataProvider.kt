@@ -123,7 +123,7 @@ class ObjectTreeDataProvider(
 
   private fun action(settingObject: SettingObject, block: (SettingObjectDataProvider) -> SettingObject) =
       dataProviders
-          .first { settingObject::class.java.isAssignableFrom(it.objectClass) }
+          .first { it.supportType(settingObject.featureType) }
           .let(block)
 
   fun dataProviders(): Sequence<SettingObjectDataProvider> = dataProviders.asSequence()

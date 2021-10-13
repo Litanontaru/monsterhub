@@ -46,7 +46,7 @@ class SettingView2(
 
     override fun update(settingObject: SettingObject): SettingObject =
         dataProviders
-            .first { settingObject::class.java.isAssignableFrom(it.objectClass) }
+            .first { it.supportType(settingObject.featureType) }
             .save(settingObject)
   }
 

@@ -7,8 +7,6 @@ import org.springframework.data.domain.Pageable
 import java.util.concurrent.CompletableFuture
 
 interface SettingObjectDataProvider {
-  val objectClass: Class<*>
-
   fun supportType(type: String): Boolean
 
   val name: String
