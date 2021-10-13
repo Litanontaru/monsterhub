@@ -136,7 +136,7 @@ class EditPanel(
         listOf(SuperioritySpace, CreatureSizeSpace),
         listOf(CreatureTraitSpace),
         listOf(CreatureAttackSpace),
-        listOf(CreatureDefence),
+        listOf(GameCharacterDefence),
         listOf(CreatureSkillSpace),
         listOf(CreatureSpeedSpace)
     )

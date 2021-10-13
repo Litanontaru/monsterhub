@@ -15,7 +15,7 @@ import org.dmg.monsterhub.service.AttackEffectiveness
 import org.dmg.monsterhub.service.DamageService
 import org.dmg.monsterhub.service.WeaponType
 
-object CreatureDefence : AbstractCreatureSpace {
+object GameCharacterDefence : AbstractCreatureSpace {
   override fun use(obj: Creature, locator: ServiceLocator, update: (Any, () -> Unit) -> Any) = listOf(
       Details().apply {
         summaryText = "Защита"
@@ -71,9 +71,9 @@ object CreatureDefence : AbstractCreatureSpace {
           isSpacing = false
         })
 
-        isOpened = locator.config.spaces.getOrDefault(CreatureDefence, false) as Boolean
+        isOpened = locator.config.spaces.getOrDefault(GameCharacterDefence, false) as Boolean
         this.addOpenedChangeListener {
-          locator.config.spaces[CreatureDefence] = it.isOpened
+          locator.config.spaces[GameCharacterDefence] = it.isOpened
         }
       }
   )
