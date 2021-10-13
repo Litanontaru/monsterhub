@@ -59,7 +59,7 @@ class ObjectTreeDataProvider(
   fun add(newSettingObject: SettingObject) {
     action(newSettingObject) {
       newSettingObject.setting = setting
-      val savedObject = it.refresh(it.save(newSettingObject))
+      val savedObject = it.getById(it.save(newSettingObject).id)!!
 
       if (savedObject.parent != null) {
         refreshItem(savedObject.parent, true)
@@ -116,7 +116,7 @@ class ObjectTreeDataProvider(
   fun reread(settingObject: SettingObject) {
     action(settingObject) {
       it
-          .refresh(settingObject)
+          .getById(settingObject.id)!!
           .also { refreshItem(it, true) }
     }
   }
