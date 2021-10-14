@@ -1,11 +1,12 @@
 package org.dmg.monsterhub.service
 
 import org.dmg.monsterhub.data.*
+import org.dmg.monsterhub.data.Power.Companion.POWER
 import org.springframework.stereotype.Service
 
 @Service
 object CreatureService {
-  private val BASE = listOf(-43, 0, -39, 0, -50, 0)
+  private val BASE = listOf(-33, 0, -39, 0, -50, 0)
 
   fun superiority(creature: Creature): Superiority {
     val allTraits = creature.getAllTraits()
@@ -74,13 +75,19 @@ object CreatureService {
     )
   }
 
-  private fun getPowerSuperiority(creature: Creature) = creature
-      .getAllTraits("Сила")
-      .mapNotNull { it.features.singleOrNull() }
-      .map { it.feature as Power }
+  private fun getPowerSuperiority(creature: Creature) = (getTraitPowers(creature) + getPowers(creature))
       .map { it.rate().toBigDecimal() }
       .max()
       ?.toInt()
+
+  private fun getTraitPowers(creature: Creature) = creature
+      .getAllTraits("Сила")
+      .mapNotNull { it.features.singleOrNull() }
+      .map { it.feature as Power }
+
+  private fun getPowers(creature: Creature) = creature
+      .getAll(POWER)
+      .map { it.feature as Power }
 
   private fun primary(actual: Int, expected: Array<Int>) = PrimaryRate(actual, expected.map { it - actual }.filter { it > 0 }.min()
       ?: 0)
