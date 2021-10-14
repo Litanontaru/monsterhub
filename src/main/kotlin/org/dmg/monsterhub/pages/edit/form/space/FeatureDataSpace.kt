@@ -15,6 +15,7 @@ import com.vaadin.flow.component.textfield.TextField
 import org.dmg.monsterhub.data.FeatureData
 import org.dmg.monsterhub.data.FeatureDataDesignation
 import org.dmg.monsterhub.data.meta.NumberOption
+import org.dmg.monsterhub.data.meta.NumberOption.Companion.IMPORTANCE_OPTIONS
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.form.EditDialog
 import java.math.BigDecimal
@@ -155,22 +156,10 @@ private fun addNumber(
         }
     )
     NumberOption.IMPORTANCE -> {
-      val options = listOf(
-          "Никогда или Никакую роль",
-          "Малую Редко",
-          "Важную Редко",
-          "Малую Вероятно",
-          "Эпическую Редко",
-          "Малую Часто",
-          "Важную Вероятно",
-          "Важную Часто",
-          "Эпическую Вероятно",
-          "Эпическую Часто"
-      )
 
       parent.add(ComboBox<Int>().apply {
         setItems((0..9).toList())
-        setItemLabelGenerator { options[it] }
+        setItemLabelGenerator { IMPORTANCE_OPTIONS[it] }
         this.value = value.toInt()
         addValueChangeListener { setter(it.value.toBigDecimal()) }
 

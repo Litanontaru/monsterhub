@@ -50,9 +50,9 @@ class FeatureData : DBObject(), FeatureContainerData {
   fun displayConfig() = configuration().joinToString()
 
   private fun configuration(): Sequence<String> =
-      combo(x, xa, xb) +
-          combo(y, ya, yb) +
-          combo(z, za, zb) +
+      feature.x.format(x, xa, xb) +
+          feature.y.format(y, ya, yb) +
+          feature.z.format(z, za, zb) +
 
           feature.designations.asSequence()
               .mapNotNull { key ->
