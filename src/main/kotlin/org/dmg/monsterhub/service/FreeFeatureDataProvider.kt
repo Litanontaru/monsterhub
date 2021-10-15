@@ -43,7 +43,7 @@ class FreeFeatureDataProvider(
 
   override val name: String = "Свободный аспект"
 
-  override fun create(): SettingObject = FreeFeature().apply { featureType = "NONE" }
+  override fun create(): SettingObject = FreeFeature().apply { featureType = supportedTypeNames.first() }
 
   companion object {
     const val EFFECT_DURATION = "EFFECT_DURATION"
