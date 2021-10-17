@@ -33,13 +33,10 @@ object CreatureService {
       }
     }
 
-    val powers = creature
-        .getAllTraits("Сила")
-        .map { it.features[0].feature as Power }
-        .toList()
+    val powers = getTraitPowers(creature) + getPowers(creature)
 
     val addedByPower = powers
-        .map { it.skillType to it.features.filter { it.feature.name == "За показатель черты" }.map { it.x } }
+        .map { it.skillType to it.features.filter { it.feature.name == "За происхождение" }.map { it.x } }
         .filter { it.second.isNotEmpty() }
         .groupBy { it.first }
         .mapValues { it.value.flatMap { it.second }.map { it.toInt() }.sum() }
