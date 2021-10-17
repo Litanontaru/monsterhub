@@ -48,6 +48,16 @@ open class Creature : ContainerData(), Hierarchical<Creature> {
 
   companion object {
     const val CREATURE = "CREATURE"
+    const val CREATURE_RACE_TEMPLATE = "CREATURE_RACE"
+    const val CREATURE_RACE = "CREATURE_RACE"
+    const val CREATURE_REPRESENTATIVE = "CREATURE_REPRESENTATIVE"
+
+    val CREATURE_TYPES = listOf(
+        CREATURE,
+        CREATURE_RACE_TEMPLATE,
+        CREATURE_RACE,
+        CREATURE_REPRESENTATIVE
+    )
 
     val META = listOf(
         FeatureContainerItem().apply {
