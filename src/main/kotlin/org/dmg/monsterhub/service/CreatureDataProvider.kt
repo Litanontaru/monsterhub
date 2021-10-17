@@ -32,7 +32,7 @@ class CreatureDataProvider(
 
   override fun supportType(type: String) = CREATURE_TYPES.contains(type)
 
-  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory("Существо") {
+  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory(CREATURE, "Существо") {
     Creature().apply { featureType = CREATURE }
   })
 }

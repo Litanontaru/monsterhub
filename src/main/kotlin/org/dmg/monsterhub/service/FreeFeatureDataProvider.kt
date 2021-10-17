@@ -40,9 +40,9 @@ class FreeFeatureDataProvider(
 
   override fun supportType(type: String) = supportedTypeNames.contains(type)
 
-  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory("Свободный аспект") {
-    FreeFeature().apply { featureType = supportedTypeNames.first() }
-  })
+  override fun factories(): List<SettingObjectFactory> = supportedTypes.map {
+    SettingObjectFactory(it.name, it.display) { FreeFeature().apply { featureType = it.name } }
+  }
 
   companion object {
     const val EFFECT_DURATION = "EFFECT_DURATION"

@@ -8,6 +8,4 @@ import org.springframework.stereotype.Service
 @Service
 class SettingDataProvider(
     repository: SettingRepository
-) : SimpleSettingObjectDataProvider<Setting>(SETTING, repository) {
-  override fun canCreate(): Boolean = false
-}
+) : SimpleSettingObjectDataProvider<Setting>(SETTING, repository)

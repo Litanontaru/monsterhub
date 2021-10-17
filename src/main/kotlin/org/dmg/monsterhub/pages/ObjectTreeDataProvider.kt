@@ -26,6 +26,8 @@ class ObjectTreeDataProvider(
 
   var onAdd: ((SettingObject) -> Unit)? = null
 
+  private val factories = dataProviders.flatMap { it.factories() }.associateBy { it.featureType }
+
   override fun hasChildren(settingObject: SettingObject?) = when (settingObject) {
     null, is Folder -> dataProviders.any { it.hasChildrenAlikeBySetting(settingObject as Folder?, setting) }
     else -> false
@@ -137,10 +139,7 @@ class ObjectTreeDataProvider(
           .map { it.getById(objId) }
           .find { it != null }
 
-  override fun create(featureType: String): SettingObject =
-      dataProviders()
-          .first { it.supportType(featureType) }
-          .create()
+  override fun create(featureType: String): SettingObject = factories[featureType]!!.create()
 
   companion object {
     private val COMPARATOR = compareBy<SettingObject>({ it !is Folder }, { it.name })

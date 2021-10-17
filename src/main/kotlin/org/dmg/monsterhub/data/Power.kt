@@ -1,8 +1,8 @@
 package org.dmg.monsterhub.data
 
+import org.dmg.monsterhub.data.PowerEffect.Companion.POWER_EFFECT
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.service.FreeFeatureDataProvider
-import org.dmg.monsterhub.service.PowerEffectDataProvider.Companion.POWER_EFFECT
 import javax.persistence.Entity
 
 @Entity

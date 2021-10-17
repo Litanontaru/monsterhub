@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 class TraitDataProvider(
     repository: TraitRepository
 ) : SimpleSettingObjectDataProvider<Trait>(TRAIT, repository) {
-  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory("Черта") {
+  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory(TRAIT, "Черта") {
     Trait().apply { featureType = TRAIT }
   })
 }

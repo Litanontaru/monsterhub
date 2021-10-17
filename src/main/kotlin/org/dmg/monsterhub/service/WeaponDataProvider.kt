@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 class WeaponDataProvider(
     repository: WeaponRepository
 ) : SimpleSettingObjectDataProvider<Weapon>(WEAPON, repository) {
-  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory("Оружие") {
+  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory(WEAPON, "Оружие") {
     Weapon().apply { featureType = WEAPON }
   })
 }

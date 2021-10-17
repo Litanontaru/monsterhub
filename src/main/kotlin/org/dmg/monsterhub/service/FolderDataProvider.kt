@@ -11,7 +11,7 @@ class FolderDataProvider(
     repository: FolderRepository
 ) : SimpleSettingObjectDataProvider<Folder>(FOLDER, repository) {
 
-  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory("Папка") {
+  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory(FOLDER, "Папка") {
     Folder().apply { featureType = FOLDER }
   })
 

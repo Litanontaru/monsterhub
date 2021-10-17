@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 class PerkDataProvider(
     repository: PerkRepository
 ) : SimpleSettingObjectDataProvider<Perk>(PERK, repository) {
-  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory("Перк") {
+  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory(PERK, "Перк") {
     Perk().apply { featureType = PERK }
   })
 }

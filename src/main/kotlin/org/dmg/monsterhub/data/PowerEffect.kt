@@ -6,4 +6,8 @@ import javax.persistence.Entity
 @Entity
 class PowerEffect: Feature() {
   var calculator: PowerRateCalculator = PowerRateCalculator.STANDARD
+
+  companion object {
+    val POWER_EFFECT = "POWER_EFFECT"
+  }
 }

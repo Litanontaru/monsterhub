@@ -27,6 +27,4 @@ interface SettingObjectDataProvider {
   fun save(one: SettingObject): SettingObject
 
   fun factories(): List<SettingObjectFactory> = listOf()
-
-  fun canCreate(): Boolean = true
 }

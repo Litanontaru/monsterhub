@@ -37,12 +37,10 @@ class SettingView2(
 
   private val data = ObjectTreeDataProvider2(featureService)
   private var rightPanel: VerticalLayout
+  private val factories = dataProviders.flatMap { it.factories() }.associateBy { it.featureType }
 
   private val manager = object : ObjectManagerService {
-    override fun create(featureType: String): SettingObject =
-        dataProviders
-            .first { it.supportType(featureType) }
-            .create()
+    override fun create(featureType: String): SettingObject = factories[featureType]!!.create()
 
     override fun update(settingObject: SettingObject): SettingObject =
         dataProviders
