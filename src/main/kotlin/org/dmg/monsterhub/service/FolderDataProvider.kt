@@ -3,14 +3,13 @@ package org.dmg.monsterhub.service
 import org.dmg.monsterhub.data.setting.Folder
 import org.dmg.monsterhub.data.setting.Folder.Companion.FOLDER
 import org.dmg.monsterhub.data.setting.Setting
-import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.FolderRepository
 import org.springframework.stereotype.Service
 
 @Service
 class FolderDataProvider(
     repository: FolderRepository
-) : SimpleSettingObjectDataProvider<Folder>(FOLDER, "Папка", repository) {
+) : SimpleSettingObjectDataProvider<Folder>(FOLDER, repository) {
 
   override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory("Папка") {
     Folder().apply { featureType = FOLDER }
@@ -32,6 +31,4 @@ class FolderDataProvider(
             ?: run { repository.countBySettingAndParentIsNullAndHiddenFalse(setting) }
         else -> 0
       }
-
-  override fun create(): SettingObject = Folder().apply { featureType = FOLDER }
 }

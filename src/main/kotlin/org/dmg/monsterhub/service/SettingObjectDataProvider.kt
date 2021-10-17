@@ -8,8 +8,6 @@ import org.springframework.data.domain.Pageable
 interface SettingObjectDataProvider {
   fun supportType(type: String): Boolean
 
-  val name: String
-
   fun getById(id: Long): SettingObject?
 
   fun getChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting): List<SettingObject>
@@ -31,6 +29,4 @@ interface SettingObjectDataProvider {
   fun factories(): List<SettingObjectFactory> = listOf()
 
   fun canCreate(): Boolean = true
-
-  fun create(): SettingObject
 }

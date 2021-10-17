@@ -4,7 +4,6 @@ import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.data.Creature.Companion.CREATURE
 import org.dmg.monsterhub.data.Creature.Companion.CREATURE_TYPES
 import org.dmg.monsterhub.data.setting.Setting
-import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.CreatureRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -36,8 +35,4 @@ class CreatureDataProvider(
   override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory("Существо") {
     Creature().apply { featureType = CREATURE }
   })
-
-  override val name: String = "Существо"
-
-  override fun create(): SettingObject = Creature().apply { featureType = CREATURE }
 }

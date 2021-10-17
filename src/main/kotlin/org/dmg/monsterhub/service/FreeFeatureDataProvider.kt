@@ -3,7 +3,6 @@ package org.dmg.monsterhub.service
 import org.dmg.monsterhub.data.FreeFeature
 import org.dmg.monsterhub.data.meta.FreeFeatureType
 import org.dmg.monsterhub.data.setting.Setting
-import org.dmg.monsterhub.data.setting.SettingObject
 import org.dmg.monsterhub.repository.FreeFeatureRepository
 import org.dmg.monsterhub.repository.FreeFeatureTypeRepository
 import org.springframework.data.domain.Pageable
@@ -44,10 +43,6 @@ class FreeFeatureDataProvider(
   override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory("Свободный аспект") {
     FreeFeature().apply { featureType = supportedTypeNames.first() }
   })
-
-  override val name: String = "Свободный аспект"
-
-  override fun create(): SettingObject = FreeFeature().apply { featureType = supportedTypeNames.first() }
 
   companion object {
     const val EFFECT_DURATION = "EFFECT_DURATION"

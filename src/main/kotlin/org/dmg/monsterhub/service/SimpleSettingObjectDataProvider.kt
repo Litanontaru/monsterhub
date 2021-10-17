@@ -5,7 +5,6 @@ import org.dmg.monsterhub.repository.SettingObjectRepository
 
 abstract class SimpleSettingObjectDataProvider<T : SettingObject>(
     val type: String,
-    override val name: String,
     repository: SettingObjectRepository<T>
 ) : AbstractSettingObjectDataProvider<T>(repository) {
 
