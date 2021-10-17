@@ -10,5 +10,9 @@ import org.springframework.stereotype.Service
 class SkillDataProvider(
     repository: SkillRepository
 ) : SimpleSettingObjectDataProvider<Skill>(SKILL, "Способность", repository) {
+  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory("Способность") {
+    Skill().apply { featureType = SKILL }
+  })
+
   override fun create(): SettingObject = Skill().apply { featureType = SKILL }
 }

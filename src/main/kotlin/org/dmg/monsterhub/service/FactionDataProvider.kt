@@ -10,5 +10,9 @@ import org.springframework.stereotype.Service
 class FactionDataProvider(
     repository: FactionRepository
 ) : SimpleSettingObjectDataProvider<Faction>(FACTION, "Фракция", repository) {
+  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory("Фракция") {
+    Faction().apply { featureType = FACTION }
+  })
+
   override fun create(): SettingObject = Faction().apply { featureType = FACTION }
 }

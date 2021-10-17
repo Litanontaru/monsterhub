@@ -41,6 +41,10 @@ class FreeFeatureDataProvider(
 
   override fun supportType(type: String) = supportedTypeNames.contains(type)
 
+  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory("Свободный аспект") {
+    FreeFeature().apply { featureType = supportedTypeNames.first() }
+  })
+
   override val name: String = "Свободный аспект"
 
   override fun create(): SettingObject = FreeFeature().apply { featureType = supportedTypeNames.first() }

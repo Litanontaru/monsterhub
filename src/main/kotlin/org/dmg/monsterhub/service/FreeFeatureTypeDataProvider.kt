@@ -11,6 +11,10 @@ class FreeFeatureTypeDataProvider(
     repository: FreeFeatureTypeRepository,
     private val freeFeatureDataProvider: FreeFeatureDataProvider
 ) : SimpleSettingObjectDataProvider<FreeFeatureType>(FREE_FEATURE_TYPE, "Тип свободного аспекта", repository) {
+  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory("Тип свободного аспекта") {
+    FreeFeatureType().apply { featureType = FREE_FEATURE_TYPE }
+  })
+
   override fun create(): SettingObject = FreeFeatureType().apply { featureType = FREE_FEATURE_TYPE }
 
   override fun save(one: SettingObject): SettingObject {

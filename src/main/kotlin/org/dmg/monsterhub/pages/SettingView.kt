@@ -235,12 +235,12 @@ class SettingView(
       if (obj == null || obj is Folder) {
         val toAdd = it.addItem("Добавить")
         data.dataProviders()
+            .flatMap { it.factories().asSequence() }
             .sortedBy { it.name }
-            .filter { it.canCreate() }
-            .forEach { dataProvider ->
-              toAdd.subMenu.addItem(dataProvider.name) {
+            .forEach { factory ->
+              toAdd.subMenu.addItem(factory.name) {
                 ChangeDialog("Создать", "") {
-                  data.add(dataProvider.create().apply {
+                  data.add(factory.create().apply {
                     name = it
                     if (obj is Folder) parent = obj
                   })

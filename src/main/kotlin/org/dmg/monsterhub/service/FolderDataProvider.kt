@@ -12,6 +12,10 @@ class FolderDataProvider(
     repository: FolderRepository
 ) : SimpleSettingObjectDataProvider<Folder>(FOLDER, "Папка", repository) {
 
+  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory("Папка") {
+    Folder().apply { featureType = FOLDER }
+  })
+
   override fun getChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting) =
       when {
         search.isBlank() -> parent

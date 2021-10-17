@@ -96,12 +96,12 @@ class SettingObjectTree(
       if (obj == null || obj.isFolder()) {
         val toAdd = it.addItem("Добавить")
         dataProviders
-            .sortedBy { it.name }
-            .filter { it.canCreate() }
-            .forEach { dataProvider ->
-              toAdd.subMenu.addItem(dataProvider.name) {
+            .flatMap { dataProvider -> dataProvider.factories().map { dataProvider to it } }
+            .sortedBy { it.second.name }
+            .forEach { (dataProvider, factory) ->
+              toAdd.subMenu.addItem(factory.name) {
                 ChangeDialog("Создать", "") {
-                  val new = dataProvider.create().apply {
+                  val new = factory.create().apply {
                     name = it
                     folder = obj?.name ?: ""
                     setting = data.setting!!
