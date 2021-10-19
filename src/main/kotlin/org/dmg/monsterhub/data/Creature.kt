@@ -18,7 +18,11 @@ open class Creature : ContainerData(), Hierarchical<Creature> {
   )
   override var base: MutableList<Creature> = mutableListOf()
 
-  override fun meta(): List<FeatureContainerItem> = META
+  override fun meta(): List<FeatureContainerItem> = when (featureType) {
+    CREATURE_RACE, CREATURE_RACE_TEMPLATE -> CREATURE_RACE_META
+    CREATURE, CREATURE_REPRESENTATIVE -> CREATURE_META
+    else -> throw UnsupportedOperationException("Unknown creature type $featureType")
+  }
 
   fun getAll(type: String): Sequence<FeatureData> {
     return base
@@ -59,7 +63,7 @@ open class Creature : ContainerData(), Hierarchical<Creature> {
         CREATURE_REPRESENTATIVE
     )
 
-    val META = listOf(
+    val CREATURE_META = listOf(
         FeatureContainerItem().apply {
           name = "Черты"
           featureType = TRAIT
@@ -87,6 +91,14 @@ open class Creature : ContainerData(), Hierarchical<Creature> {
           name = "Силы"
           featureType = Power.POWER
           allowHidden = true
+        }
+    )
+
+    val CREATURE_RACE_META = listOf(
+        FeatureContainerItem().apply {
+          name = "Черты"
+          featureType = TRAIT
+
         }
     )
   }

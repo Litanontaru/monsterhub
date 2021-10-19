@@ -17,7 +17,7 @@ class GameCharacter : Creature() {
   companion object {
     val CHARACTER = "CHARACTER"
 
-    val CHARACTER_META = META + listOf(
+    val CHARACTER_META = CREATURE_META + listOf(
         FeatureContainerItem().apply {
           name = "Фракция"
           featureType = FACTION
