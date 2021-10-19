@@ -26,5 +26,7 @@ interface SettingObjectDataProvider {
 
   fun save(one: SettingObject): SettingObject
 
+  fun groupFactories(): String = ""
+
   fun factories(): List<SettingObjectFactory> = listOf()
 }

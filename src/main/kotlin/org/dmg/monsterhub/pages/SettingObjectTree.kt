@@ -2,6 +2,7 @@ package org.dmg.monsterhub.pages
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.contextmenu.ContextMenu
+import com.vaadin.flow.component.contextmenu.MenuItem
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.icon.Icon
@@ -17,6 +18,7 @@ import org.dmg.monsterhub.pages.edit.form.ChangeDialog
 import org.dmg.monsterhub.repository.SettingRepository
 import org.dmg.monsterhub.service.DependencyAnalyzer
 import org.dmg.monsterhub.service.SettingObjectDataProvider
+import org.dmg.monsterhub.service.SettingObjectFactory
 
 class SettingObjectTree(
     private val data: ObjectTreeDataProvider2,
@@ -92,22 +94,38 @@ class SettingObjectTree(
   }
 
   private fun Component.contextMenu(obj: SettingObjectTreeNode?) {
+    fun addCreateMenu(menuItem: MenuItem, factory: SettingObjectFactory, dataProvider: SettingObjectDataProvider) {
+      menuItem.subMenu.addItem(factory.name) {
+        ChangeDialog("Создать", "") {
+          val new = factory.create().apply {
+            name = it
+            folder = obj?.name ?: ""
+            setting = data.setting!!
+          }
+          dataProvider.save(new)
+        }.open()
+      }
+    }
+
+
     ContextMenu().also {
       if (obj == null || obj.isFolder()) {
         val toAdd = it.addItem("Добавить")
         dataProviders
-            .flatMap { dataProvider -> dataProvider.factories().map { dataProvider to it } }
-            .sortedBy { it.second.name }
-            .forEach { (dataProvider, factory) ->
-              toAdd.subMenu.addItem(factory.name) {
-                ChangeDialog("Создать", "") {
-                  val new = factory.create().apply {
-                    name = it
-                    folder = obj?.name ?: ""
-                    setting = data.setting!!
-                  }
-                  dataProvider.save(new)
-                }.open()
+            .flatMap {
+              when {
+                it.groupFactories().isBlank() -> it.factories().map { factory -> factory.name to listOf(factory) to it }
+                else -> listOf(it.groupFactories() to it.factories().sortedBy { it.name } to it)
+              }
+            }
+            .sortedBy { it.first.first }
+            .forEach { (pair, dataProvider) ->
+              val (name, factories) = pair
+              if (factories.size == 1) {
+                addCreateMenu(toAdd, factories[0], dataProvider)
+              } else {
+                val menuItem = toAdd.subMenu.addItem(name)
+                factories.forEach { addCreateMenu(menuItem, it, dataProvider) }
               }
             }
       }

@@ -2,6 +2,9 @@ package org.dmg.monsterhub.service
 
 import org.dmg.monsterhub.data.Creature
 import org.dmg.monsterhub.data.Creature.Companion.CREATURE
+import org.dmg.monsterhub.data.Creature.Companion.CREATURE_RACE
+import org.dmg.monsterhub.data.Creature.Companion.CREATURE_RACE_TEMPLATE
+import org.dmg.monsterhub.data.Creature.Companion.CREATURE_REPRESENTATIVE
 import org.dmg.monsterhub.data.Creature.Companion.CREATURE_TYPES
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.repository.CreatureRepository
@@ -32,7 +35,11 @@ class CreatureDataProvider(
 
   override fun supportType(type: String) = CREATURE_TYPES.contains(type)
 
-  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory(CREATURE, "Существо") {
-    Creature().apply { featureType = CREATURE }
-  })
+  override fun groupFactories(): String = "Существо"
+
+  override fun factories(): List<SettingObjectFactory> = listOf(
+      SettingObjectFactory(CREATURE_RACE_TEMPLATE, "Шаблон расы") { Creature().apply { featureType = CREATURE_RACE_TEMPLATE } },
+      SettingObjectFactory(CREATURE_RACE, "Раса") { Creature().apply { featureType = CREATURE_RACE } },
+      SettingObjectFactory(CREATURE_REPRESENTATIVE, "Представитель расы") { Creature().apply { featureType = CREATURE_REPRESENTATIVE } }
+  )
 }

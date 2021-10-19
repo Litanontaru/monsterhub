@@ -3,6 +3,7 @@ package org.dmg.monsterhub.pages
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.contextmenu.ContextMenu
+import com.vaadin.flow.component.contextmenu.MenuItem
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.html.Div
@@ -25,10 +26,7 @@ import org.dmg.monsterhub.pages.edit.form.ChangeDialog
 import org.dmg.monsterhub.pages.edit.form.EditPanel
 import org.dmg.monsterhub.pages.edit.form.EditPanelConfig
 import org.dmg.monsterhub.repository.*
-import org.dmg.monsterhub.service.DependencyAnalyzer
-import org.dmg.monsterhub.service.FreeFeatureDataProvider
-import org.dmg.monsterhub.service.SettingService
-import org.dmg.monsterhub.service.TransactionService
+import org.dmg.monsterhub.service.*
 
 
 @Route("setting/:settingId/edit/:objId")
@@ -231,20 +229,35 @@ class SettingView(
   }
 
   private fun Component.contextMenu(obj: SettingObject?) {
+    fun addCreateMenu(menuItem: MenuItem, factory: SettingObjectFactory) {
+      menuItem.subMenu.addItem(factory.name) {
+        ChangeDialog("Создать", "") {
+          data.add(factory.create().apply {
+            this.name = it
+            if (obj is Folder) parent = obj
+          })
+        }.open()
+      }
+    }
+
     ContextMenu().also {
       if (obj == null || obj is Folder) {
         val toAdd = it.addItem("Добавить")
-        data.dataProviders()
-            .flatMap { it.factories().asSequence() }
-            .sortedBy { it.name }
-            .forEach { factory ->
-              toAdd.subMenu.addItem(factory.name) {
-                ChangeDialog("Создать", "") {
-                  data.add(factory.create().apply {
-                    name = it
-                    if (obj is Folder) parent = obj
-                  })
-                }.open()
+        data
+            .dataProviders()
+            .flatMap {
+              when {
+                it.groupFactories().isBlank() -> it.factories().asSequence().map { it.name to listOf(it) }
+                else -> sequenceOf(it.groupFactories() to it.factories().sortedBy { it.name })
+              }
+            }
+            .sortedBy { it.first }
+            .forEach { (name, factories) ->
+              if (factories.size == 1) {
+                addCreateMenu(toAdd, factories[0])
+              } else {
+                val menuItem = toAdd.subMenu.addItem(name)
+                factories.forEach { addCreateMenu(menuItem, it) }
               }
             }
       }
