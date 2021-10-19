@@ -37,9 +37,18 @@ class CreatureDataProvider(
 
   override fun groupFactories(): String = "Существо"
 
-  override fun factories(): List<SettingObjectFactory> = listOf(
-      SettingObjectFactory(CREATURE_RACE_TEMPLATE, "Шаблон расы") { Creature().apply { featureType = CREATURE_RACE_TEMPLATE } },
-      SettingObjectFactory(CREATURE_RACE, "Раса") { Creature().apply { featureType = CREATURE_RACE } },
-      SettingObjectFactory(CREATURE_REPRESENTATIVE, "Представитель расы") { Creature().apply { featureType = CREATURE_REPRESENTATIVE } }
-  )
+  override fun factories(): List<SettingObjectFactory> = CREATURE_FACTORIES
+
+  companion object {
+    val ALL_CREATURE_TYPES = listOf(
+        CREATURE to "Существо (deprecated)",
+        CREATURE_RACE_TEMPLATE to "Шаблон расы",
+        CREATURE_RACE to "Раса",
+        CREATURE_REPRESENTATIVE to "Представитель расы"
+    )
+
+    val CREATURE_FACTORIES = ALL_CREATURE_TYPES
+        .filter { it.first != CREATURE }
+        .map { SettingObjectFactory(it.first, it.second) { Creature().apply { featureType = it.first } } }
+  }
 }
