@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 
 @Service
 object CreatureService {
-  private val BASE = listOf(-33, 0, -39, 0, -50, 0)
+  private val BASE = listOf(-43, 0, -41, 0, -55, 0)
 
   fun superiority(creature: Creature): Superiority {
     val allTraits = creature.getAllTraits()
