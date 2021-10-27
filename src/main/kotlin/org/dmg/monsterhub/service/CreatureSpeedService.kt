@@ -5,10 +5,6 @@ import java.math.BigDecimal
 import java.math.MathContext
 
 object CreatureSpeedService {
-  private val MODS = mapOf(
-      "Водный" to CreatureSpeed("Под водой", BigDecimal("1"))
-  )
-
   private val MODIFIERS = mapOf(
       "Водный" to CreatureSpeed("Под водой", BigDecimal("1"), listOf("Водный")),
       "Галоп" to CreatureSpeed("По земле", BigDecimal("1"), listOf("Галоп")),
