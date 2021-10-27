@@ -27,6 +27,7 @@ object CreatureSpeedService {
 
   fun speed(creature: Creature): List<CreatureSpeed> {
     val size = CreatureService.size(creature)
+    val damageSize = CreatureService.damageSize(creature)
     val partsSize = CreatureService.partsSize(creature)
 
     return creature
@@ -36,7 +37,7 @@ object CreatureSpeedService {
         .groupBy { it.mode }
         .mapValues { it.value.reduce { a, b -> a * b } }
         .values
-        .map { it * SizeProfileService.get(size + it.modifierSize, partsSize + it.modifierSize) }
+        .map { it * SizeProfileService.get(size + it.modifierSize, damageSize + it.modifierSize, partsSize + it.modifierSize) }
   }
 
   data class CreatureSpeed(

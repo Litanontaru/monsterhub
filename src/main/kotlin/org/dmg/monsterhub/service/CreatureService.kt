@@ -96,7 +96,10 @@ object CreatureService {
       ?.toInt()
       ?: 0
 
-  fun sizeProfile(creature: Creature) = SizeProfileService.get(size(creature), partsSize(creature))
+  fun sizeProfile(creature: Creature) = SizeProfileService.get(size(creature), damageSize(creature), partsSize(creature))
+
+  fun damageSize(creature: Creature) = size(creature) +
+      (creature.getAllTraits("Мощь").singleOrNull()?.x?.toInt() ?: 0)
 
   fun physicalSize(creature: Creature): Int = getBasePhysicalSize(creature) +
       creature.getAllTraits("Крупногабаритный", "Крылатый").sumBy { 1 }

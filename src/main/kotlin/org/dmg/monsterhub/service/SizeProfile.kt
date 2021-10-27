@@ -6,6 +6,8 @@ data class SizeProfile(
     val size: Int,
     val damageModifier: Int,
     val destructionModifier: Int,
+    val damageReduction: Int,
+    val destructionReduction: Int,
     val partSizeModifier: BigDecimal,
     val weaponSizeModifier: BigDecimal,
     val speedModifier: BigDecimal,
@@ -22,6 +24,8 @@ data class SizeProfile(
 
     operator fun invoke(row: List<String>) = SizeProfile(
         row[0].toInt(),
+        row[1].toInt(),
+        row[2].toInt(),
         row[1].toInt(),
         row[2].toInt(),
         row[3].toBigDecimal(),

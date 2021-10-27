@@ -13,8 +13,8 @@ object DamageService {
     val naturalArmor = creature.getAllTraits("Естественная защита").take(1).singleOrNull()?.x?.toInt() ?: 0
 
     return DefenceProfile(
-        damageReduction = size.damageModifier,
-        destructionReduction = size.destructionModifier + groupSize * size.powerUpModifier,
+        damageReduction = size.damageReduction,
+        destructionReduction = size.destructionReduction + groupSize * size.powerUpModifier,
 
         strongArmor = naturalArmor + (armor?.strong ?: 0),
         standardArmor = naturalArmor + (armor?.standard ?: 0),
