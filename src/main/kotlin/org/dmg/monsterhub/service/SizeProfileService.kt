@@ -11,21 +11,20 @@ object SizeProfileService {
       .groupBy { it.size }
       .mapValues { it.value.single() }
 
-  fun get(size: Int, damageSize: Int, partsSize: Int): SizeProfile {
+  fun get(size: Int, damageSize: Int, partsSize: Int, speedSize: Int = 0): SizeProfile {
     val bySize = sizeProfiles[size]!!
     val byDamageSize = sizeProfiles[damageSize]!!
-    val byParts = sizeProfiles[partsSize]!!
 
     return SizeProfile(
-        bySize.size,
-        byDamageSize.damageModifier,
-        byDamageSize.destructionModifier,
-        bySize.damageReduction,
-        bySize.destructionReduction,
-        byParts.partSizeModifier,
-        bySize.weaponSizeModifier,
-        byParts.speedModifier,
-        bySize.powerUpModifier
+        size = bySize.size,
+        damageModifier = byDamageSize.damageModifier,
+        destructionModifier = byDamageSize.destructionModifier,
+        damageReduction = bySize.damageReduction,
+        destructionReduction = bySize.destructionReduction,
+        partSizeModifier = sizeProfiles[partsSize]!!.partSizeModifier,
+        weaponSizeModifier = bySize.weaponSizeModifier,
+        speedModifier = sizeProfiles[speedSize]!!.speedModifier,
+        powerUpModifier = bySize.powerUpModifier
     )
   }
 }

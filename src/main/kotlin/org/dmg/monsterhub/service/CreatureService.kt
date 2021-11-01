@@ -96,7 +96,12 @@ object CreatureService {
       ?.toInt()
       ?: 0
 
-  fun sizeProfile(creature: Creature) = SizeProfileService.get(size(creature), damageSize(creature), partsSize(creature))
+  fun sizeProfile(creature: Creature) = SizeProfileService.get(
+      size(creature),
+      damageSize(creature),
+      partsSize(creature),
+      speedSize(creature)
+  )
 
   fun damageSize(creature: Creature) = size(creature) +
       (creature.getAllTraits("Мощь").singleOrNull()?.x?.toInt() ?: 0)
@@ -106,6 +111,8 @@ object CreatureService {
 
   fun partsSize(creature: Creature): Int = getBasePhysicalSize(creature) +
       (creature.getAllTraits("Длинные конечности").singleOrNull()?.x?.toInt() ?: 0)
+
+  fun speedSize(creature: Creature): Int = getBasePhysicalSize(creature)
 
   private fun getBasePhysicalSize(creature: Creature) = size(creature) +
       (creature.getAllTraits("Тяжёлый").singleOrNull()?.let { -1 } ?: 0) +
