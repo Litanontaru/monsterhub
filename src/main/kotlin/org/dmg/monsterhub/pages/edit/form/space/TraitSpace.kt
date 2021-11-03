@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.pages.edit.form.space
 
 import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.textfield.TextField
@@ -51,6 +52,13 @@ object TraitSpace : Space {
 
       width = "100%"
       isPadding = false
+    })
+
+    parent.add(Checkbox("Перекрывающее").apply {
+      value = obj.overriding
+      addValueChangeListener {
+        update(obj) { obj.overriding = it.value }
+      }
     })
 
     return parent

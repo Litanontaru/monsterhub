@@ -12,6 +12,8 @@ class Trait : Feature() {
   var defenceAlt: String? = null
   var commonAlt: String? = null
 
+  var overriding: Boolean = false
+
   fun formulas(context: (String) -> List<BigDecimal>) = sequenceOf(
       base,
       offenceAlt,

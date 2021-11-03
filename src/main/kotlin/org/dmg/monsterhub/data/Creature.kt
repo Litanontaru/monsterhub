@@ -36,7 +36,14 @@ open class Creature : ContainerData(), Hierarchical<Creature> {
       .filter { it.feature.featureType == type }
 
   private fun combine(left: Sequence<FeatureData>, right: Sequence<FeatureData>): Sequence<FeatureData> {
-    val names = left.map { it.feature.name }.toSet()
+    val names = left
+        .filter {
+          when (val feature = it.feature) {
+            is Trait -> feature.overriding
+            else -> false
+          }
+        }
+        .map { it.feature.name }.toSet()
     val groups = left.mapNotNull { it.feature.selectionGroup }.toSet()
 
     return left + right.filter { it.feature.name !in names && (it.feature.selectionGroup !in groups) }
