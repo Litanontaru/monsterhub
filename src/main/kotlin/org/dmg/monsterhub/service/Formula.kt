@@ -86,10 +86,10 @@ class FDiv(private val left: FNode, private val right: FNode) : FNode {
   }
 }
 
-class FMin(private val value: FNode, private val cap: FNode) : FNode {
+class FMin(private val left: FNode, private val right: FNode) : FNode {
   override fun calculate(): List<Decimal> {
-    val vv = value.calculate()
-    val cc = cap.calculate()
+    val vv = left.calculate()
+    val cc = right.calculate()
 
     return vv.flatMap { v ->
       cc.map { c ->
@@ -102,10 +102,10 @@ class FMin(private val value: FNode, private val cap: FNode) : FNode {
   }
 }
 
-class FMax(private val value: FNode, private val cap: FNode) : FNode {
+class FMax(private val left: FNode, private val right: FNode) : FNode {
   override fun calculate(): List<Decimal> {
-    val vv = value.calculate()
-    val cc = cap.calculate()
+    val vv = left.calculate()
+    val cc = right.calculate()
 
     return vv.flatMap { v ->
       cc.map { c ->

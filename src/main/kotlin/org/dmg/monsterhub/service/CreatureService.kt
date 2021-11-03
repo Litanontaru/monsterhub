@@ -30,7 +30,7 @@ object CreatureService {
         .flatMap { it.features.asSequence().filter { it.feature.name == "За происхождение" }.map { it.x.toInt() } }
         .sum()
 
-    val base = values.map { it[0] }.sum() + addedByPower - 141
+    val base = values.map { it[0] }.sum() + addedByPower - 142
     val off = alt(1)
     val def = alt(2)
     val com = alt(3)
