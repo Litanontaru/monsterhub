@@ -3,6 +3,7 @@ package org.dmg.monsterhub.data
 import org.dmg.monsterhub.data.PowerEffect.Companion.POWER_EFFECT
 import org.dmg.monsterhub.data.meta.FeatureContainerItem
 import org.dmg.monsterhub.service.FreeFeatureDataProvider
+import java.math.RoundingMode
 import javax.persistence.Entity
 
 @Entity
@@ -17,7 +18,7 @@ class Power : ContainerData(), SkillLike {
 
   override fun meta(): List<FeatureContainerItem> = META
 
-  override fun rate() = calculator().calculator(this)
+  override fun rate() = calculator().calculator(this).setScale(0, RoundingMode.UP)
 
   companion object {
     const val POWER = "POWER"

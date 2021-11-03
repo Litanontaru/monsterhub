@@ -1,6 +1,7 @@
 package org.dmg.monsterhub.service
 
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 open class Decimal(val value: BigDecimal, val type: DecimalType) : Comparable<Decimal> {
   open operator fun unaryMinus(): Decimal = Decimal(-value, type)
@@ -23,6 +24,8 @@ open class Decimal(val value: BigDecimal, val type: DecimalType) : Comparable<De
   fun toInt(): Int = value.toInt()
 
   fun toBigDecimal() = value
+
+  fun setScale(newScale: Int, roundingMode: RoundingMode): Decimal = Decimal(value.setScale(newScale, roundingMode), type)
 
   companion object {
     val NONE = NoneDecimal(DecimalType.DIGIT)

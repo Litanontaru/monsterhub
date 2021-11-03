@@ -220,7 +220,8 @@ object TreeSpace : Space {
 
       //RATE
       addColumn {
-        it.compactRate()?.takeIf { it.isNotBlank() }
+        val takeIf = it.compactRate()?.takeIf { it.isNotBlank() }
+        takeIf
       }.also {
         it.width = "6em"
         it.flexGrow = 0

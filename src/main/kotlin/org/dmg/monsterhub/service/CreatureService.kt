@@ -1,13 +1,14 @@
 package org.dmg.monsterhub.service
 
-import org.dmg.monsterhub.data.*
+import org.dmg.monsterhub.data.Creature
+import org.dmg.monsterhub.data.Power
 import org.dmg.monsterhub.data.Power.Companion.POWER
+import org.dmg.monsterhub.data.Superiority
+import org.dmg.monsterhub.data.Trait
 import org.springframework.stereotype.Service
 
 @Service
 object CreatureService {
-  private val BASE = listOf(-42, 0, -39, 0, -59, 0)
-
   fun superiority(creature: Creature): Superiority {
     val allTraits = creature.getAllTraits()
 
@@ -20,56 +21,27 @@ object CreatureService {
         }
         .toList()
 
-
-    val evaluated = BASE.withIndex().map {
-      val index = it.index
-      when {
-        index % 2 == 1 ->
-          values.partition { it[index] > 0 }
-              .let { (positive, negative) ->
-                (positive.map { it[index] }.max() ?: 0) + (negative.map { it[index] }.min() ?: 0)
-              }
-        else -> values.map { it[index] }.sum() + it.value
-      }
-    }
+    fun alt(index: Int) =
+        (values.map { it[index] }.filter { it > 0 }.max() ?: 0) +
+            (values.map { it[index] }.filter { it < 0 }.min() ?: 0)
 
     val powers = getTraitPowers(creature) + getPowers(creature)
-
     val addedByPower = powers
-        .map { it.skillType to it.features.filter { it.feature.name == "За происхождение" }.map { it.x } }
-        .filter { it.second.isNotEmpty() }
-        .groupBy { it.first }
-        .mapValues { it.value.flatMap { it.second }.map { it.toInt() }.sum() }
+        .flatMap { it.features.asSequence().filter { it.feature.name == "За происхождение" }.map { it.x.toInt() } }
+        .sum()
 
-    val offence = evaluated[0] + evaluated[1] + addedByPower.getOrDefault(SkillType.OFFENSE, 0)
-    val defence = evaluated[2] + evaluated[3] + addedByPower.getOrDefault(SkillType.DEFENCE, 0)
-    val common = evaluated[4] + evaluated[5] + addedByPower.getOrDefault(SkillType.COMMON, 0)
+    val base = values.map { it[0] }.sum() + addedByPower - 141
+    val off = alt(1)
+    val def = alt(2)
+    val com = alt(3)
 
-    val sortedSuper = arrayOf(offence, defence, common).map { it.toDouble() }.sorted()
+    val traitRate = base + off + def + com
+    val traitLevel = Math.ceil(traitRate / 6.0).toInt()
+    val powerLevel = getPowerSuperiority(creature)
 
-    val one = (sortedSuper[2] + sortedSuper[1]) / 2
-    val another = (2 * sortedSuper[2] + sortedSuper[0]) / 3
-    val sup = Math.max(one, another)
+    val level = powerLevel?.let { Math.max(traitLevel, it) } ?: traitLevel
 
-    val cr = (offence + defence) / 2.0
-
-    val aggregatedSup = getPowerSuperiority(creature)?.let { Math.max(it * 2.0, sup) } ?: sup
-
-    val level = Math.ceil(aggregatedSup / 2).toInt()
-    val skew = (sortedSuper[2] - sup).toInt()
-    val expected = arrayOf(2 * level + skew, 2 * level - skew, 2 * level - 2 * skew)
-
-    return Superiority(
-        level,
-        sup,
-        sortedSuper[2] - sup,
-
-        Math.ceil(cr / 2).toInt(),
-
-        primary(offence, expected),
-        primary(defence, expected),
-        primary(common, expected)
-    )
+    return Superiority(level, level * 6 - traitRate)
   }
 
   private fun getPowerSuperiority(creature: Creature) = (getTraitPowers(creature) + getPowers(creature))
@@ -85,9 +57,6 @@ object CreatureService {
   private fun getPowers(creature: Creature) = creature
       .getAll(POWER)
       .map { it.feature as Power }
-
-  private fun primary(actual: Int, expected: Array<Int>) = PrimaryRate(actual, expected.map { it - actual }.filter { it > 0 }.min()
-      ?: 0)
 
   fun size(creature: Creature) = creature
       .getAllTraits("Размер")

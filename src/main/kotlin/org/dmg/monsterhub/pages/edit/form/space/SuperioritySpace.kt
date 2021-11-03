@@ -15,11 +15,7 @@ object SuperioritySpace : AbstractCreatureSpace {
 
         addContent(VerticalLayout().apply {
           add(Label("Превосходство: ${superiority.value}"))
-          add(Label("Опасность: ${superiority.challengeRating}"))
-
-          add(Label("Нападение: ${superiority.offence.value} ПЧ, (${superiority.offence.under})"))
-          add(Label("Защита: ${superiority.defence.value} ПЧ, (${superiority.defence.under})"))
-          add(Label("Общее: ${superiority.common.value} ПЧ, (${superiority.common.under})"))
+          add(Label("Недобор: ${superiority.underRate}"))
 
           width = "100%"
           isPadding = false
