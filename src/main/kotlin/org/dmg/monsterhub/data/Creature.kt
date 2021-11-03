@@ -52,7 +52,7 @@ open class Creature : ContainerData(), Hierarchical<Creature> {
 
   companion object {
     const val CREATURE = "CREATURE"
-    const val CREATURE_RACE_TEMPLATE = "CREATURE_RACE"
+    const val CREATURE_RACE_TEMPLATE = "CREATURE_RACE_TEMPLATE"
     const val CREATURE_RACE = "CREATURE_RACE"
     const val CREATURE_REPRESENTATIVE = "CREATURE_REPRESENTATIVE"
 

@@ -17,18 +17,41 @@ class TraitRatePage(
   init {
     add(VerticalLayout().apply {
       val grid = Grid<FeatureData>().apply {
-        addColumn { it.display() }
-            .setHeader("Черта")
-        addColumn { it.feature.category }
-            .setHeader("Категория")
-        addColumn { it.feature.let { it as Trait }.base.toFormula(it.context).calculateFinal().takeIf { it.isNotBlank() } }
-            .setHeader("База")
-        addColumn { it.feature.let { it as Trait }.offenceAlt.toFormula(it.context).calculateFinal().takeIf { it.isNotBlank() } }
-            .setHeader("Нападение")
-        addColumn { it.feature.let { it as Trait }.defenceAlt.toFormula(it.context).calculateFinal().takeIf { it.isNotBlank() } }
-            .setHeader("Защита")
-        addColumn { it.feature.let { it as Trait }.commonAlt.toFormula(it.context).calculateFinal().takeIf { it.isNotBlank() } }
-            .setHeader("Общее")
+        addColumn { it.display() }.apply {
+          setHeader("Черта")
+          isAutoWidth = true
+          flexGrow = 2
+          isSortable = true
+        }
+        addColumn { it.feature.category }.apply {
+          setHeader("Категория")
+          isAutoWidth = true
+          isSortable = true
+        }
+        addColumn { it.feature.let { it as Trait }.base.toFormula(it.context).calculateFinal().takeIf { it.isNotBlank() } }.apply {
+          setHeader("База")
+          flexGrow = 0
+          minWidth = "6em"
+          isSortable = true
+        }
+        addColumn { it.feature.let { it as Trait }.offenceAlt.toFormula(it.context).calculateFinal().takeIf { it.isNotBlank() } }.apply {
+          setHeader("Нападение")
+          flexGrow = 0
+          minWidth = "6em"
+          isSortable = true
+        }
+        addColumn { it.feature.let { it as Trait }.defenceAlt.toFormula(it.context).calculateFinal().takeIf { it.isNotBlank() } }.apply {
+          setHeader("Защита")
+          flexGrow = 0
+          minWidth = "6em"
+          isSortable = true
+        }
+        addColumn { it.feature.let { it as Trait }.commonAlt.toFormula(it.context).calculateFinal().takeIf { it.isNotBlank() } }.apply {
+          setHeader("Общее")
+          flexGrow = 0
+          minWidth = "6em"
+          isSortable = true
+        }
 
         val traits = creature.getAllTraits().sortedWith(
             compareBy<FeatureData> { it.feature.category }
