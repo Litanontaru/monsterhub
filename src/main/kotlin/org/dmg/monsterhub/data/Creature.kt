@@ -24,6 +24,8 @@ open class Creature : ContainerData(), Hierarchical<Creature> {
     else -> throw UnsupportedOperationException("Unknown creature type $featureType")
   }
 
+  //--------------------------------------------------------------------------------------------------------------------
+
   fun getAll(type: String): Sequence<FeatureData> {
     return base
         .distinct()
@@ -49,11 +51,41 @@ open class Creature : ContainerData(), Hierarchical<Creature> {
     return left + right.filter { it.feature.name !in names && (it.feature.selectionGroup !in groups) }
   }
 
+  fun getAllWithCreature(type: String): Sequence<Pair<Creature, FeatureData>> {
+    return base
+        .distinct()
+        .map { it.getAllWithCreature(type) }
+        .fold(myWithCreature(type), ::combineWithCreature)
+  }
+
+  private fun myWithCreature(type: String): Sequence<Pair<Creature, FeatureData>> = features
+      .asSequence()
+      .filter { it.feature.featureType == type }
+      .map { this to it }
+
+  private fun combineWithCreature(left: Sequence<Pair<Creature, FeatureData>>, right: Sequence<Pair<Creature, FeatureData>>): Sequence<Pair<Creature, FeatureData>> {
+    val names = left
+        .filter {
+          when (val feature = it.second.feature) {
+            is Trait -> feature.overriding
+            else -> false
+          }
+        }
+        .map { it.second.feature.name }.toSet()
+    val groups = left.mapNotNull { it.second.feature.selectionGroup }.toSet()
+
+    return left + right.filter { it.second.feature.name !in names && (it.second.feature.selectionGroup !in groups) }
+  }
+
+  //--------------------------------------------------------------------------------------------------------------------
+
   fun getAllTraits(): Sequence<FeatureData> = getAll(TRAIT)
 
   fun getAllTraits(category: String, vararg categories: String) = getAllTraits((sequenceOf(category) + categories).toSet())
 
   fun getAllTraits(categories: Set<String>) = getAllTraits().filter { it.feature.category in categories || it.feature.name in categories }
+
+  //--------------------------------------------------------------------------------------------------------------------
 
   override fun rate(): Decimal = CreatureService.superiority(this).value.toBigDecimal().toDecimal()
 

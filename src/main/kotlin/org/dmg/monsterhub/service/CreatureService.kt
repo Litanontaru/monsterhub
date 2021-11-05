@@ -14,34 +14,65 @@ object CreatureService {
 
     val values = allTraits
         .map { data ->
-          (data.feature as Trait)
+          data to (data.feature as Trait)
               .formulas(data.context)
               .map { it.calculateFinal().toInt() }
               .toList()
         }
         .toList()
 
-    fun alt(index: Int) =
-        (values.map { it[index] }.filter { it > 0 }.max() ?: 0) +
-            (values.map { it[index] }.filter { it < 0 }.min() ?: 0)
+    fun max(index: Int) =
+        values
+            .filter { it.second[index] > 0 }
+            .maxBy { it.second[index] }
+            ?.let {
+              val rate = it.second[index]
+              values.filter { it.second[index] == rate }
+                  .map { it.first.display() } to rate
+            }
+            ?: listOf<String>() to 0
+
+    fun min(index: Int) =
+        values
+            .filter { it.second[index] < 0 }
+            .minBy { it.second[index] }
+            ?.let {
+              val rate = it.second[index]
+              values.filter { it.second[index] == rate }
+                  .map { it.first.display() } to rate
+            }
+            ?: listOf<String>() to 0
+
+    fun alt(index: Int) = max(index) to min(index)
 
     val powers = getTraitPowers(creature) + getPowers(creature)
     val addedByPower = powers
         .flatMap { it.features.asSequence().filter { it.feature.name == "За происхождение" }.map { it.x.toInt() } }
         .sum()
 
-    val base = values.map { it[0] }.sum() + addedByPower - 137
+    val base = values.map { it.second[0] }.sum() + addedByPower - 142
     val off = alt(1)
     val def = alt(2)
     val com = alt(3)
 
-    val traitRate = base + off + def + com
+    val traitRate = base + off.first.second + off.second.second + def.first.second + def.second.second + com.first.second + com.second.second
     val traitLevel = Math.ceil(traitRate / 6.0).toInt()
     val powerLevel = getPowerSuperiority(creature)
 
     val level = powerLevel?.let { Math.max(traitLevel, it) } ?: traitLevel
 
-    return Superiority(level, level * 6 - traitRate)
+    return Superiority(
+        level,
+        level * 6 - traitRate,
+
+        base,
+        off.first,
+        off.second,
+        def.first,
+        def.second,
+        com.first,
+        com.second
+    )
   }
 
   private fun getPowerSuperiority(creature: Creature) = (getTraitPowers(creature) + getPowers(creature))

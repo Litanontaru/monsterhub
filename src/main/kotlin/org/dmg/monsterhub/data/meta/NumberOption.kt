@@ -3,14 +3,30 @@ package org.dmg.monsterhub.data.meta
 import org.dmg.isZero
 import java.math.BigDecimal
 
-enum class NumberOption(val displayName: String, val format: (BigDecimal, BigDecimal, BigDecimal) -> Sequence<String>) {
-  NONE("Нет", { _, _, _ -> none() }),
-  POSITIVE("Позитивные", { x, _, _ -> positive(x) }),
-  POSITIVE_AND_INFINITE("Позитивные и бесконечность", { x, _, _ -> positiveAndInfinite(x) }),
-  FREE("Любые целые", { x, _, _ -> free(x) }),
-  DAMAGE("Урон", { x, xa, _ -> damage(x, xa) }),
-  ARMOR("Очки брони", { x, xa, xb -> armor(x, xa, xb) }),
-  IMPORTANCE("Важность", { x, _, _ -> importance(x) });
+enum class NumberOption(
+
+    val displayName: String,
+
+    val format: (BigDecimal, BigDecimal, BigDecimal) -> Sequence<String>,
+
+    val fieldsCount: Int
+
+) {
+  NONE("Нет", { _, _, _ -> none() }, 0),
+  POSITIVE("Позитивные", { x, _, _ -> positive(x) }, 1),
+  POSITIVE_AND_INFINITE("Позитивные и бесконечность", { x, _, _ -> positiveAndInfinite(x) }, 1),
+  FREE("Любые целые", { x, _, _ -> free(x) }, 1),
+  DAMAGE("Урон", { x, xa, _ -> damage(x, xa) }, 2),
+  ARMOR("Очки брони", { x, xa, xb -> armor(x, xa, xb) }, 3),
+  IMPORTANCE("Важность", { x, _, _ -> importance(x) }, 1);
+
+  fun context(x: BigDecimal, xa: BigDecimal, xb: BigDecimal) = when (fieldsCount) {
+    0 -> listOf()
+    1 -> listOf(x)
+    2 -> listOf(x, xa)
+    3 -> listOf(x, xa, xb)
+    else -> throw IllegalArgumentException()
+  }
 
   companion object {
     val IMPORTANCE_OPTIONS = listOf(

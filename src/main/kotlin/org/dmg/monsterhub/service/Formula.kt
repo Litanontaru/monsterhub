@@ -181,11 +181,11 @@ object Formula {
 
   /*@JvmStatic
   fun main(args: Array<String>) {
-    val x = BigDecimal("2.0")
+    val x = listOf(BigDecimal("2.0"))
 
     listOf(
         null,
-        "(x - 3) max 0",
+        "3  * (x max 4) - 12",
         "1",
         "1.0",
         "1 + X",
@@ -201,6 +201,6 @@ object Formula {
         "1 + x|1",
         "1 + (x|10)/10"
     )
-        .forEach { println(it + " = " + it.toFormula { x }.calculate()) }
+        .forEach { println(it + " = " + it.toFormula { x }.calculateFinal()) }
   }*/
 }

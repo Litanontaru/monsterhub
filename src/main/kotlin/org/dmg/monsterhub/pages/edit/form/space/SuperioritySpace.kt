@@ -18,6 +18,17 @@ object SuperioritySpace : AbstractCreatureSpace {
         addContent(VerticalLayout().apply {
           add(Label("Превосходство: ${superiority.value}"))
           add(Label("Недобор: ${superiority.underRate}"))
+          add(Label("База: ${superiority.base}"))
+
+          add(Label("Нападение бонус: ${superiority.offMax.second} : ${superiority.offMax.first.joinToString()}"))
+          add(Label("Нападение штраф: ${superiority.offMin.second} : ${superiority.offMin.first.joinToString()}"))
+
+          add(Label("Защита бонус: ${superiority.defMax.second} : ${superiority.defMax.first.joinToString()}"))
+          add(Label("Защита штраф: ${superiority.defMin.second} : ${superiority.defMin.first.joinToString()}"))
+
+          add(Label("Общее бонус: ${superiority.comMax.second} : ${superiority.comMax.first.joinToString()}"))
+          add(Label("Общее штраф: ${superiority.comMin.second} : ${superiority.comMin.first.joinToString()}"))
+
           add(Button("Детали") {
             TraitRatePage(obj).open()
           })

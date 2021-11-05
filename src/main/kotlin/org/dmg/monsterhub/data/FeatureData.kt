@@ -83,9 +83,9 @@ class FeatureData : DBObject(), FeatureContainerData {
   @Transient
   val context: (String) -> List<BigDecimal> = {
     when (it) {
-      "X" -> listOf(x, xa, xb)
-      "Y" -> listOf(y, ya, yb)
-      "Z" -> listOf(z, za, zb)
+      "X" -> feature.x.context(x, xa, xb)
+      "Y" -> feature.y.context(y, ya, yb)
+      "Z" -> feature.z.context(z, za, zb)
       "Н" -> listOf(skillRate(SkillType.OFFENSE))
       "З" -> listOf(skillRate(SkillType.DEFENCE))
       "О" -> listOf(skillRate(SkillType.COMMON))
