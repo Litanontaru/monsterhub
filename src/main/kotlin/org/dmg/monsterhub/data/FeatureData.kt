@@ -86,6 +86,7 @@ class FeatureData : DBObject(), FeatureContainerData {
       "X" -> feature.x.context(x, xa, xb)
       "Y" -> feature.y.context(y, ya, yb)
       "Z" -> feature.z.context(z, za, zb)
+      "C" -> features.map { it.rate().toBigDecimal() }
       "Н" -> listOf(skillRate(SkillType.OFFENSE))
       "З" -> listOf(skillRate(SkillType.DEFENCE))
       "О" -> listOf(skillRate(SkillType.COMMON))
@@ -109,7 +110,4 @@ class FeatureData : DBObject(), FeatureContainerData {
       ?.skillType
 
   fun rate(): Decimal = feature.rate.toFormula(context).calculateFinal()
-  /*features
-  .map { it.rate() }
-  .fold() { a, b -> a + b }*/
 }
