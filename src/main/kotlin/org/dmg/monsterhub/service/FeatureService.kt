@@ -25,11 +25,6 @@ class FeatureService(
     else -> featureRepository.countFeatureBySettingAndFolderAndNameContainingAndHiddenFalse(setting, folder, filter)
   }
 
-  fun features(setting: Setting, folder: String, filter: String) = when {
-    filter.isBlank() -> featureRepository.featureBySettingAndFolder(setting, folder)
-    else -> featureRepository.featureBySettingAndFolder(setting, folder, filter)
-  }
-
   fun hide(id: Long) {
     featureRepository.hide(id)
   }
