@@ -81,7 +81,7 @@ class SettingView(
       val leftPanel = VerticalLayout().apply {
         val filter = TextField().apply {
           addValueChangeListener {
-            dataWithFilter.setFilter(it.value)
+            dataWithFilter.setFilter(SettingObjectTreeFilter(it.value))
           }
           width = "100%"
         }

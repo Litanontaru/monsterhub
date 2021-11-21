@@ -22,7 +22,7 @@ class ObjectTreeDataProviderService(
 class ObjectTreeDataProvider(
     private val setting: Setting,
     private val dataProviders: List<SettingObjectDataProvider>
-) : AbstractBackEndHierarchicalDataProvider<SettingObject, String>(), ObjectManagerService {
+) : AbstractBackEndHierarchicalDataProvider<SettingObject, SettingObjectTreeFilter>(), ObjectManagerService {
 
   var onAdd: ((SettingObject) -> Unit)? = null
 
@@ -33,10 +33,10 @@ class ObjectTreeDataProvider(
     else -> false
   }
 
-  override fun fetchChildrenFromBackEnd(query: HierarchicalQuery<SettingObject, String>?): Stream<SettingObject> {
+  override fun fetchChildrenFromBackEnd(query: HierarchicalQuery<SettingObject, SettingObjectTreeFilter>?): Stream<SettingObject> {
     val let = query?.parent?.let { it as Folder }
         .let { parent ->
-          val search = query?.filter?.orElse("") ?: ""
+          val search = query?.filter?.map { it.filterValue }?.orElse("") ?: ""
           dataProviders
               .flatMap { it.getChildrenAlikeBySetting(parent, search, setting) }
               .sortedWith(COMPARATOR)
@@ -46,10 +46,10 @@ class ObjectTreeDataProvider(
         .stream()
   }
 
-  override fun getChildCount(query: HierarchicalQuery<SettingObject, String>?) =
+  override fun getChildCount(query: HierarchicalQuery<SettingObject, SettingObjectTreeFilter>?) =
       query?.parent?.let { it as Folder }
           .let { parent ->
-            val search = query?.filter?.orElse("") ?: ""
+            val search = query?.filter?.map { it.filterValue }?.orElse("") ?: ""
             dataProviders.sumBy { it.countChildrenAlikeBySetting(parent, search, setting) }
           }
 
