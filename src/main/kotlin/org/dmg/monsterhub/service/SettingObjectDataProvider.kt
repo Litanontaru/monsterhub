@@ -3,6 +3,7 @@ package org.dmg.monsterhub.service
 import org.dmg.monsterhub.data.setting.Folder
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
+import org.dmg.monsterhub.pages.SettingObjectTreeFilter
 import org.springframework.data.domain.Pageable
 
 interface SettingObjectDataProvider {
@@ -10,9 +11,9 @@ interface SettingObjectDataProvider {
 
   fun getById(id: Long): SettingObject?
 
-  fun getChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting): List<SettingObject>
+  fun getChildrenAlikeBySetting(parent: Folder?, filter: SettingObjectTreeFilter, setting: Setting): List<SettingObject>
 
-  fun countChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting): Int
+  fun countChildrenAlikeBySetting(parent: Folder?, filter: SettingObjectTreeFilter, setting: Setting): Int
 
   fun hasChildrenAlikeBySetting(parent: Folder?, setting: Setting): Boolean
 

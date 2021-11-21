@@ -3,6 +3,7 @@ package org.dmg.monsterhub.service
 import org.dmg.monsterhub.data.setting.Folder
 import org.dmg.monsterhub.data.setting.Folder.Companion.FOLDER
 import org.dmg.monsterhub.data.setting.Setting
+import org.dmg.monsterhub.pages.SettingObjectTreeFilter
 import org.dmg.monsterhub.repository.FolderRepository
 import org.springframework.stereotype.Service
 
@@ -15,20 +16,21 @@ class FolderDataProvider(
     Folder().apply { featureType = FOLDER }
   })
 
-  override fun getChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting) =
+  override fun getChildrenAlikeBySetting(parent: Folder?, filter: SettingObjectTreeFilter, setting: Setting) =
       when {
-        search.isBlank() -> parent
+        filter.hasFilter() -> listOf()
+        else -> parent
             ?.let { repository.findAllByParentAndHiddenFalse(it) }
             ?: run { repository.findAllBySettingAndParentIsNullAndHiddenFalse(setting) }
-        else -> listOf()
       }
 
 
-  override fun countChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting) =
+  override fun countChildrenAlikeBySetting(parent: Folder?, filter: SettingObjectTreeFilter, setting: Setting) =
       when {
-        search.isBlank() -> parent
+        filter.hasFilter() -> 0
+        else -> parent
             ?.let { repository.countByParentAndHiddenFalse(it) }
             ?: run { repository.countBySettingAndParentIsNullAndHiddenFalse(setting) }
-        else -> 0
+
       }
 }

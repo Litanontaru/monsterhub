@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.treegrid.TreeGrid
+import com.vaadin.flow.data.provider.hierarchy.HierarchicalConfigurableFilterDataProvider
 import com.vaadin.flow.router.*
 import org.dmg.monsterhub.data.setting.Folder
 import org.dmg.monsterhub.data.setting.Setting
@@ -50,6 +51,7 @@ class SettingView(
   private var initialized = false
   private lateinit var setting: Setting
   private lateinit var data: ObjectTreeDataProvider
+  private lateinit var dataWithFilter: HierarchicalConfigurableFilterDataProvider<SettingObject, Void, SettingObjectTreeFilter>
 
   private lateinit var tree: TreeGrid<SettingObject>
   private var selectedObjId: Long? = null
@@ -69,7 +71,7 @@ class SettingView(
       setting = settingService.get(settingId)
 
       data = objectDataProviderService(setting)
-      val dataWithFilter = data.withConfigurableFilter()
+      dataWithFilter = data.withConfigurableFilter()
 
       rightPanel = VerticalLayout().apply {
         height = "100%"
@@ -81,7 +83,7 @@ class SettingView(
       val leftPanel = VerticalLayout().apply {
         val filter = TextField().apply {
           addValueChangeListener {
-            dataWithFilter.setFilter(SettingObjectTreeFilter(it.value))
+            dataWithFilter.setFilter(SettingObjectTreeFilter(filterValue = it.value))
           }
           width = "100%"
         }
@@ -328,6 +330,10 @@ class SettingView(
               }
             }
           }.open()
+        }
+
+        it.addItem("Найти использование") {
+          dataWithFilter.setFilter(SettingObjectTreeFilter(findUsages = obj))
         }
       }
 

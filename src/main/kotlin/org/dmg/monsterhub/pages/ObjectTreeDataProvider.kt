@@ -5,6 +5,7 @@ import com.vaadin.flow.data.provider.hierarchy.HierarchicalQuery
 import org.dmg.monsterhub.data.setting.Folder
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
+import org.dmg.monsterhub.pages.SettingObjectTreeFilter.Companion.EMPTY_FILTER
 import org.dmg.monsterhub.service.ObjectManagerService
 import org.dmg.monsterhub.service.SettingObjectDataProvider
 import org.springframework.stereotype.Service
@@ -36,9 +37,9 @@ class ObjectTreeDataProvider(
   override fun fetchChildrenFromBackEnd(query: HierarchicalQuery<SettingObject, SettingObjectTreeFilter>?): Stream<SettingObject> {
     val let = query?.parent?.let { it as Folder }
         .let { parent ->
-          val search = query?.filter?.map { it.filterValue }?.orElse("") ?: ""
+          val filterValue = query?.filter?.orElse(EMPTY_FILTER) ?: EMPTY_FILTER
           dataProviders
-              .flatMap { it.getChildrenAlikeBySetting(parent, search, setting) }
+              .flatMap { it.getChildrenAlikeBySetting(parent, filterValue, setting) }
               .sortedWith(COMPARATOR)
               .distinct()
         }
@@ -49,14 +50,14 @@ class ObjectTreeDataProvider(
   override fun getChildCount(query: HierarchicalQuery<SettingObject, SettingObjectTreeFilter>?) =
       query?.parent?.let { it as Folder }
           .let { parent ->
-            val search = query?.filter?.map { it.filterValue }?.orElse("") ?: ""
-            dataProviders.sumBy { it.countChildrenAlikeBySetting(parent, search, setting) }
+            val filterValue = query?.filter?.orElse(EMPTY_FILTER) ?: EMPTY_FILTER
+            dataProviders.sumBy { it.countChildrenAlikeBySetting(parent, filterValue, setting) }
           }
 
   fun firstFolder(parent: Folder?, search: String): Folder? =
       dataProviders
           .first { it.supportType("FOLDER") }
-          .getChildrenAlikeBySetting(parent, "", setting)
+          .getChildrenAlikeBySetting(parent, EMPTY_FILTER, setting)
           .filter { it.name == search }
           .take(1)
           .map { it as Folder }

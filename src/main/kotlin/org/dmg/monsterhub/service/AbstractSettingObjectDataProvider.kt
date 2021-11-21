@@ -3,6 +3,7 @@ package org.dmg.monsterhub.service
 import org.dmg.monsterhub.data.setting.Folder
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
+import org.dmg.monsterhub.pages.SettingObjectTreeFilter
 import org.dmg.monsterhub.repository.SettingObjectRepository
 import org.dmg.monsterhub.repository.update
 import org.springframework.data.domain.Pageable
@@ -14,21 +15,23 @@ abstract class AbstractSettingObjectDataProvider<T : SettingObject>(
 
   override fun getById(id: Long): SettingObject? = repository.findByIdOrNull(id)
 
-  override fun getChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting) =
+  override fun getChildrenAlikeBySetting(parent: Folder?, filter: SettingObjectTreeFilter, setting: Setting) =
       when {
-        search.isBlank() -> parent
+        filter.hasFilter() -> repository.findAllBySettingAndNameContainingAndHiddenFalse(setting, filter.filterValue())
+        filter.hasFindUsages() -> TODO()
+        else -> parent
             ?.let { repository.findAllByParentAndHiddenFalse(it) }
             ?: run { repository.findAllBySettingAndParentIsNullAndHiddenFalse(setting) }
-        else -> repository.findAllBySettingAndNameContainingAndHiddenFalse(setting, search)
       }
 
 
-  override fun countChildrenAlikeBySetting(parent: Folder?, search: String, setting: Setting) =
+  override fun countChildrenAlikeBySetting(parent: Folder?, filter: SettingObjectTreeFilter, setting: Setting) =
       when {
-        search.isBlank() -> parent
+        filter.hasFilter() -> repository.countBySettingAndNameContainingAndHiddenFalse(setting, filter.filterValue())
+        filter.hasFindUsages() -> TODO()
+        else -> parent
             ?.let { repository.countByParentAndHiddenFalse(it) }
             ?: run { repository.countBySettingAndParentIsNullAndHiddenFalse(setting) }
-        else -> repository.countBySettingAndNameContainingAndHiddenFalse(setting, search)
       }
 
   override fun hasChildrenAlikeBySetting(parent: Folder?, setting: Setting) =
