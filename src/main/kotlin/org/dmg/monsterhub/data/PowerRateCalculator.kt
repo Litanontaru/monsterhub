@@ -8,7 +8,8 @@ import java.math.BigDecimal
 enum class PowerRateCalculator(val display: String, val calculator: (Power) -> Decimal) {
   STANDARD("Обычный", { it.standardRate() }),
   ACQUISITION("Приобретение", { it.acquisitionRate() }),
-  COMPOSITION("Совмещение", { it.compositionRate() })
+  COMPOSITION("Совмещение", { it.compositionRate() }),
+  ALT("Альтернатива", { it.alternativeRate() })
 }
 
 private fun Power.standardRate() = (effect() * multiplier() - compensation()).toDecimal()
@@ -36,6 +37,17 @@ private fun Power.compositionRate(): Decimal {
     }
     sum += addition
   }
+}
+
+private fun Power.alternativeRate(): Decimal {
+  val compensation = compensation()
+  val rates = minorRates().map { it.value }
+
+  return rates.maxBy { it }
+      ?.let {
+        (it + rates.size.toBigDecimal() - BigDecimal.ONE - compensation).toDecimal()
+      }
+      ?: -compensation.toDecimal()
 }
 
 private fun Power.multiplier() = features
