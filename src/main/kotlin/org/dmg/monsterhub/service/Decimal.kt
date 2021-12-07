@@ -56,6 +56,7 @@ enum class DecimalType(val value: String, val display: (BigDecimal) -> String) {
   DIGIT("", { it.toInt().toString() }),
   PE("ПЭ", { it.toInt().toString() + " ПЭ" }),
   PC("ПК", { it.toInt().toString() + " ПК" }),
+  PS("ПС", { it.toInt().toString() + " ПС" }),
   MULT("×", { "× " + it.toString() });
 
   infix fun display(digit: BigDecimal): String = display.invoke(digit)

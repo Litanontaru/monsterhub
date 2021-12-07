@@ -12,10 +12,10 @@ enum class PowerRateCalculator(val display: String, val calculator: (Power) -> D
   ALT("Альтернатива", { it.alternativeRate() })
 }
 
-private fun Power.standardRate() = (effect() * multiplier() - compensation()).toDecimal()
+private fun Power.standardRate() = (power() + effect() * multiplier() - compensation()).toDecimal()
 
 private fun Power.acquisitionRate() = (
-    6.toBigDecimal() + effect() +
+    6.toBigDecimal() + power() + effect() +
         (minorRates().singleOrNull()?.value ?: BigDecimal.ZERO) -
         (compensation() / multiplier())
     ).toDecimal()
@@ -65,6 +65,12 @@ private fun Power.compensation() = features
 private fun Power.effect() = features
     .map { it.rate() }
     .filter { it.type == DecimalType.PE }
+    .map { it.value }
+    .fold(BigDecimal.ZERO) { a, b -> a + b }
+
+private fun Power.power() = features
+    .map { it.rate() }
+    .filter { it.type == DecimalType.PS }
     .map { it.value }
     .fold(BigDecimal.ZERO) { a, b -> a + b }
 
