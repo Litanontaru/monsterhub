@@ -18,6 +18,8 @@ import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.treegrid.TreeGrid
 import com.vaadin.flow.data.provider.hierarchy.HierarchicalConfigurableFilterDataProvider
 import com.vaadin.flow.router.*
+import org.dmg.monsterhub.api.TreeObjectController
+import org.dmg.monsterhub.api.TreeObjectDictionary
 import org.dmg.monsterhub.data.setting.Folder
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.data.setting.SettingObject
@@ -44,7 +46,9 @@ class SettingView(
     private val settingRepository: SettingRepository,
     private val freeFeatureDataProvider: FreeFeatureDataProvider,
     private val dependencyAnalyzer: DependencyAnalyzer,
-    private val transactionService: TransactionService
+    private val transactionService: TransactionService,
+    private val treeObjectController: TreeObjectController,
+    private val treeObjectDictionary: TreeObjectDictionary
 ) : Div(), BeforeEnterObserver, HasDynamicTitle {
   private val config: EditPanelConfig = EditPanelConfig("Конфигурация")
 
@@ -197,6 +201,8 @@ class SettingView(
             settingRepository,
             freeFeatureDataProvider,
             transactionService,
+            treeObjectController,
+            treeObjectDictionary,
 
             config
         ).also { it.refreshSettings() }

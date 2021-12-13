@@ -2,6 +2,7 @@ package org.dmg.monsterhub.repository
 
 import org.dmg.monsterhub.data.meta.Feature
 import org.dmg.monsterhub.data.setting.Setting
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
@@ -32,4 +33,12 @@ interface FeatureRepository : JpaRepository<Feature, Long> {
   @Modifying
   @Query("UPDATE Feature f SET f.setting = :setting WHERE f.id = :id")
   fun move(id: Long, setting: Setting)
+
+  fun findAllByFeatureTypeAndSetting_IdInAndHiddenFalse(featureType: String, settings: List<Long>, pageable: Pageable): List<Feature>
+
+  fun countAllByFeatureTypeAndSetting_IdInAndHiddenFalse(featureType: String, settings: List<Long>): Int
+
+  fun findAllByFeatureTypeAndNameContainingAndSetting_IdInAndHiddenFalse(featureType: String, name: String, settings: List<Long>, pageable: Pageable): List<Feature>
+
+  fun countAllByFeatureTypeAndNameContainingAndSetting_IdInAndHiddenFalse(featureType: String, name: String, settings: List<Long>): Int
 }

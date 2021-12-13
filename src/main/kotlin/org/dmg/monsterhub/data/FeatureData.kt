@@ -24,6 +24,14 @@ class FeatureData : DBObject(), FeatureContainerData {
   var za: BigDecimal = BigDecimal.ZERO
   var zb: BigDecimal = BigDecimal.ZERO
 
+  @ManyToOne
+  @JoinColumn(name = "feature_container_id")
+  var containerData: ContainerData? = null
+
+  @ManyToOne
+  @JoinColumn(name = "main_feature_id")
+  var mainFeature: FeatureData? = null
+
   @OneToMany(orphanRemoval = true)
   @JoinColumn(name = "feature_data_id")
   var designations: MutableList<FeatureDataDesignation> = mutableListOf()

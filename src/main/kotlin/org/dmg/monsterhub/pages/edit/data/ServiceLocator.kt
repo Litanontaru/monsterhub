@@ -1,5 +1,7 @@
 package org.dmg.monsterhub.pages.edit.data
 
+import org.dmg.monsterhub.api.TreeObjectController
+import org.dmg.monsterhub.api.TreeObjectDictionary
 import org.dmg.monsterhub.data.setting.Setting
 import org.dmg.monsterhub.pages.edit.form.EditPanelConfig
 import org.dmg.monsterhub.repository.*
@@ -21,6 +23,8 @@ data class ServiceLocator(
     val settingRepository: SettingRepository,
     val freeFeatureDataProvider: FreeFeatureDataProvider,
     val transactionService: TransactionService,
+    val treeObjectController: TreeObjectController,
+    val treeObjectDictionary: TreeObjectDictionary,
 
     val config: EditPanelConfig
 ) {

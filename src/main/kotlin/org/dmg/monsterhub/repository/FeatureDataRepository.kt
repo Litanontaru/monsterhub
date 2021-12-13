@@ -15,6 +15,10 @@ interface FeatureDataRepository : DBObjectRepository<FeatureData> {
       nativeQuery = true
   )
   fun findAllByFeatureData(featureDataId: Long): List<FeatureDataContainer>
+
+  fun findAllByContainerData_IdAndFeature_FeatureType(containerData_id: Long, feature_featureType: String): List<FeatureData>
+
+  fun findAllByMainFeature_IdAndFeature_FeatureType(mainFeature_id: Long, feature_featureType: String): List<FeatureData>
 }
 
 interface FeatureDataContainer {
