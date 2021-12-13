@@ -23,23 +23,25 @@ class TreeObjectService(
 
   fun ContainerData.toTreeObject() = TreeObject(
       id,
-      name,
-      Decimal.NONE,
-      { Decimal.NONE },
+      "",
+      rate(),
+      { rate() },
       TreeObjectType.FEATURE_OBJECT,
       getAttributes(
           get = { featureDataRepository.findAllByContainerData_IdAndFeature_FeatureType(id, it) },
           add = { obj -> controller.addFeatureDataFromContainerData(id, obj.id) },
           remove = { obj -> controller.removeFeatureDataFromContainerData(id, obj.id) },
           replace = { obj -> controller.replaceFeatureDataFromContainerData(id, obj.id) }
-      )
+      ),
+      primitive = mutableListOf(name),
+      setPrimitive = { _, value -> controller.setFeatureName(id, (value as String?) ?: "") }
   )
 
   private fun FeatureData.toTreeObject() = TreeObject(
-      this.id,
-      this.feature.name,
-      Decimal.NONE,
-      { Decimal.NONE },
+      id,
+      if (feature is ContainerData) "" else feature.name,
+      rate(),
+      { rate() },
       TreeObjectType.FEATURE_DATA,
       getFeatureAttributes()
   )
@@ -135,14 +137,19 @@ class TreeObjectService(
     creatureRepository.getById(creatureId).base.removeIf { it.id == baseId }
   }
 
+  fun setFeatureName(id: Long, name: String) {
+    containerDataRepository.getById(id).name = name
+  }
+
   //--------------------------------------------------------------------------------------------------------------------
 
   private fun FeatureData.getFeatureAttributes(): List<TreeObjectAttribute> {
     val list = mutableListOf<TreeObjectAttribute>()
     if (feature is ContainerData) {
-      val obj = (feature as ContainerData).toTreeObject()
+      val data = feature as ContainerData
+      val obj = data.toTreeObject()
       list += TreeObjectAttribute(
-          name = feature.name,
+          name = "",
           type = TreeObjectType.FEATURE,
           get = { listOf(obj) }
       )

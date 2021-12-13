@@ -78,6 +78,12 @@ class TreeObjectNode(
   override fun count() = obj.attributes.size
 
   override fun canCompact() = count() == 1
+
+  override fun value(): MutableList<Any?> = obj.primitive
+
+  override fun setValue(index: Int, new: Any?) {
+    obj.setPrimitive(index, new)
+  }
 }
 
 class TerminalTreeObjectAttributeNode(

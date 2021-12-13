@@ -10,7 +10,9 @@ class TreeObject(
     val read: () -> Decimal,
 
     val type: TreeObjectType,
-    val attributes: List<TreeObjectAttribute>
+    val attributes: List<TreeObjectAttribute>,
+    val primitive: MutableList<Any?> = mutableListOf(),
+    val setPrimitive: (Int, Any?) -> Unit = { _, _ -> throw UnsupportedOperationException() }
 ) {
   fun readRate() = read().also { rate = it }
 }

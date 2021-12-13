@@ -84,6 +84,12 @@ object TreeSpace2 : Space {
       }.also {
         it.isAutoWidth = true
       }
+      addColumn {
+        it.compacted().mapNotNull { it.rate() }.find { it.isNotBlank() }
+      }.also {
+        it.width = "6em"
+        it.flexGrow = 0
+      }
 
       setDataProvider(dataProvider)
 
@@ -114,7 +120,7 @@ object Actions {
     is TerminalTreeObjectAttributeNode -> ACTIONS[node.type]!!(node)
     is NonTerminalTreeObjectAttributeNode -> ACTIONS[node.type]!!(node)
     is TreeObjectNode -> when (node.obj.type) {
-      TreeObjectType.FEATURE_OBJECT -> EditableLayout()
+      TreeObjectType.FEATURE_OBJECT -> LineActions(node)
       TreeObjectType.FEATURE_DATA -> FeatureDataActions(node)
       else -> throw IllegalArgumentException()
     }
@@ -128,6 +134,11 @@ open class EditableLayout : HorizontalLayout() {
     set(new) {
       changeEditing(new)
     }
+
+  init {
+    isSpacing = false
+    isPadding = false
+  }
 
   open fun changeEditing(new: Boolean) {}
 }

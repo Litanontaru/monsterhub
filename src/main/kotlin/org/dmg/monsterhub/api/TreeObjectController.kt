@@ -52,4 +52,8 @@ class TreeObjectController {
   fun removeBaseCreature(baseId: Long, creatureId: Long) {
     service.removeBaseCreature(baseId, creatureId)
   }
+
+  fun setFeatureName(id: Long, name: String) {
+    service.setFeatureName(id, name)
+  }
 }
