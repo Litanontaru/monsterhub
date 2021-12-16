@@ -4,6 +4,7 @@ import org.dmg.monsterhub.data.*
 import org.dmg.monsterhub.data.meta.NumberOption
 import org.dmg.monsterhub.repository.*
 import org.dmg.monsterhub.service.Decimal
+import org.dmg.monsterhub.service.sum
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
@@ -210,7 +211,9 @@ class TreeObjectService(
           canCreate = it.allowHidden,
           add = add,
           remove = remove,
-          replace = replace
+          replace = replace,
+          rate = this.features.filter { f -> f.feature.featureType == it.featureType }.map { it.rate() }.sum(),
+          read = { get(it.featureType).map { it.rate() }.sum() }
       )
     }
   }

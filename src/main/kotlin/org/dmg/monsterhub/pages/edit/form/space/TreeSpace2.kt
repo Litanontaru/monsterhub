@@ -73,6 +73,7 @@ object TreeSpace2 : Space {
                     .also {
                       it.locator = locator
                       it.editing = item == selectedItem
+                      it.refreshItem = { item, refreshChildren -> dataProvider.refreshItem(item, refreshChildren) }
                     }
                 listOf<Component>(Label(text), actions)
               }
@@ -92,6 +93,7 @@ object TreeSpace2 : Space {
       }
 
       setDataProvider(dataProvider)
+      this.expand(dataProvider.root.last().children())
 
       width = "100%"
       isHeightByRows = true
@@ -134,6 +136,7 @@ open class EditableLayout : HorizontalLayout() {
     set(new) {
       changeEditing(new)
     }
+  lateinit var refreshItem: (TreeNode, Boolean) -> Unit
 
   init {
     isSpacing = false
@@ -448,6 +451,7 @@ class RefActions(private val item: TreeNode) : EditableLayout() {
     addButton = Button(Icon(VaadinIcon.PLUS)) {
       TreeObjectOptionSelection(locator.treeObjectDictionary, item.dictionary(), locator.settings.map { it.id }, null) {
         item.add(it)
+        refreshItem(item, true)
       }.open()
     }
     addButton.isVisible = false
@@ -455,6 +459,7 @@ class RefActions(private val item: TreeNode) : EditableLayout() {
     createButton = Button(Icon(VaadinIcon.MAGIC)) {
       val new = locator.treeObjectDictionary.create(item.dictionary(), locator.setting.id)
       item.add(new)
+      refreshItem(item, true)
     }
     createButton.isVisible = false
 
@@ -473,6 +478,7 @@ class FeatureDataActions(private val item: TreeNode) : EditableLayout() {
   init {
     removeButton = Button(Icon(VaadinIcon.CLOSE)) {
       item.parent!!.remove(item)
+      refreshItem(item.parent, true)
     }
 
     removeButton.isVisible = false

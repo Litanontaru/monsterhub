@@ -35,8 +35,13 @@ class TreeObjectAttribute(
     val canCreate: Boolean = false,
     val add: (TreeObjectOption) -> TreeObject = { _ -> throw UnsupportedOperationException() },
     val remove: (TreeObject) -> Unit = { _ -> throw UnsupportedOperationException() },
-    val replace: (TreeObjectOption) -> TreeObject = { _ -> throw UnsupportedOperationException() }
-)
+    val replace: (TreeObjectOption) -> TreeObject = { _ -> throw UnsupportedOperationException() },
+
+    var rate: Decimal = Decimal.NONE,
+    val read: () -> Decimal = { Decimal.NONE }
+) {
+  fun readRate() = read().also { rate = it }
+}
 
 enum class TreeObjectType(val terminal: Boolean) {
   POSITIVE(true),

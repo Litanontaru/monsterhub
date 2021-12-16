@@ -16,6 +16,7 @@ abstract class TreeNode(
   abstract fun children(): List<TreeNode>
   abstract fun count(): Int
   abstract fun canCompact(): Boolean
+  abstract fun hasData(): Boolean
 
   open fun add(option: TreeObjectOption) {
     throw UnsupportedOperationException()
@@ -79,6 +80,8 @@ class TreeObjectNode(
 
   override fun canCompact() = count() == 1
 
+  override fun hasData(): Boolean = true
+
   override fun value(): MutableList<Any?> = obj.primitive
 
   override fun setValue(index: Int, new: Any?) {
@@ -104,6 +107,8 @@ class TerminalTreeObjectAttributeNode(
 
   override fun canCompact() = false
 
+  override fun hasData(): Boolean = true
+
   override fun value(): MutableList<Any?> = attribute.primitive
 
   override fun setValue(index: Int, new: Any?) {
@@ -121,7 +126,7 @@ class NonTerminalTreeObjectAttributeNode(
 
   override fun name() = attribute.name
 
-  override fun rate(): Decimal? = null
+  override fun rate(): Decimal? = attribute.rate
 
   override fun hasChildren() = data.isNotEmpty()
 
@@ -130,6 +135,8 @@ class NonTerminalTreeObjectAttributeNode(
   override fun count() = data.size
 
   override fun canCompact() = attribute.type != TreeObjectType.MULTIPLE_REF && count() == 1
+
+  override fun hasData(): Boolean = data.isNotEmpty()
 
   override fun add(option: TreeObjectOption) {
     data = data + attribute.add(option)

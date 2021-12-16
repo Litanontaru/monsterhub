@@ -52,6 +52,8 @@ fun BigDecimal.toDecimal(): Decimal = Decimal(this, DecimalType.DIGIT)
 
 fun Int.toDecimal(): Decimal = this.toBigDecimal().toDecimal()
 
+fun Iterable<Decimal>.sum() = fold<Decimal, Decimal>(Decimal.NONE, { a, b -> a + b })
+
 enum class DecimalType(val value: String, val display: (BigDecimal) -> String) {
   DIGIT("", { it.toInt().toString() }),
   PE("ПЭ", { it.toInt().toString() + " ПЭ" }),
