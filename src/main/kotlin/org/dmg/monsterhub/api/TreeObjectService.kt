@@ -30,6 +30,7 @@ class TreeObjectService(
       TreeObjectType.FEATURE_OBJECT,
       getAttributes(
           get = { featureDataRepository.findAllByContainerData_IdAndFeature_FeatureType(id, it) },
+          isEmpty = { !featureDataRepository.existsByContainerData_IdAndFeature_FeatureType(id, it) },
           add = { obj -> controller.addFeatureDataFromContainerData(id, obj.id) },
           remove = { obj -> controller.removeFeatureDataFromContainerData(id, obj.id) },
           replace = { obj -> controller.replaceFeatureDataFromContainerData(id, obj.id) }
@@ -190,6 +191,7 @@ class TreeObjectService(
     }
     return list + getFeatureContainerDataAttributes(
         get = { featureDataRepository.findAllByMainFeature_IdAndFeature_FeatureType(id, it) },
+        isEmpty = { !featureDataRepository.existsByMainFeature_IdAndFeature_FeatureType(id, it) },
         add = { obj -> controller.addFeatureDataFromFeatureData(id, obj.id) },
         remove = { obj -> controller.removeFeatureDataFromFeatureData(id, obj.id) },
         replace = { obj -> controller.replaceFeatureDataFromFeatureData(id, obj.id) }
@@ -198,6 +200,7 @@ class TreeObjectService(
 
   private fun FeatureContainerData.getFeatureContainerDataAttributes(
       get: (String) -> List<FeatureData>,
+      isEmpty: (String) -> Boolean,
       add: (TreeObjectOption) -> TreeObject,
       remove: (TreeObject) -> Unit,
       replace: (TreeObjectOption) -> TreeObject
@@ -207,6 +210,7 @@ class TreeObjectService(
           name = it.name,
           type = if (it.onlyOne) TreeObjectType.SINGLE_REF else TreeObjectType.MULTIPLE_REF,
           get = { get(it.featureType).map { it.toTreeObject() }.toMutableList() },
+          isEmpty = { isEmpty(it.featureType) },
           dictionary = it.featureType,
           canCreate = it.allowHidden,
           add = add,
@@ -220,6 +224,7 @@ class TreeObjectService(
 
   private fun ContainerData.getAttributes(
       get: (String) -> List<FeatureData>,
+      isEmpty: (String) -> Boolean,
       add: (TreeObjectOption) -> TreeObject,
       remove: (TreeObject) -> Unit,
       replace: (TreeObjectOption) -> TreeObject
@@ -229,7 +234,7 @@ class TreeObjectService(
     } else {
       listOf()
     }
-    return base + getFeatureContainerDataAttributes(get, add, remove, replace)
+    return base + getFeatureContainerDataAttributes(get, isEmpty, add, remove, replace)
   }
 
   private fun Creature.getBaseCreatures(): List<TreeObjectAttribute> {
@@ -237,6 +242,7 @@ class TreeObjectService(
         name = "Основа",
         type = TreeObjectType.MULTIPLE_REF,
         get = { this.base.map { it.toTreeObject() } },
+        isEmpty = { this.base.isEmpty() },
         add = { obj -> controller.addBaseCreature(obj.id, id) },
         remove = { obj -> controller.removeBaseCreature(obj.id, id) }
     ))

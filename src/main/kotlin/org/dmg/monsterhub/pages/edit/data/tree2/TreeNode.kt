@@ -13,10 +13,9 @@ abstract class TreeNode(
   abstract fun rate(): Decimal?
 
   abstract fun hasChildren(): Boolean
-  abstract fun children(): List<TreeNode>
-  abstract fun count(): Int
+  abstract fun children(showEmpty: Boolean): List<TreeNode>
+  abstract fun count(showEmpty: Boolean): Int
   abstract fun canCompact(): Boolean
-  abstract fun hasData(): Boolean
 
   open fun add(option: TreeObjectOption) {
     throw UnsupportedOperationException()
@@ -47,7 +46,7 @@ abstract class TreeNode(
   fun last(): TreeNode {
     var node = this
     while (node.canCompact()) {
-      node = node.children()[0]
+      node = node.children(true)[0]
     }
     return node
   }
@@ -56,7 +55,7 @@ abstract class TreeNode(
     var node = this
     var result = sequenceOf(node)
     while (node.canCompact()) {
-      node = node.children()[0]
+      node = node.children(true)[0]
       result += node
     }
     return result
@@ -74,13 +73,11 @@ class TreeObjectNode(
 
   override fun hasChildren() = obj.attributes.isNotEmpty()
 
-  override fun children() = obj.attributes.map { it.toNode(this) }
+  override fun children(showEmpty: Boolean) = obj.attributes.filter { showEmpty || !it.isEmpty() }.map { it.toNode(this) }
 
-  override fun count() = obj.attributes.size
+  override fun count(showEmpty: Boolean) = obj.attributes.filter { showEmpty || !it.isEmpty() }.size
 
-  override fun canCompact() = count() == 1
-
-  override fun hasData(): Boolean = true
+  override fun canCompact() = count(true) == 1
 
   override fun value(): MutableList<Any?> = obj.primitive
 
@@ -101,13 +98,11 @@ class TerminalTreeObjectAttributeNode(
 
   override fun hasChildren() = false
 
-  override fun children() = listOf<TreeNode>()
+  override fun children(showEmpty: Boolean) = listOf<TreeNode>()
 
-  override fun count() = 0
+  override fun count(showEmpty: Boolean) = 0
 
   override fun canCompact() = false
-
-  override fun hasData(): Boolean = true
 
   override fun value(): MutableList<Any?> = attribute.primitive
 
@@ -121,6 +116,7 @@ class NonTerminalTreeObjectAttributeNode(
     private val attribute: TreeObjectAttribute
 ) : TreeNode(parent) {
   private var data: List<TreeObject> = attribute.get()
+  private var isEmpty = attribute.isEmpty()
 
   val type = attribute.type
 
@@ -130,27 +126,28 @@ class NonTerminalTreeObjectAttributeNode(
 
   override fun hasChildren() = data.isNotEmpty()
 
-  override fun children() = data.map { TreeObjectNode(this, it) }
+  override fun children(showEmpty: Boolean) = data.map { TreeObjectNode(this, it) }
 
-  override fun count() = data.size
+  override fun count(showEmpty: Boolean) = data.size
 
-  override fun canCompact() = attribute.type != TreeObjectType.MULTIPLE_REF && count() == 1
-
-  override fun hasData(): Boolean = data.isNotEmpty()
+  override fun canCompact() = attribute.type != TreeObjectType.MULTIPLE_REF && count(true) == 1
 
   override fun add(option: TreeObjectOption) {
     data = data + attribute.add(option)
+    isEmpty = data.isEmpty()
   }
 
   override fun remove(node: TreeNode) {
     val obj = (node as TreeObjectNode).obj
     attribute.remove(obj)
     data = data - obj
+    isEmpty = data.isEmpty()
   }
 
   override fun replace(option: TreeObjectOption) {
     val replace = attribute.replace(option)
     data = listOf(replace)
+    isEmpty = data.isEmpty()
   }
 
   override fun dictionary(): String = attribute.dictionary

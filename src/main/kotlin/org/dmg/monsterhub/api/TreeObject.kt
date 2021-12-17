@@ -31,6 +31,7 @@ class TreeObjectAttribute(
     val setPrimitive: (Int, Any?) -> Unit = { _, _ -> throw UnsupportedOperationException() },
 
     val get: () -> List<TreeObject> = { throw UnsupportedOperationException() },
+    val isEmpty: () -> Boolean = { false },
     val dictionary: String = "",
     val canCreate: Boolean = false,
     val add: (TreeObjectOption) -> TreeObject = { _ -> throw UnsupportedOperationException() },

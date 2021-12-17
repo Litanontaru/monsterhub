@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.combobox.ComboBox
+import com.vaadin.flow.component.contextmenu.ContextMenu
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.GridVariant
@@ -34,6 +35,8 @@ object TreeSpace2 : Space {
 
     val root = locator.treeObjectController.get(obj.id)
     val dataProvider = TreeDataProvider(TreeObjectNode(null, root))
+
+    dataProvider.showEmpty = locator.config.spaces[TreeSpace2]?.let { it as Boolean } ?: false
 
     parent.add(TreeGrid<TreeNode>().apply {
       //ADD SELECTION TRACKER
@@ -92,8 +95,16 @@ object TreeSpace2 : Space {
         it.flexGrow = 0
       }
 
+      ContextMenu().also {
+        it.addItem("Срыть/показать пустое") {
+          dataProvider.showEmpty = !dataProvider.showEmpty
+          locator.config.spaces[TreeSpace2] = dataProvider.showEmpty
+        }
+        it.target = this
+      }
+
       setDataProvider(dataProvider)
-      this.expand(dataProvider.root.last().children())
+      this.expand(dataProvider.root.last().children(dataProvider.showEmpty))
 
       width = "100%"
       isHeightByRows = true

@@ -16,7 +16,8 @@ class TreeDataProvider(
   override fun hasChildren(item: TreeNode?): Boolean = (item ?: root).last().hasChildren()
 
   override fun fetchChildrenFromBackEnd(query: HierarchicalQuery<TreeNode, Unit>?): Stream<TreeNode> =
-      (query?.parent ?: root).last().children().stream()
+      (query?.parent ?: root).last().children(showEmpty).stream()
 
-  override fun getChildCount(query: HierarchicalQuery<TreeNode, Unit>?): Int = (query?.parent ?: root).last().count()
+  override fun getChildCount(query: HierarchicalQuery<TreeNode, Unit>?): Int = (query?.parent
+      ?: root).last().count(showEmpty)
 }

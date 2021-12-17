@@ -42,7 +42,7 @@ private fun Power.alternativeRate(): Decimal {
       ?: -compensation.toDecimal()
 }
 
-private fun Power.areaRate() = (power() + (minorRates().map { it.value }.sum()) * multiplier() - compensation()).toDecimal()
+private fun Power.areaRate() = (power() + (minorRates().map { it.value }.sum()) * minorMultiplier() - compensation()).toDecimal()
 
 private fun Power.multiplier() = features
     .map { it.rate() }
@@ -74,5 +74,11 @@ private fun Power.minors() = features
     ?: emptyList<FeatureData>()
 
 private fun Power.minorRates() = minors().map { it.feature.rate() }
+
+private fun Power.minorMultiplier() = minors()
+    .map { it.rate() }
+    .filter { it.type == DecimalType.MULT }
+    .map { it.value }
+    .fold(BigDecimal.ONE) { a, b -> a * b }
 
 private fun List<BigDecimal>.sum() = this.fold(BigDecimal.ZERO) { a, b -> a + b }

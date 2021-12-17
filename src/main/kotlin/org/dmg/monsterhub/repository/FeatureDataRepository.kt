@@ -18,7 +18,11 @@ interface FeatureDataRepository : DBObjectRepository<FeatureData> {
 
   fun findAllByContainerData_IdAndFeature_FeatureType(containerData_id: Long, feature_featureType: String): List<FeatureData>
 
+  fun existsByContainerData_IdAndFeature_FeatureType(containerData_id: Long, feature_featureType: String): Boolean
+
   fun findAllByMainFeature_IdAndFeature_FeatureType(mainFeature_id: Long, feature_featureType: String): List<FeatureData>
+
+  fun existsByMainFeature_IdAndFeature_FeatureType(mainFeature_id: Long, feature_featureType: String): Boolean
 }
 
 interface FeatureDataContainer {
