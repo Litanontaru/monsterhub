@@ -96,8 +96,8 @@ class EditPanel(
             locator.objectManagerService
                 .update(obj)
                 .also {
-                  if (onUpdate != null && obj == this.obj) {
-                    onUpdate!!()
+                  if (obj == this.obj) {
+                    onUpdate?.let { it() }
                   }
                 }
           }

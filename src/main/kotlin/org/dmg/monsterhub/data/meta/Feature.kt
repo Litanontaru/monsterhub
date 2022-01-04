@@ -28,4 +28,6 @@ open class Feature : SettingObject(), FeatureContainer, WithDescription {
   @OneToMany(orphanRemoval = true)
   @JoinColumn(name = "feature_id")
   override val containFeatureTypes: MutableList<FeatureContainerItem> = mutableListOf()
+
+  open fun rateFormula(): String? = rate
 }

@@ -43,12 +43,6 @@ class Power : ContainerData(), SkillLike {
         },
 
         FeatureContainerItem().apply {
-          name = "Область действия"
-          featureType = FreeFeatureDataProvider.AREA_OF_EFFECT
-          onlyOne = true
-        },
-
-        FeatureContainerItem().apply {
           name = "Тип цели"
           featureType = FreeFeatureDataProvider.EFFECT_TARGET_TYPE
         },

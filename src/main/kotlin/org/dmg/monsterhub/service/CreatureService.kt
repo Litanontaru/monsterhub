@@ -22,26 +22,26 @@ object CreatureService {
         .toList()
 
     fun max(index: Int) =
-        values
-            .filter { it.second[index] > 0 }
-            .maxBy { it.second[index] }
-            ?.let {
-              val rate = it.second[index]
-              values.filter { it.second[index] == rate }
-                  .map { it.first.display() } to rate
-            }
-            ?: listOf<String>() to 0
+      values
+        .filter { it.second[index] > 0 }
+        .maxBy { it.second[index] }
+        ?.let {
+          val rate = it.second[index]
+          values.filter { it.second[index] == rate }
+            .map { it.first.display() } to rate
+        }
+        ?: (listOf<String>() to 0)
 
     fun min(index: Int) =
-        values
-            .filter { it.second[index] < 0 }
-            .minBy { it.second[index] }
-            ?.let {
-              val rate = it.second[index]
-              values.filter { it.second[index] == rate }
-                  .map { it.first.display() } to rate
-            }
-            ?: listOf<String>() to 0
+      values
+        .filter { it.second[index] < 0 }
+        .minBy { it.second[index] }
+        ?.let {
+          val rate = it.second[index]
+          values.filter { it.second[index] == rate }
+            .map { it.first.display() } to rate
+        }
+        ?: (listOf<String>() to 0)
 
     fun alt(index: Int) = max(index) to min(index)
 
@@ -50,7 +50,7 @@ object CreatureService {
         .flatMap { it.features.asSequence().filter { it.feature.name == "За происхождение" }.map { it.x.toInt() } }
         .sum()
 
-    val base = values.map { it.second[0] }.sum() + addedByPower - 142
+    val base = values.map { it.second[0] }.sum() + addedByPower - 149
     val off = alt(1)
     val def = alt(2)
     val com = alt(3)

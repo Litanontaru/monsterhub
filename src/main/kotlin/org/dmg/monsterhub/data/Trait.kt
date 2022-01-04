@@ -15,12 +15,19 @@ class Trait : Feature() {
   var overriding: Boolean = false
 
   fun formulas(context: (String) -> List<BigDecimal>) = sequenceOf(
-      base,
-      offenceAlt,
-      defenceAlt,
-      commonAlt
+    base,
+    offenceAlt,
+    defenceAlt,
+    commonAlt
   )
-      .map { it.toFormula(context) }
+    .map { it.toFormula(context) }
+
+  override fun rateFormula(): String? =
+    sequenceOf(base, offenceAlt, defenceAlt, commonAlt)
+      .mapNotNull { it }
+      .filter { it.isNotBlank() }
+      .joinToString(" + ")
+      .takeIf { it.isNotBlank() }
 
   companion object {
     val TRAIT = "TRAIT"

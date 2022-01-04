@@ -89,7 +89,7 @@ object TreeSpace2 : Space {
         it.isAutoWidth = true
       }
       addColumn {
-        it.compacted().mapNotNull { it.rate() }.find { it.isNotBlank() }
+        it.compacted().toList().reversed().mapNotNull { it.rate() }.find { it.isNotBlank() }
       }.also {
         it.width = "6em"
         it.flexGrow = 0

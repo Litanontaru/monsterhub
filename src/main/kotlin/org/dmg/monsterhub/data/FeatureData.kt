@@ -117,5 +117,5 @@ class FeatureData : DBObject(), FeatureContainerData {
       ?.let { it as SkillLike }
       ?.skillType
 
-  fun rate(): Decimal = feature.rate.toFormula(context).calculateFinal()
+  fun rate(): Decimal = feature.rateFormula().toFormula(context).calculateFinal()
 }
