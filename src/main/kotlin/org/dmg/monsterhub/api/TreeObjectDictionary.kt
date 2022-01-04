@@ -24,26 +24,31 @@ class TreeObjectDictionary(
 
     private val treeObjectService: TreeObjectService
 ) {
-  fun dataProvider(featureType: String, settings: List<Long>): TreeObjectOptionDataProvider =
-      TreeObjectOptionDataProvider(this, featureType, settings)
+  fun dataProvider(featureType: List<String>, settings: List<Long>): TreeObjectOptionDataProvider =
+    TreeObjectOptionDataProvider(this, featureType, settings)
 
-  fun getAll(featureType: String, settings: List<Long>, pageable: Pageable): List<TreeObjectOption> =
-      repository
-          .findAllByFeatureTypeAndSetting_IdInAndHiddenFalse(featureType, settings, pageable)
-          .map { TreeObjectOption(it.id, it.name, it.rate ?: "") }
+  fun getAll(featureType: List<String>, settings: List<Long>, pageable: Pageable): List<TreeObjectOption> =
+    repository
+      .findAllByFeatureTypeInAndSetting_IdInAndHiddenFalse(featureType, settings, pageable)
+      .map { TreeObjectOption(it.id, it.name, it.rate ?: "") }
 
-  fun countAll(featureType: String, settings: List<Long>) =
-      repository
-          .countAllByFeatureTypeAndSetting_IdInAndHiddenFalse(featureType, settings)
+  fun countAll(featureType: List<String>, settings: List<Long>) =
+    repository
+      .countAllByFeatureTypeInAndSetting_IdInAndHiddenFalse(featureType, settings)
 
-  fun getAllStarting(featureType: String, name: String, settings: List<Long>, pageable: Pageable): List<TreeObjectOption> =
-      repository
-          .findAllByFeatureTypeAndNameContainingAndSetting_IdInAndHiddenFalse(featureType, name, settings, pageable)
-          .map { TreeObjectOption(it.id, it.name, it.rate ?: "") }
+  fun getAllStarting(
+    featureType: List<String>,
+    name: String,
+    settings: List<Long>,
+    pageable: Pageable
+  ): List<TreeObjectOption> =
+    repository
+      .findAllByFeatureTypeInAndNameContainingAndSetting_IdInAndHiddenFalse(featureType, name, settings, pageable)
+      .map { TreeObjectOption(it.id, it.name, it.rate ?: "") }
 
-  fun countAllStarting(featureType: String, name: String, settings: List<Long>) =
-      repository
-          .countAllByFeatureTypeAndNameContainingAndSetting_IdInAndHiddenFalse(featureType, name, settings)
+  fun countAllStarting(featureType: List<String>, name: String, settings: List<Long>) =
+    repository
+      .countAllByFeatureTypeInAndNameContainingAndSetting_IdInAndHiddenFalse(featureType, name, settings)
 
   fun create(featureType: String, settingId: Long): TreeObjectOption {
     val data = when (featureType) {
@@ -66,9 +71,9 @@ class TreeObjectDictionary(
 }
 
 class TreeObjectOptionDataProvider(
-    val dictionary: TreeObjectDictionary,
-    val featureType: String,
-    val settings: List<Long>
+  val dictionary: TreeObjectDictionary,
+  val featureType: List<String>,
+  val settings: List<Long>
 ) : AbstractBackEndDataProvider<TreeObjectOption, Void>() {
   var filter = ""
     set(value) {
@@ -83,14 +88,14 @@ class TreeObjectOptionDataProvider(
     }
   }
 
-  override fun fetchFromBackEnd(query: Query<TreeObjectOption, Void>?): Stream<TreeObjectOption>? {
+  override fun fetchFromBackEnd(query: Query<TreeObjectOption, Void>?): Stream<TreeObjectOption> {
     return when {
       filter.isNotBlank() -> dictionary
-          .getAllStarting(featureType, filter, settings, PageRequest.of(query!!.page, query.pageSize))
-          .stream()
+        .getAllStarting(featureType, filter, settings, PageRequest.of(query!!.page, query.pageSize))
+        .stream()
       else -> dictionary
-          .getAll(featureType, settings, PageRequest.of(query!!.page, query.pageSize))
-          .stream()
+        .getAll(featureType, settings, PageRequest.of(query!!.page, query.pageSize))
+        .stream()
     }
   }
 }

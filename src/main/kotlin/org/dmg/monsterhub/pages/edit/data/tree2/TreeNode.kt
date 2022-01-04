@@ -29,7 +29,7 @@ abstract class TreeNode(
     throw UnsupportedOperationException()
   }
 
-  open fun dictionary(): String {
+  open fun dictionary(): List<String> {
     throw UnsupportedOperationException()
   }
 
@@ -150,7 +150,7 @@ class NonTerminalTreeObjectAttributeNode(
     isEmpty = data.isEmpty()
   }
 
-  override fun dictionary(): String = attribute.dictionary
+  override fun dictionary(): List<String> = attribute.dictionary
 
   override fun canCreate(): Boolean = attribute.canCreate
 }

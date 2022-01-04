@@ -34,11 +34,24 @@ interface FeatureRepository : JpaRepository<Feature, Long> {
   @Query("UPDATE Feature f SET f.setting = :setting WHERE f.id = :id")
   fun move(id: Long, setting: Setting)
 
-  fun findAllByFeatureTypeAndSetting_IdInAndHiddenFalse(featureType: String, settings: List<Long>, pageable: Pageable): List<Feature>
+  fun findAllByFeatureTypeInAndSetting_IdInAndHiddenFalse(
+    featureType: List<String>,
+    settings: List<Long>,
+    pageable: Pageable
+  ): List<Feature>
 
-  fun countAllByFeatureTypeAndSetting_IdInAndHiddenFalse(featureType: String, settings: List<Long>): Int
+  fun countAllByFeatureTypeInAndSetting_IdInAndHiddenFalse(featureType: List<String>, settings: List<Long>): Int
 
-  fun findAllByFeatureTypeAndNameContainingAndSetting_IdInAndHiddenFalse(featureType: String, name: String, settings: List<Long>, pageable: Pageable): List<Feature>
+  fun findAllByFeatureTypeInAndNameContainingAndSetting_IdInAndHiddenFalse(
+    featureType: List<String>,
+    name: String,
+    settings: List<Long>,
+    pageable: Pageable
+  ): List<Feature>
 
-  fun countAllByFeatureTypeAndNameContainingAndSetting_IdInAndHiddenFalse(featureType: String, name: String, settings: List<Long>): Int
+  fun countAllByFeatureTypeInAndNameContainingAndSetting_IdInAndHiddenFalse(
+    featureType: List<String>,
+    name: String,
+    settings: List<Long>
+  ): Int
 }

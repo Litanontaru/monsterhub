@@ -207,7 +207,7 @@ class TreeObjectService(
         type = if (it.onlyOne) TreeObjectType.SINGLE_REF else TreeObjectType.MULTIPLE_REF,
         get = { preload },
         isEmpty = { preload.isEmpty() },
-        dictionary = it.featureType,
+        dictionary = listOf(it.featureType),
         canCreate = it.allowHidden,
         add = add,
         remove = remove,
@@ -238,6 +238,7 @@ class TreeObjectService(
       type = TreeObjectType.MULTIPLE_REF,
       get = { this.base.map { it.toTreeObject() } },
       isEmpty = { this.base.isEmpty() },
+      dictionary = listOf(Creature.CREATURE_RACE_TEMPLATE, Creature.CREATURE_RACE),
       add = { obj -> controller.addBaseCreature(obj.id, id) },
       remove = { obj -> controller.removeBaseCreature(obj.id, id) }
     ))

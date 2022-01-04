@@ -24,22 +24,22 @@ class TreeObjectOption(
 )
 
 class TreeObjectAttribute(
-    val name: String,
-    val type: TreeObjectType,
+  val name: String,
+  val type: TreeObjectType,
 
-    val primitive: MutableList<Any?> = mutableListOf(),
-    val setPrimitive: (Int, Any?) -> Unit = { _, _ -> throw UnsupportedOperationException() },
+  val primitive: MutableList<Any?> = mutableListOf(),
+  val setPrimitive: (Int, Any?) -> Unit = { _, _ -> throw UnsupportedOperationException() },
 
-    val get: () -> List<TreeObject> = { throw UnsupportedOperationException() },
-    val isEmpty: () -> Boolean = { false },
-    val dictionary: String = "",
-    val canCreate: Boolean = false,
-    val add: (TreeObjectOption) -> TreeObject = { _ -> throw UnsupportedOperationException() },
-    val remove: (TreeObject) -> Unit = { _ -> throw UnsupportedOperationException() },
-    val replace: (TreeObjectOption) -> TreeObject = { _ -> throw UnsupportedOperationException() },
+  val get: () -> List<TreeObject> = { throw UnsupportedOperationException() },
+  val isEmpty: () -> Boolean = { false },
+  val dictionary: List<String> = listOf(),
+  val canCreate: Boolean = false,
+  val add: (TreeObjectOption) -> TreeObject = { _ -> throw UnsupportedOperationException() },
+  val remove: (TreeObject) -> Unit = { _ -> throw UnsupportedOperationException() },
+  val replace: (TreeObjectOption) -> TreeObject = { _ -> throw UnsupportedOperationException() },
 
-    var rate: Decimal = Decimal.NONE,
-    val read: () -> Decimal = { Decimal.NONE }
+  var rate: Decimal = Decimal.NONE,
+  val read: () -> Decimal = { Decimal.NONE }
 ) {
   fun readRate() = read().also { rate = it }
 }

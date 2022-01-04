@@ -468,7 +468,7 @@ class RefActions(private val item: TreeNode) : EditableLayout() {
     addButton.isVisible = false
 
     createButton = Button(Icon(VaadinIcon.MAGIC)) {
-      val new = locator.treeObjectDictionary.create(item.dictionary(), locator.setting.id)
+      val new = locator.treeObjectDictionary.create(item.dictionary().single(), locator.setting.id)
       item.add(new)
       refreshItem(item, true)
     }
@@ -544,11 +544,11 @@ private fun valueWithInfinite(value: BigDecimal, setter: (BigDecimal) -> Unit): 
 }
 
 class TreeObjectOptionSelection(
-    private val treeObjectDictionary: TreeObjectDictionary,
-    private val dictionary: String,
-    private val settings: List<Long>,
-    private val initialValue: Long?,
-    private val onSelect: (TreeObjectOption) -> Unit
+  private val treeObjectDictionary: TreeObjectDictionary,
+  private val dictionary: List<String>,
+  private val settings: List<Long>,
+  private val initialValue: Long?,
+  private val onSelect: (TreeObjectOption) -> Unit
 ) : Dialog() {
   init {
     add(VerticalLayout().apply {
