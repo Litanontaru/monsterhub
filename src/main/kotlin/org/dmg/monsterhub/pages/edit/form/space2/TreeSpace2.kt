@@ -133,7 +133,10 @@ object Actions {
     is TerminalTreeObjectAttributeNode -> ACTIONS[node.type]!!(node)
     is NonTerminalTreeObjectAttributeNode -> ACTIONS[node.type]!!(node)
     is TreeObjectNode -> when (node.obj.type) {
-      TreeObjectType.FEATURE_OBJECT -> LineActions(node)
+      TreeObjectType.FEATURE_OBJECT -> when (node.parent) {
+        is NonTerminalTreeObjectAttributeNode -> FeatureActions(node)
+        else -> LineActions(node)
+      }
       TreeObjectType.FEATURE_DATA -> FeatureDataActions(node)
       else -> throw IllegalArgumentException()
     }
@@ -501,8 +504,31 @@ class FeatureDataActions(private val item: TreeNode) : EditableLayout() {
   }
 }
 
+class FeatureActions(private val item: TreeNode) : EditableLayout() {
+  private val staticLabel: Label
+  private val removeButton: Button
+
+  init {
+    staticLabel = Label((item.value()[0]?.let { it as String } ?: ""))
+
+    removeButton = Button(Icon(VaadinIcon.CLOSE)) {
+      item.parent!!.remove(item)
+      refreshItem(item.parent, true)
+    }
+
+    removeButton.isVisible = false
+
+    add(staticLabel, removeButton)
+    setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, staticLabel, removeButton)
+  }
+
+  override fun changeEditing(new: Boolean) {
+    removeButton.isVisible = new
+  }
+}
+
 private fun positiveWithInfiniteLabel(value: BigDecimal): String =
-    if (value == Int.MAX_VALUE.toBigDecimal()) "Бесконечность" else value.stripTrailingZeros().toPlainString()
+  if (value == Int.MAX_VALUE.toBigDecimal()) "Бесконечность" else value.stripTrailingZeros().toPlainString()
 
 private fun valueWithInfinite(value: BigDecimal, setter: (BigDecimal) -> Unit): Pair<TextField, Checkbox> {
   val isInfinite = value == Int.MAX_VALUE.toBigDecimal()

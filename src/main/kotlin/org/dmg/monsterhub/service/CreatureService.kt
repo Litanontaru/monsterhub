@@ -47,8 +47,10 @@ object CreatureService {
 
     val powers = getTraitPowers(creature) + getPowers(creature)
     val addedByPower = powers
-        .flatMap { it.features.asSequence().filter { it.feature.name == "За происхождение" }.map { it.x.toInt() } }
-        .sum()
+      .flatMap {
+        it.features.asSequence().filter { it.feature.name == "За происхождение" }.map { it.x.toInt() }
+      }  //todo тут баг, потому что берётся только верхнеуровневые...
+      .sum()
 
     val base = values.map { it.second[0] }.sum() + addedByPower - 149
     val off = alt(1)
