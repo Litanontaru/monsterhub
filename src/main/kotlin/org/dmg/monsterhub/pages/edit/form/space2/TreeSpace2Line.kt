@@ -22,29 +22,27 @@ import org.dmg.monsterhub.pages.edit.form.space.TreeObjectOptionSelection
 import java.math.BigDecimal
 
 object Lines {
-  fun toComponent(item: TreeNode, editing: Boolean): HorizontalLayout {
-    val nodes = item.compacted().toList()
-    val lines = nodes.map { toComponent(it) }
-    val elements = lines.flatMap { it.getElements(editing) }
-    val concattedElements = elements
-      .fold(listOf<LineElement>()) { result, element ->
-        if (result.isEmpty()) {
-          listOf(element)
-        } else {
-          result.subList(0, result.size - 1) + result.last().concat(element)
-        }
+  fun toComponent(item: TreeNode, editing: Boolean): HorizontalLayout = item
+    .compacted()
+    .toList()
+    .map { toComponent(it) }
+    .flatMap { it.getElements(editing) }
+    .fold<LineElement, List<LineElement>>(listOf()) { result, element ->
+      if (result.isEmpty()) {
+        listOf(element)
+      } else {
+        result.subList(0, result.size - 1) + result.last().concat(element)
       }
-    val components = concattedElements.flatMap { it.toComponents() }
-    return components
-      .let {
-        HorizontalLayout().apply {
-          add(*it.toTypedArray())
-          setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, *it.toTypedArray())
+    }
+    .flatMap { it.toComponents() }
+    .let {
+      HorizontalLayout().apply {
+        add(*it.toTypedArray())
+        setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, *it.toTypedArray())
 
-          width = "100%"
-        }
+        width = "100%"
       }
-  }
+    }
 
   private fun toComponent(node: TreeNode): EditableLine = when (node) {
     is TerminalTreeObjectAttributeNode -> toComponent(node, node.type)
@@ -261,6 +259,8 @@ class ImportanceLine(private val item: TreeNode) : EditableLine() {
 
     return if (editing) {
       val edit = ComboBox<Int>().apply {
+        width = "15em"
+
         setItems((0..9).toList())
         setItemLabelGenerator { NumberOption.IMPORTANCE_OPTIONS[it] }
         this.value = initial
@@ -285,7 +285,7 @@ class LineLine(private val item: TreeNode) : EditableLine() {
     return if (editing) {
       val editField = TextField().apply {
         value = initial
-        width = "100%"
+        width = "25em"
 
         addValueChangeListener {
           val new = it.value
@@ -307,7 +307,7 @@ class MultilineLine(private val item: TreeNode) : EditableLine() {
     return if (editing) {
       val editField = TextArea().apply {
         value = initial
-        width = "100%"
+        width = "25em"
 
         addValueChangeListener {
           val new = it.value
@@ -384,7 +384,7 @@ class FeatureLine(private val item: TreeNode) : EditableLine() {
     return if (editing) {
       val editField = TextField().apply {
         value = name
-        width = "100%"
+        width = "25em"
 
         addValueChangeListener {
           val new = it.value

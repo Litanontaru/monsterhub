@@ -52,6 +52,8 @@ object TreeSpace2 : Space {
       addComponentHierarchyColumn { item ->
         Lines.toComponent(item, item == selectedItem)
       }.also {
+        it.width = "100%"
+        it.flexGrow = 1
         it.isAutoWidth = true
       }
       addColumn {
