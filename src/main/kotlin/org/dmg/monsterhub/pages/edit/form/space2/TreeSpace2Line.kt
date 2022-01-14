@@ -22,10 +22,20 @@ import org.dmg.monsterhub.pages.edit.form.space.TreeObjectOptionSelection
 import java.math.BigDecimal
 
 object Lines {
-  fun toComponent(item: TreeNode, editing: Boolean): HorizontalLayout = item
+  fun toComponent(
+    item: TreeNode,
+    editing: Boolean,
+    locator: ServiceLocator,
+    refreshItem: (TreeNode, Boolean) -> Unit
+  ): HorizontalLayout = item
     .compacted()
     .toList()
-    .map { toComponent(it) }
+    .map {
+      toComponent(it).also {
+        it.locator = locator
+        it.refreshItem = refreshItem
+      }
+    }
     .flatMap { it.getElements(editing) }
     .fold<LineElement, List<LineElement>>(listOf()) { result, element ->
       if (result.isEmpty()) {

@@ -50,7 +50,9 @@ object TreeSpace2 : Space {
       addSelectionListener { updateSelection(it.firstSelectedItem.orElse(null)) }
 
       addComponentHierarchyColumn { item ->
-        Lines.toComponent(item, item == selectedItem)
+        Lines.toComponent(item, item == selectedItem, locator) { node, refreshChildren ->
+          dataProvider.refreshItem(node, refreshChildren)
+        }
       }.also {
         it.width = "100%"
         it.flexGrow = 1
