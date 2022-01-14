@@ -58,6 +58,7 @@ enum class TreeObjectType(val terminal: Boolean) {
   MULTIPLE_REF(false),
 
   FEATURE_OBJECT(false),
+  BASE_CREATURE(false),
   FEATURE_DATA(false)
 }
 

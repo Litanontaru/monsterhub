@@ -20,14 +20,14 @@ class TreeObjectService(
 ) {
   //--------------------------------------------------------------------------------------------------------------------
 
-  fun get(id: Long) = containerDataRepository.getById(id).toTreeObject()
+  fun get(id: Long) = containerDataRepository.getById(id).toTreeObject(TreeObjectType.FEATURE_OBJECT)
 
-  fun ContainerData.toTreeObject() = TreeObject(
+  fun ContainerData.toTreeObject(type: TreeObjectType) = TreeObject(
     id,
     "",
     rate(),
     { rate() },
-    TreeObjectType.FEATURE_OBJECT,
+    type,
     getAttributes(
       get = { featureDataRepository.findAllByContainerData_IdAndFeature_FeatureType(id, it) },
       add = { obj -> controller.addFeatureDataFromContainerData(id, obj.id) },
@@ -131,7 +131,7 @@ class TreeObjectService(
   fun addBaseCreature(baseId: Long, creatureId: Long): TreeObject {
     val base = creatureRepository.getById(baseId)
     creatureRepository.getById(creatureId).base.add(base)
-    return base.toTreeObject()
+    return base.toTreeObject(TreeObjectType.BASE_CREATURE)
   }
 
   fun removeBaseCreature(baseId: Long, creatureId: Long) {
@@ -236,7 +236,7 @@ class TreeObjectService(
     return listOf(TreeObjectAttribute(
       name = "Основа",
       type = TreeObjectType.MULTIPLE_REF,
-      get = { this.base.map { it.toTreeObject() } },
+      get = { this.base.map { it.toTreeObject(TreeObjectType.BASE_CREATURE) } },
       isEmpty = { this.base.isEmpty() },
       dictionary = listOf(Creature.CREATURE_RACE_TEMPLATE, Creature.CREATURE_RACE),
       add = { obj -> controller.addBaseCreature(obj.id, id) },
