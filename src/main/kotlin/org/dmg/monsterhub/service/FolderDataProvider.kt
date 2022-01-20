@@ -9,28 +9,31 @@ import org.springframework.stereotype.Service
 
 @Service
 class FolderDataProvider(
-    repository: FolderRepository
-) : SimpleSettingObjectDataProvider<Folder>(FOLDER, repository) {
+  dependencyAnalyzer: DependencyAnalyzer,
+  repository: FolderRepository
+) : SimpleSettingObjectDataProvider<Folder>(FOLDER, dependencyAnalyzer, repository) {
 
   override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory(FOLDER, "Папка") {
     Folder().apply { featureType = FOLDER }
   })
 
   override fun getChildrenAlikeBySetting(parent: Folder?, filter: SettingObjectTreeFilter, setting: Setting) =
-      when {
-        filter.hasFilter() -> listOf()
-        else -> parent
-            ?.let { repository.findAllByParentAndHiddenFalse(it) }
-            ?: run { repository.findAllBySettingAndParentIsNullAndHiddenFalse(setting) }
-      }
+    when {
+      filter.hasFilter() -> listOf()
+      filter.hasFindUsages() -> listOf()
+      else -> parent
+        ?.let { repository.findAllByParentAndHiddenFalse(it) }
+        ?: run { repository.findAllBySettingAndParentIsNullAndHiddenFalse(setting) }
+    }
 
 
   override fun countChildrenAlikeBySetting(parent: Folder?, filter: SettingObjectTreeFilter, setting: Setting) =
-      when {
-        filter.hasFilter() -> 0
-        else -> parent
-            ?.let { repository.countByParentAndHiddenFalse(it) }
-            ?: run { repository.countBySettingAndParentIsNullAndHiddenFalse(setting) }
+    when {
+      filter.hasFilter() -> 0
+      filter.hasFindUsages() -> 0
+      else -> parent
+        ?.let { repository.countByParentAndHiddenFalse(it) }
+        ?: run { repository.countBySettingAndParentIsNullAndHiddenFalse(setting) }
 
-      }
+    }
 }

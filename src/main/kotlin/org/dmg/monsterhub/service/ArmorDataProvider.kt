@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class ArmorDataProvider(
-    repository: ArmorRepository
-) : SimpleSettingObjectDataProvider<Armor>(ARMOR, repository) {
+  dependencyAnalyzer: DependencyAnalyzer,
+  repository: ArmorRepository
+) : SimpleSettingObjectDataProvider<Armor>(ARMOR, dependencyAnalyzer, repository) {
   override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory(ARMOR, "Броня") {
     Armor().apply { featureType = ARMOR }
   })

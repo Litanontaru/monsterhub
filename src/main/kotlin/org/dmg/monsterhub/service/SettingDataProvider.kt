@@ -7,5 +7,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class SettingDataProvider(
-    repository: SettingRepository
-) : SimpleSettingObjectDataProvider<Setting>(SETTING, repository)
+  dependencyAnalyzer: DependencyAnalyzer,
+  repository: SettingRepository
+) : SimpleSettingObjectDataProvider<Setting>(SETTING, dependencyAnalyzer, repository)

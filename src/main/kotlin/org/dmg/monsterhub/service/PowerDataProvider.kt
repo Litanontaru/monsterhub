@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class PowerDataProvider(
-    repository: PowerRepository
-) : SimpleSettingObjectDataProvider<Power>(POWER, repository) {
+  dependencyAnalyzer: DependencyAnalyzer,
+  repository: PowerRepository
+) : SimpleSettingObjectDataProvider<Power>(POWER, dependencyAnalyzer, repository) {
   override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory(POWER, "Сила") {
     Power().apply { featureType = POWER }
   })

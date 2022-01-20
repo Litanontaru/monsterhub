@@ -11,8 +11,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class GameCharacterDataProvider(
-    repository: GameCharacterRepository
-) : SimpleSettingObjectDataProvider<GameCharacter>(CHARACTER, repository) {
+  dependencyAnalyzer: DependencyAnalyzer,
+  repository: GameCharacterRepository
+) : SimpleSettingObjectDataProvider<GameCharacter>(CHARACTER, dependencyAnalyzer, repository) {
   override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory(CHARACTER, "Персонаж") {
     FreeFeatureType().apply { featureType = CHARACTER }
   })

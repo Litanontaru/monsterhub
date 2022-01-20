@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class CreatureDataProvider(
-    override val repository: CreatureRepository
-) : AbstractSettingObjectDataProvider<Creature>(repository) {
+  dependencyAnalyzer: DependencyAnalyzer,
+  override val repository: CreatureRepository
+) : AbstractSettingObjectDataProvider<Creature>(dependencyAnalyzer, repository) {
 
   private fun mapType(type: String): List<String> = when (type) {
     CREATURE -> CREATURE_TYPES
@@ -22,7 +23,7 @@ class CreatureDataProvider(
   }
 
   override fun getBySettings(type: String, settings: List<Setting>, pageable: Pageable) =
-      repository.findAllByFeatureTypeInAndSettingIn(mapType(type), settings, pageable)
+    repository.findAllByFeatureTypeInAndSettingIn(mapType(type), settings, pageable)
 
   override fun getAlikeBySettings(type: String, name: String, settings: List<Setting>, pageable: Pageable) =
       repository.findAllByFeatureTypeInAndNameContainingAndSettingIn(mapType(type), name, settings, pageable)

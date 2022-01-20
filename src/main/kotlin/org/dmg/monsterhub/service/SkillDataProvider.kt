@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class SkillDataProvider(
-    repository: SkillRepository
-) : SimpleSettingObjectDataProvider<Skill>(SKILL, repository) {
+  dependencyAnalyzer: DependencyAnalyzer,
+  repository: SkillRepository
+) : SimpleSettingObjectDataProvider<Skill>(SKILL, dependencyAnalyzer, repository) {
   override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory(SKILL, "Способность") {
     Skill().apply { featureType = SKILL }
   })

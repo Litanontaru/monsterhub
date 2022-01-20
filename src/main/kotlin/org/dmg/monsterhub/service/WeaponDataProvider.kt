@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class WeaponDataProvider(
-    repository: WeaponRepository
-) : SimpleSettingObjectDataProvider<Weapon>(WEAPON, repository) {
+  dependencyAnalyzer: DependencyAnalyzer,
+  repository: WeaponRepository
+) : SimpleSettingObjectDataProvider<Weapon>(WEAPON, dependencyAnalyzer, repository) {
   override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory(WEAPON, "Оружие") {
     Weapon().apply { featureType = WEAPON }
   })

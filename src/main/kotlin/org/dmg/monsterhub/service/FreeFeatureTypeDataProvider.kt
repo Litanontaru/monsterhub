@@ -8,15 +8,17 @@ import org.springframework.stereotype.Service
 
 @Service
 class FreeFeatureTypeDataProvider(
-    repository: FreeFeatureTypeRepository,
-    private val freeFeatureDataProvider: FreeFeatureDataProvider
-) : SimpleSettingObjectDataProvider<FreeFeatureType>(FREE_FEATURE_TYPE, repository) {
-  override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory(FREE_FEATURE_TYPE, "Тип свободного аспекта") {
-    FreeFeatureType().apply { featureType = FREE_FEATURE_TYPE }
-  })
+  dependencyAnalyzer: DependencyAnalyzer,
+  repository: FreeFeatureTypeRepository,
+  private val freeFeatureDataProvider: FreeFeatureDataProvider
+) : SimpleSettingObjectDataProvider<FreeFeatureType>(FREE_FEATURE_TYPE, dependencyAnalyzer, repository) {
+  override fun factories(): List<SettingObjectFactory> =
+    listOf(SettingObjectFactory(FREE_FEATURE_TYPE, "Тип свободного аспекта") {
+      FreeFeatureType().apply { featureType = FREE_FEATURE_TYPE }
+    })
 
   override fun save(one: SettingObject): SettingObject {
     return super.save(one)
-        .also { freeFeatureDataProvider.refreshTypes() }
+      .also { freeFeatureDataProvider.refreshTypes() }
   }
 }

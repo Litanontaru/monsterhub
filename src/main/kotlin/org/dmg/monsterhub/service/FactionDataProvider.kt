@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class FactionDataProvider(
-    repository: FactionRepository
-) : SimpleSettingObjectDataProvider<Faction>(FACTION, repository) {
+  dependencyAnalyzer: DependencyAnalyzer,
+  repository: FactionRepository
+) : SimpleSettingObjectDataProvider<Faction>(FACTION, dependencyAnalyzer, repository) {
   override fun factories(): List<SettingObjectFactory> = listOf(SettingObjectFactory(FACTION, "Фракция") {
     Faction().apply { featureType = FACTION }
   })

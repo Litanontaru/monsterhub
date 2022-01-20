@@ -18,13 +18,15 @@ interface SettingObjectRepository<T : SettingObject> : DBObjectRepository<T> {
 
   fun countBySettingAndNameContainingAndHiddenFalse(setting: Setting, name: String): Int
 
+  fun findAllBySettingAndIdInAndHiddenFalse(setting: Setting, ids: List<Long>): List<T>
+
+  fun countBySettingAndIdInAndHiddenFalse(setting: Setting, ids: List<Long>): Int
+
   fun findAllBySettingAndParentIsNullAndHiddenFalse(setting: Setting): List<T>
 
   fun countBySettingAndParentIsNullAndHiddenFalse(setting: Setting): Int
 
   fun existsBySettingAndParentIsNullAndHiddenFalse(setting: Setting): Boolean
-
-  fun findAllBySettingAndHiddenFalse(setting: Setting): List<T>
 
   fun findAllBySettingIn(settings: List<Setting>, pageable: Pageable): List<T>
 
