@@ -27,6 +27,7 @@ class TreeObjectService(
     "",
     rate(),
     { rate() },
+    id,
     type,
     getAttributes(
       get = { featureDataRepository.findAllByContainerData_IdAndFeature_FeatureType(id, it) },
@@ -43,6 +44,7 @@ class TreeObjectService(
     if (feature is ContainerData) "" else feature.name,
     rate(),
     { rate() },
+    feature.id,
     TreeObjectType.FEATURE_DATA,
     getFeatureAttributes()
   )
@@ -179,11 +181,12 @@ class TreeObjectService(
       )
     }
     feature.designations.forEach { key ->
+      val trimmedKey = key.substringBeforeLast("*")
       list += TreeObjectAttribute(
-        name = key,
+        name = trimmedKey,
         type = TreeObjectType.LINE,
-        primitive = mutableListOf(designations.find { it.designationKey == key }?.value),
-        setPrimitive = { _, value -> controller.setDesignation(id, key, value as String?) }
+        primitive = mutableListOf(designations.find { it.designationKey == trimmedKey }?.value),
+        setPrimitive = { _, value -> controller.setDesignation(id, trimmedKey, value as String?) }
       )
     }
     return list + getFeatureContainerDataAttributes(

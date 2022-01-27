@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.combobox.ComboBox
+import com.vaadin.flow.component.html.Anchor
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -11,8 +12,11 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.textfield.TextArea
 import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.router.RouteConfiguration
+import com.vaadin.flow.router.RouteParameters
 import org.dmg.monsterhub.api.TreeObjectType
 import org.dmg.monsterhub.data.meta.NumberOption
+import org.dmg.monsterhub.pages.SettingView
 import org.dmg.monsterhub.pages.edit.data.ServiceLocator
 import org.dmg.monsterhub.pages.edit.data.tree2.NonTerminalTreeObjectAttributeNode
 import org.dmg.monsterhub.pages.edit.data.tree2.TerminalTreeObjectAttributeNode
@@ -374,6 +378,7 @@ class MultiRefLine(item: TreeNode) : RefLine(item) {
 class FeatureDataLine(private val item: TreeNode) : EditableLine() {
   override fun getElements(editing: Boolean): List<LineElement> {
     val name = item.name() ?: ""
+    val nameButton = nameButton(name, item.featureId()!!, locator.setting.id)
     return if (editing) {
 
       val removeButton = Button(Icon(VaadinIcon.CLOSE)) {
@@ -381,9 +386,9 @@ class FeatureDataLine(private val item: TreeNode) : EditableLine() {
         refreshItem(item.parent, true)
       }
 
-      listOf(StringLineElement(name), ComponentLineElement(removeButton))
+      listOf(ComponentLineElement(nameButton, removeButton))
     } else {
-      listOf(StringLineElement(name))
+      listOf(ComponentLineElement(nameButton))
     }
   }
 }
@@ -412,15 +417,16 @@ class FeatureLine(private val item: TreeNode) : EditableLine() {
 class BaseCreatureLine(private val item: TreeNode) : EditableLine() {
   override fun getElements(editing: Boolean): List<LineElement> {
     val name = (item.value()[0]?.let { it as String } ?: "")
+    val nameButton = nameButton(name, item.featureId()!!, locator.setting.id)
     return if (editing) {
       val removeButton = Button(Icon(VaadinIcon.CLOSE)) {
         item.parent!!.remove(item)
         refreshItem(item.parent, true)
       }
 
-      listOf(StringLineElement(name), ComponentLineElement(removeButton))
+      listOf(ComponentLineElement(nameButton, removeButton))
     } else {
-      listOf(StringLineElement(name))
+      listOf(ComponentLineElement(nameButton))
     }
   }
 }
@@ -464,4 +470,16 @@ private fun valueWithInfinite(value: BigDecimal, setter: (BigDecimal) -> Unit): 
   }
 
   return field to inifinite
+}
+
+private fun nameButton(name: String, id: Long, settingId: Long): Component {
+  val routeConfiguration = RouteConfiguration.forSessionScope()
+  val parameters = RouteParameters(
+    mutableMapOf(
+      "settingId" to settingId.toString(),
+      "objId" to id.toString()
+    )
+  )
+  val url = routeConfiguration.getUrl(SettingView::class.java, parameters)
+  return Anchor(url, name)
 }

@@ -11,6 +11,7 @@ abstract class TreeNode(
 ) {
   abstract fun name(): String?
   abstract fun rate(): Decimal?
+  abstract fun featureId(): Long?
 
   abstract fun hasChildren(): Boolean
   abstract fun children(showEmpty: Boolean): List<TreeNode>
@@ -71,9 +72,12 @@ class TreeObjectNode(
 
   override fun rate() = obj.rate
 
+  override fun featureId() = obj.featureId
+
   override fun hasChildren() = obj.attributes.isNotEmpty()
 
-  override fun children(showEmpty: Boolean) = obj.attributes.filter { showEmpty || !it.isEmpty() }.map { it.toNode(this) }
+  override fun children(showEmpty: Boolean) =
+    obj.attributes.filter { showEmpty || !it.isEmpty() }.map { it.toNode(this) }
 
   override fun count(showEmpty: Boolean) = obj.attributes.filter { showEmpty || !it.isEmpty() }.size
 
@@ -95,6 +99,8 @@ class TerminalTreeObjectAttributeNode(
   override fun name() = attribute.name
 
   override fun rate(): Decimal? = null
+
+  override fun featureId(): Long? = null
 
   override fun hasChildren() = false
 
@@ -123,6 +129,8 @@ class NonTerminalTreeObjectAttributeNode(
   override fun name() = attribute.name
 
   override fun rate(): Decimal? = attribute.rate
+
+  override fun featureId(): Long? = null
 
   override fun hasChildren() = data.isNotEmpty()
 

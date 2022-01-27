@@ -4,15 +4,16 @@ import org.dmg.monsterhub.data.meta.NumberOption
 import org.dmg.monsterhub.service.Decimal
 
 class TreeObject(
-    val id: Long,
-    val name: String,
-    var rate: Decimal,
-    val read: () -> Decimal,
+  val id: Long,
+  val name: String,
+  var rate: Decimal,
+  val read: () -> Decimal,
+  val featureId: Long? = null,
 
-    val type: TreeObjectType,
-    val attributes: List<TreeObjectAttribute>,
-    val primitive: MutableList<Any?> = mutableListOf(),
-    val setPrimitive: (Int, Any?) -> Unit = { _, _ -> throw UnsupportedOperationException() }
+  val type: TreeObjectType,
+  val attributes: List<TreeObjectAttribute>,
+  val primitive: MutableList<Any?> = mutableListOf(),
+  val setPrimitive: (Int, Any?) -> Unit = { _, _ -> throw UnsupportedOperationException() }
 ) {
   fun readRate() = read().also { rate = it }
 }
